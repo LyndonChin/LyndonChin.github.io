@@ -12,7 +12,7 @@
 body {
   background: #eee;
   color: #444;
-  font-family: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+  font-family: -apple-system, "Helvetica Neue", "Helvetica", Arial, sans-serif;
   font-size: 14px;
   text-shadow: 0 0 1px transparent;
 }
@@ -32,7 +32,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 h1 {
   font-size: 1.8em;
@@ -106,7 +106,8 @@ a:hover {
   margin: 50px auto;
 }
 #header a {
-  color: #999;
+  color: #666;
+  font-weight: bold;
 }
 #header a:hover {
   color: #258fb8;
@@ -120,11 +121,15 @@ a:hover {
 #header h2 {
   font-weight: normal;
   font-size: 0.9em;
+  font-style: italic;
   line-height: 1;
   margin-top: 10px;
 }
+#header h2 a {
+  font-weight: normal;
+}
 #header #main-nav {
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   line-height: 2.5em;
 }
 #header #main-nav ul {
@@ -258,7 +263,7 @@ article header .icon:before {
 }
 article header time {
   color: #999;
-  font: 0.9em "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font: 0.9em Helvetica Neue, Helvetica, Arial, sans-serif;
   margin-bottom: 5px;
   display: block;
   line-height: 1;
@@ -292,13 +297,15 @@ article .entry .video-container {
   margin-top: 15px;
 }
 article .entry blockquote {
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  color: #808080;
   font-style: italic;
-  font-family: "Georgia", serif;
-  font-size: 1.2em;
-  padding: 0 30px 15px;
-  text-align: center;
+  font-size: 1em;
+  margin: 20px 0 20px;
+  padding: 5px 20px;
+  border-left: 5px solid #eee;
+}
+article .entry blockquote p {
+  margin-top: 0;
 }
 article .entry blockquote footer {
   border-top: none;
@@ -317,14 +324,12 @@ article .entry pre {
   font-family: Monaco, Menlo, Consolas, Courier New, monospace;
 }
 article .entry code {
-  background: #eee;
-  color: #666;
-  padding: 0 5px;
-  margin: 0 2px;
+  background: #f9f2f4;
+  color: #c7254e;
+  padding: 2px 4px;
   font-size: 0.9em;
-  border: 1px solid #ddd;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
 }
 article .entry pre {
   background: #eee;
@@ -360,13 +365,11 @@ article .entry dl dl {
   margin-top: 0;
 }
 article .entry h1,
-article .entry h2 {
-  font-weight: normal;
-  border-bottom: 1px solid #ddd;
+article .entry h2,
+article .entry h3 {
   padding-bottom: 10px;
   margin-top: 20px;
 }
-article .entry h3,
 article .entry h4,
 article .entry h5,
 article .entry h6 {
@@ -494,7 +497,7 @@ article footer .addthis iframe {
   padding: 5px 10px;
   background: #ddd;
   color: #999;
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   text-shadow: 0 0 1px #fff;
   margin-bottom: 50px;
 }
@@ -593,7 +596,7 @@ article footer .addthis iframe {
 }
 #sidebar .search input {
   background: #fff;
-  font-family: "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   font-style: italic;
   font-size: 1em;
   padding: 10px 15px;
@@ -641,17 +644,16 @@ article footer .addthis iframe {
 #footer {
   color: #999;
   margin-bottom: 50px;
-  font: 0.9em/1.6 "Lato", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font: 0.9em/1.6 Helvetica Neue, Helvetica, Arial, sans-serif;
   text-shadow: 0 0 1px #fff;
 }
 .entry .gist {
-  background: #eee;
+  background: #2b2b2b;
   border: 1px solid #ddd;
   margin-top: 15px;
   padding: 7px 15px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  text-shadow: 0 0 1px #fff;
   line-height: 1.6;
   overflow: auto;
   color: #666;
@@ -675,7 +677,6 @@ article footer .addthis iframe {
   color: #999;
   margin-top: 5px;
   padding: 0;
-  text-shadow: 0 0 1px #fff;
   font-size: 100%;
 }
 .entry .gist .gist-file .gist-meta a {
@@ -685,13 +686,12 @@ article footer .addthis iframe {
   color: #258fb8;
 }
 figure.highlight {
-  background: #eee;
+  background: #2b2b2b;
   border: 1px solid #ddd;
   margin-top: 15px;
   padding: 7px 15px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  text-shadow: 0 0 1px #fff;
   line-height: 1.6;
   overflow: auto;
   position: relative;
@@ -700,13 +700,14 @@ figure.highlight {
 figure.highlight figcaption {
   color: #999;
   margin-bottom: 5px;
-  text-shadow: 0 0 1px #fff;
 }
 figure.highlight figcaption a {
   position: absolute;
   right: 15px;
 }
 figure.highlight pre {
+  color: #a9b7c6;
+  background: #2b2b2b;
   border: none;
   padding: 0;
   margin: 0;
@@ -716,14 +717,16 @@ figure.highlight table {
   border-spacing: 0;
 }
 figure.highlight .gutter {
-  color: #999;
+  color: #8c8c8c;
   padding-right: 15px;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #555;
   text-align: right;
+}
+figure.highlight .gutter pre {
+  color: #8c8c8c;
 }
 figure.highlight .code {
   padding-left: 15px;
-  border-left: 1px solid #fff;
   color: #666;
 }
 figure.highlight .line {
