@@ -296,6 +296,10 @@ article .entry h6,
 article .entry .video-container {
   margin-top: 15px;
 }
+article .entry hr {
+  margin-top: 1em;
+  border-style: ridge;
+}
 article .entry blockquote {
   color: #808080;
   font-style: italic;
