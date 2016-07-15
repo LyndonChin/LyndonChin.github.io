@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Unit Test on Android | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Unit Test on Android"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-28T03:24:30.000Z"><a href="/2016/01/28/unit-test-on-android/">2016-01-28</a></time>
+      
+      
+  
+    <h1 class="title">Unit Test on Android</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Android Studio 和 Android Gradle Plugin 可以让我们脱离 <code>android.jar</code> 在 development machine 上执行单元测试。</p>
+<p><em>Unit tests run on a local JVM on your development machine</em></p>
+<p>Gradle 插件会编译执行位于 <code>src/test/java</code> 下的代码，运行时会用到一个修改过的 <code>android.jar</code>，去掉了所有的 <code>final</code> 修饰符，这样就可以利用多态引入 <strong>mocking libraries</strong>：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">  testCompile <span class="string">'junit:junit:4.12'</span></div><div class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew test --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
+<p>等价于</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
+<p>其中 <code>--continue</code> 表示即使某个 case 失败了，也会继续执行剩下的 case。</p>
+<h2 id="Flavors-amp-Build-type"><a href="#Flavors-amp-Build-type" class="headerlink" title="Flavors &amp; Build type"></a>Flavors &amp; Build type</h2><p>遵守规范</p>
+<table>
+<thead>
+<tr>
+<th>Production class</th>
+<th>Test class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>src/main/java/Foo.java</td>
+<td>src/test/java/FooTest.java</td>
+</tr>
+<tr>
+<td>src/debug/java/Foo.java</td>
+<td>src/testDebug/java/FooTest.java</td>
+</tr>
+<tr>
+<td>src/myFlavor/java/Foo.java</td>
+<td>src/testMyFlavor/java/FooTest.java</td>
+</tr>
+</tbody>
+</table>
+<h2 id="“Method-…-not-mocked-”"><a href="#“Method-…-not-mocked-”" class="headerlink" title="“Method … not mocked.”"></a>“Method … not mocked.”</h2><p>今天遇到的就是这个问题：</p>
+<pre>
+java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
+</pre>
+
+<p>加了 mock 依赖后还是搞不定：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">testCompile <span class="string">"org.mockito:mockito-core:1.9.5</span></div></pre></td></tr></table></figure>
+<p>修改配置，让 mock 方法返回默认值还是不行：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  testOptions &#123; </div><div class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></div><div class="line">  &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果却是：</p>
+<p><em>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</em></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><code>android.jar</code> 是被 mock 过的，所以有些 Android API 返回值可能会不是预期值。</li>
+<li>JUnit 本身是针对 java 代码的单测，所以尽量不要用于使用了 Android API 的方法。</li>
+<li>Android Gradle 插件提供的 mocked android.jar 跟我刚开始工作时做过的测试框架原理类似。</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/技术/">技术</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/12/google-io-expectation/">Google IO 看点</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/09/build-my-world/">计划</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
+      </li>
+    
+      <li>
+        <a href="/2016/03/31/wtf-wired-things-recently/">形式和内容</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+    <li><a href="http://www.liaohuqiu.net/">秋百万</li>
+    <li><a href="http://yifeiyuan.me/">程序亦非猿</li>
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>第 3 页 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper">
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-26T01:31:56.000Z"><a href="/2016/01/26/2016-todo/">2016-01-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/26/2016-todo/">2016 计划</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="技术-我对自己的定位是什么？"><a href="#技术-我对自己的定位是什么？" class="headerlink" title="技术 - 我对自己的定位是什么？"></a><em>技术 - 我对自己的定位是什么？</em></h2><ul>
+<li><code>技术需要真爱</code></li>
+<li>像读书一样去读代码，多读多记录，少造劣质轮子<ul>
+<li><a href="https://github.com/square/okhttp" target="_blank" rel="external">okHttp</a></li>
+<li><a href="https://github.com/facebook/fresco" target="_blank" rel="external">fresco</a></li>
+<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">RxJava</a></li>
+</ul>
+</li>
+<li>理清楚移动开发的<code>理り</code><ul>
+<li>完全用 Swift 开发 iOS</li>
+<li>ReactNative</li>
+</ul>
+</li>
+</ul>
+<h2 id="能力养成-提高执行力，让内心更强大"><a href="#能力养成-提高执行力，让内心更强大" class="headerlink" title="能力养成 - 提高执行力，让内心更强大"></a><em>能力养成 - 提高执行力，让内心更强大</em></h2><ul>
+<li><code>搞定</code>三册、<code>活法</code>四册</li>
+<li>The Willpower</li>
+</ul>
+<h2 id="语言-这是一个怎样的世界？"><a href="#语言-这是一个怎样的世界？" class="headerlink" title="语言 - 这是一个怎样的世界？"></a><em>语言 - 这是一个怎样的世界？</em></h2><ul>
+<li>阅读</li>
+<li>日剧</li>
+</ul>
+<h2 id="工作-不仅仅是技术"><a href="#工作-不仅仅是技术" class="headerlink" title="工作 - 不仅仅是技术"></a><em>工作 - 不仅仅是技术</em></h2><ul>
+<li>向所有人学习</li>
+<li>多接触不同领域的人，多聊天</li>
+<li>锻炼<code>产品</code>、<code>运营</code>思维</li>
+<li>做一个好 APP（不仅仅是技术）</li>
+</ul>
+<h2 id="生活-与身体对话"><a href="#生活-与身体对话" class="headerlink" title="生活 - 与身体对话"></a><em>生活 - 与身体对话</em></h2><ul>
+<li>健身（减脂）</li>
+<li>买车（目标 320Li）</li>
+<li>东南亚旅行</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-25T05:54:00.000Z"><a href="/2016/01/25/hexo-summary/">2016-01-25</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/25/hexo-summary/">Hexo 踩坑记</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h2><p>除了通过 <code>hexo generate</code> 生成 <strong>github pages</strong> 之外，还需要备份整个博客。</p>
+<p>分支 <code>master</code> 用于发布 <strong>public</strong> 文件夹下的内容，<code>hexo</code> 用于备份整个博客（不包括 <strong>public</strong>）</p>
+<p>用一个简单的脚本实现备份和发布：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">git add --all</div><div class="line">git commit -m<span class="string">'update'</span></div><div class="line">git push</div><div class="line"></div><div class="line">hexo g</div><div class="line">hexo d</div></pre></td></tr></table></figure>
+<h2 id="添加-disquse"><a href="#添加-disquse" class="headerlink" title="添加 disquse"></a>添加 disquse</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo config disqus_shortname liangfeizc</div><div class="line">hexo --config themes/light/_config.yml config comment_provider disqus</div></pre></td></tr></table></figure>
+<h2 id="添加-About"><a href="#添加-About" class="headerlink" title="添加 About"></a>添加 About</h2><ol>
+<li><p>生成一个 page</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo new page about</div></pre></td></tr></table></figure>
+</li>
+<li><p>编辑 <code>source/about/index.md</code></p>
+</li>
+<li>修改 <code>themes/light/_config.yml</code>，添加链接 <figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">menu:</span></div><div class="line"><span class="attr">  Home:</span> <span class="literal">null</span></div><div class="line"><span class="attr">  Archives:</span> archives</div><div class="line"><span class="attr">  About:</span> about</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="Header-添加链接"><a href="#Header-添加链接" class="headerlink" title="Header 添加链接"></a>Header 添加链接</h2><p>修改 <code>themes/light/layout/_partial/header.ejs</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">id</span>=<span class="string">"main-nav"</span> <span class="attr">class</span>=<span class="string">"alignright"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">ul</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">%</span> <span class="attr">for</span> (<span class="attr">var</span> <span class="attr">i</span> <span class="attr">in</span> <span class="attr">theme.menu</span>)&#123; %&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%- config.root %&gt;&lt;%- theme.menu[i] %&gt;"</span>&gt;</span><span class="tag">&lt;<span class="name">%=</span> <span class="attr">i</span> %&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"https://github.com/lyndonchin"</span>&gt;</span>Github<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"clearfix"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">nav</span>&gt;</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-25T02:57:15.000Z"><a href="/2016/01/25/2015-summary/">2016-01-25</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/25/2015-summary/">2015 年总结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <blockquote>
+<p>2015 关键词：结婚、开源、日本游、换工作。</p>
+</blockquote>
+<p>回首这一年，首先要感恩阿里，不但让我开阔了眼界，而且意外地进入了开源圈子，拓宽了人脉。</p>
+<p>但是我已经不满足仅仅做一个码农了，外面的世界那么精彩，人生怎么可能只有埋头苦干、升P加薪、贷款买房。失去想象力的生活是无趣的，所以我选择拥抱变化，离开阿里，去做更好玩的事，认识更好玩的人。</p>
+<h2 id="开源"><a href="#开源" class="headerlink" title="开源"></a>开源</h2><p>把格局放大后才发现能够影响到自己的人不只是身边那一拨，还有散落在世界各地素未谋面的一群人。<strong>感谢开源</strong>，就像日语那样，让我又发现了一个新的世界。 </p>
+<p>以前只是那个坐在看台最远处，只能静静看他们演出的观众，现在一只脚已经踏上了舞台，随时准备一场属于自己的浮夸。</p>
+<ul>
+<li>无心插柳柳成荫，一个只是为了练手的项目，居然收获了 1K+ 的 star，诚惶诚恐。</li>
+<li>一篇用心写的 Data Binding 教程收获了快 1K 的 star。</li>
+<li>感谢贵人相助，成功组织了两次线下开发者聚餐，谢谢小伙伴们捧场，何德何能。</li>
+</ul>
+<h2 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h2><p>工作虽然很苦逼，但是技术长进感觉超过了前三年之和，再一次体会到量变引起质变的感觉。</p>
+<ul>
+<li>从第0行代码开始了<strong>天猫安卓HD</strong>版本的开发，感受到了沟通的成本。</li>
+<li>入门 iOS 开发，开发了<strong>天猫HD</strong>的<strong>足迹</strong>页面。</li>
+<li>独立开发了手机天猫的<strong>全局导航</strong>功能，体验到了人与人认知的差异，有的人做事真得太狠。</li>
+<li>成功组织了团队 outing 日本游，高富帅真得很好相处，屌丝有一种丢不了的气质。</li>
+</ul>
+<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><ul>
+<li>结婚领证了 ：）</li>
+<li>赶在离职之前来了一个东京深度蜜月之旅。</li>
+<li>考出了驾照</li>
+<li>一共跑了 173 公里，可惜没能坚持住，最长跑了 17 公里。</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-11-09T08:53:09.000Z"><a href="/2015/11/09/how-to-use-synchronized-in-static-method/">2015-11-09</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/11/09/how-to-use-synchronized-in-static-method/">怎样在静态方法中使用 synchronized</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="synchronized-的实现方式"><a href="#synchronized-的实现方式" class="headerlink" title="synchronized 的实现方式"></a>synchronized 的实现方式</h2><p><code>synchronized</code> 的类型可以分为两种：</p>
+<ol>
+<li>synchronized method</li>
+<li>synchronized block</li>
+</ol>
+<p>两者的实现方式是不一样的，jvm 规范中写道，编译后的 synchronized method 会有一个 <strong>ACC_SYNCHRONIZED</strong> 的 flag，也就是说当 jvm 的方法调用指令（the method invocation instruction）从 the run-time constant pool 中查找到这个 method 的时候，已经知道它是一个synchronized method，所以锁操作是由<strong>方法调用</strong>以及<strong>返回</strong>指令来控制的。</p>
+<p>而 <strong>synchronized block</strong> 的锁是由 <code>monitorenter</code> 和 <code>monitorexit</code> 这两个指令来控制。</p>
+<p>可以通过 javap 命令来“反汇编”一下 class 文件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticMethodTest</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">staticMethod</span><span class="params">()</span> </span>&#123; &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">staticMethod1</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (StaticMethodTest.class) &#123;</div><div class="line">        <span class="comment">// ...</span></div><div class="line">    &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">memberMethod</span><span class="params">()</span> </span>&#123; &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编译成 class 文件后执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">javap -verbose StaticMethodTest</div></pre></td></tr></table></figure></p>
+<p>两个静态方法的输出结果分别为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">public static synchronized void staticMethod();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC, ACC_STATIC, ACC_SYNCHRONIZED</div><div class="line">  Code:</div><div class="line">    stack=0, locals=0, args_size=0</div><div class="line">       0: return</div><div class="line">    LineNumberTable:</div><div class="line">      line 2: 0</div><div class="line">public static void staticMethod1();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC, ACC_STATIC</div><div class="line">  Code:</div><div class="line">    stack=2, locals=2, args_size=0</div><div class="line">       0: ldc           #2                  // class StaticMethodTest</div><div class="line">       2: dup</div><div class="line">       3: astore_0</div><div class="line">       4: monitorenter</div><div class="line">       5: aload_0</div><div class="line">       6: monitorexit</div><div class="line">       7: goto          15</div><div class="line">      10: astore_1</div><div class="line">      11: aload_0</div><div class="line">      12: monitorexit</div><div class="line">      13: aload_1</div><div class="line">      14: athrow</div><div class="line">      15: return</div><div class="line">    Exception table:</div><div class="line">       from    to  target type</div><div class="line">           5     7    10   any</div><div class="line">          10    13    10   any</div></pre></td></tr></table></figure></p>
+<p>其实不管静态方法还是成员方法，<code>synchronized</code> 的实现方式都是一样的，那么类和对象究竟有什么关系呢？</p>
+<h2 id="类和对象"><a href="#类和对象" class="headerlink" title="类和对象"></a>类和对象</h2><p>首先要了解的就是<strong>类究竟是怎么来的</strong>。 </p>
+<p>JVM 拿到编译器编译好的 class 文件后，首先会把文件载入到内存中，class 文件当然会有自己的格式，所以需要由 ClassLoader 来解析文件的内容，这个解析出来的内容会用一个 <code>Class</code> 类的实例 - Class object 来表示，这个 object 可以通过 Java 的 <code>ClassName.class</code>来获取。</p>
+<p>也就是说，Class object 是一个 <code>Class</code> 类型的实例（instance），而对象是一个 ClassName 的 instance。Class 和 ClassName都是类型，ClassName是由 <code>class</code> 关键字定义的，而Class是内置类型。</p>
+<p>因此成员方法的synchronized method 就等价于 synchronized (this) block，即下面两种方式是等价的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>成员方法是属于 <code>this</code>，而静态方法是属于 Class Object，那么静态方法的 synchronized method 也就等价于下面这种形式的 synchronized block 了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">synchronized</span> (ClassName.class) &#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="验证代码"><a href="#验证代码" class="headerlink" title="验证代码"></a>验证代码</h2><p>定义了三个静态方法，分别采用不同的锁机制，并且每个方法都是一个死循环。然后再定义三个线程分别执行调用三个方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.concurrent.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedTest</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object lock = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            System.out.println(<span class="string">"in fun"</span>);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (SynchronizedTest.class) &#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                System.out.println(<span class="string">"in fun1"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (lock) &#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                System.out.println(<span class="string">"in fun2"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line">    </div><div class="line">    </div><div class="line">       <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun1();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line"></div><div class="line"></div><div class="line">        <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun2();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果就是 in fun 和 in fun2 交替出现，就是没有 in fun1。<br>只要运行 fun 的线程不交出锁，fun1 就无法被调用，因为他们都是共享了 Class object 的锁。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-06-23T08:47:40.000Z"><a href="/2015/06/23/dpi-dp-sp/">2015-06-23</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/06/23/dpi-dp-sp/">详解 Android 开发中常用的 DPI / DP / SP</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Android的碎片化已经被喷了好多年，随着国内手机厂商的崛起，碎片化也越来越严重，根据<a href="http://thenextweb.com/mobile/2014/08/21/18796-different-android-devices-according-opensignals-latest-fragmentation-report/" target="_blank" rel="external">OpenSignal的最新调查</a>，2014年市面上有18796种不同的Android设备，作为开发者，一个无法回避的难题就是需要适配各种各样奇奇怪怪的机型。</p>
+<p>设备机型不同必然也会导致屏幕大小和分辨率（Resolution）的不同，但是无论分辨率有多大，屏幕有多大，我们手指触控范围的大小不会发生变化，所以最优的适配方式应该是<strong>指定大小的控件在所有的设备上的显示都一样</strong>。</p>
+<p>Android的官方文档对此也有明确的说明</p>
+<blockquote>
+<p>When adding support for multiple screens, applications <em>do not work directly with resolution</em>; applications should be concerned <em>only with screen size and density</em>, as specified by the generalized size and density groups.</p>
+</blockquote>
+<p>所以，适配应该与分辨率无关，只与屏幕大小和屏幕密度相关，首先来看一下什么是屏幕密度 － DPI。</p>
+<h3 id="DPI"><a href="#DPI" class="headerlink" title="DPI"></a>DPI</h3><p>DPI的全称是 Dots Per Inch，Inch是一个物理单位（无论在任何设备上，其大小都是固定的），所以DPI就指在一个Inch的物理长度内有多少个Dot，160DPI的屏幕就表示一个Inch包含160个Dot，320DPI的屏幕表示一个Inch有320个Dot，所以说Dot的大小是不固定的。</p>
+<p>Android设备用DPI来表示屏幕密度(Density)，屏幕密度大就表示一个Inch包含的Dot比较多。那PPI是什么呢？<br>我们会经常看到iPad、iPhone是用PPI来表示屏幕密度，小米Pad也是用PPI来表示。<br><img src="http://img4.tbcdn.cn/L1/461/1/ffa8ab85d4cc4d9e8b9cb379143bb83bcaf40a28" alt="PPI in mi pad"></p>
+<p>其实对Android而言，DPI等价于PPI(Pixels-Per-Inch)，DPI最早是用于印刷行业，跟PPI还是有本质不同的，Android应该是误用了DPI这个概念。具体可以参考<a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference/" target="_blank" rel="external">PPI vs. DPI: what’s the difference?</a>。</p>
+<p>其实我们只要知道在Android设备中，DPI 等价于 PPI 就可以了。<br><img src="http://img2.tbcdn.cn/L1/461/1/73e824419477f8c604791f6318f8a4701c91d165" alt="PPI 定义"></p>
+<p>通常我们说一个设备是多少寸时，指的是屏幕对角线(Diagonal)是多少inch，所以用对角线的像素值（px）除以对角线长度（inch），就可以计算出PPI。<br><img src="http://img1.tbcdn.cn/L1/461/1/af31a9366de3232f78a9e48904f5b0463875ec25" alt="PPI 计算公式"></p>
+<p>为了简化适配工作，Android根据屏幕大小（Inch）和屏幕密度（DPI）对设备做了如下划分：<br><img src="http://img1.tbcdn.cn/L1/461/1/5a7fe24f76a7f23cbdea5efa088b1188d73597f5" alt="PPI 对应屏幕尺寸"></p>
+<h3 id="DP"><a href="#DP" class="headerlink" title="DP"></a>DP</h3><p>既然有那么多不同分辨率、不同大小的屏幕，使用PX必然会导致适配困难，为了进一步简化适配工作，Android为我们提供了一个虚拟的像素单位 － DP 或者 DIP (Density-Independent pixel)，当然也可以理解为 Device-Independent Pixel。为什么说是<strong>虚拟</strong>呢，因为它的大小不是一个物理（Phisical）值，而是由操作系统根据屏幕大小和密度动态渲染出来的。</p>
+<p>PX跟DP之间的换算关系很简单 </p>
+<blockquote>
+<p> px = dp * (dpi / 160)</p>
+</blockquote>
+<p>举例来说，小米Pad的屏幕密度为326dpi，如果需要显示的图片大小为20dp，那么就需要提供一个 <code>20 <em> (326 / 160) = 40px</em></code>的图片才能达到最佳显示效果，如果还要适配一个163dpi的屏幕，那么还需要再提供一个<code>20  (163 / 160) = 20px</code>的图片。</p>
+<p>那么一个20dp的图片，在不同设备上的显示效果如何呢？我们以iPad为例来说明。<br><img src="http://img4.tbcdn.cn/L1/461/1/2c18879aebe47f6faa42c3f3d2e21ccc7e77d66d" alt="iPad 屏幕参数"></p>
+<p>iPad2 和 iPad Retina的物理尺寸都是 9.7 inch，不同的是分辨率和PPI，一个是1024x768 / 132ppi，另一个是2048x1536 / 264ppi，</p>
+<p>分别计算一下20dp对应多少inch</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ipad2 = <span class="number">20</span> * (<span class="number">132</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">1024</span> * <span class="number">1024</span> + <span class="number">768</span> * <span class="number">768</span>))) </div><div class="line">ipad_retina = <span class="number">20</span> * (<span class="number">264</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">2048</span> * <span class="number">2048</span> + <span class="number">1536</span> * <span class="number">1536</span>)))</div></pre></td></tr></table></figure>
+<p>计算结果都是0.1018359375，这就是dp的功能，它能保证在所有的设备上显示的大小都一样。</p>
+<p>如果只提供了一个大小为20px的图片，为了保证图片在所有设备上的物理大小都一样，高DPI的设备上系统会拉伸图片，低DPI的设备上图片会被缩小，这样既会影响UE也会影响APP的执行效率。所以我们需要为不同屏幕密度的设备提供不同的图片，他们之间的对应关系如下。<br><img src="http://img1.tbcdn.cn/L1/461/1/7d691bde9a6f414a5f93082b0312c1589289494d" alt="Android 设备屏幕分级"></p>
+<p>我们在用Sketch作图的时候，如果1x图片对应的是屏幕是MDPI (160dpi)，那么1.5x，2x就分别对应HDPI，XHDPI。<br><img src="http://img4.tbcdn.cn/L1/461/1/4c46ea76d3cf05a87bdf101ac931a1d00ff730ef" alt="screens_densities"></p>
+<h3 id="SP"><a href="#SP" class="headerlink" title="SP"></a>SP</h3><p>SP 全称是 Scale-independent Pixels，用于字体大小，其概念与DP是一致的，也是为了保持设备无关。因为Android用户可以根据喜好来调整字体大小，所以要使用sp来表示字体大小。<br><img src="http://img4.tbcdn.cn/L1/461/1/ed1118ab7e089febd541bd8f1ed454e009edec24" alt="changing_android_font_size"></p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ol>
+<li><a href="http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts" target="_blank" rel="external">http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts</a></li>
+<li><a href="http://developer.android.com/training/multiscreen/screendensities.html" target="_blank" rel="external">http://developer.android.com/training/multiscreen/screendensities.html</a></li>
+<li><a href="http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android" target="_blank" rel="external">http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android</a></li>
+<li><a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference" target="_blank" rel="external">http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference</a></li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+<nav id="pagination">
+  
+    <a href="/page/2/" class="alignleft prev">上一页</a>
+  
+  
+  <div class="clearfix"></div>
+</nav></div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/12/google-io-expectation/">Google IO 看点</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/09/build-my-world/">计划</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
+      </li>
+    
+      <li>
+        <a href="/2016/03/31/wtf-wired-things-recently/">形式和内容</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+    <li><a href="http://www.liaohuqiu.net/">秋百万</li>
+    <li><a href="http://yifeiyuan.me/">程序亦非猿</li>
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

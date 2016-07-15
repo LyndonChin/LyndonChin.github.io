@@ -1,0 +1,224 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>RichEditor 源码解析 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="RichEditor 源码解析"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-27T02:09:06.000Z"><a href="/2016/01/27/source-analysis-rich-editor/">2016-01-27</a></time>
+      
+      
+  
+    <h1 class="title">RichEditor 源码解析</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h2><p><code>RichEditor</code> 是一个继承自 <code>WebView</code> 的自定义 view，枚举类型 <code>Type</code> 定了它所支持的排版格式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Type &#123;</div><div class="line">  BOLD,</div><div class="line">  ITALIC,</div><div class="line">  SUBSCRIPT,</div><div class="line">  SUPERSCRIPT,</div><div class="line">  STRIKETHROUGH,</div><div class="line">  UNDERLINE,</div><div class="line">  H1,</div><div class="line">  H2,</div><div class="line">  H3,</div><div class="line">  H4,</div><div class="line">  H5,</div><div class="line">  H6</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先在构造函数中加载一个 html 文件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SETUP_HTML = <span class="string">"file:///android_asset/editor.html"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">RichEditor</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">  <span class="keyword">super</span>(context, attrs, defStyleAttr);</div><div class="line">  setVerticalScrollBarEnabled(<span class="keyword">false</span>);</div><div class="line">  setHorizontalScrollBarEnabled(<span class="keyword">false</span>);</div><div class="line">  getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);</div><div class="line">  setWebChromeClient(<span class="keyword">new</span> WebChromeClient());</div><div class="line">  setWebViewClient(createWebviewClient());</div><div class="line"></div><div class="line">  <span class="comment">// 加载 html 文件</span></div><div class="line">  loadUrl(SETUP_HTML);</div><div class="line"></div><div class="line">  applyAttributes(context, attrs);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中 html 文件 - <code>editor.html</code> 加载了两个 css 文件 - <code>normalize.css</code> &amp; <code>style.css</code>，一个 js 文件 - <code>rich_editor.js</code>。</p>
+<p><code>body</code> 中插入了一个 <code>contentEditable=&quot;true&quot;</code> 的 <code>div</code>。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"user-scalable=no"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"normalize.css"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"style.css"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"editor"</span> <span class="attr">contentEditable</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"rich_editor.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<p><code>rich_editor.js</code> 中定义了很多排版功能的 API，<code>RichEditor</code> 类似 proxy，对外提供了 Java API。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEditorFontColor</span><span class="params">(<span class="keyword">int</span> color)</span> </span>&#123;</div><div class="line">  String hex = convertHexColorString(color);</div><div class="line">  exec(<span class="string">"javascript:RE.setBaseTextColor('"</span> + hex + <span class="string">"');"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中 <code>exec</code> 用于执行 js 代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">exec</span><span class="params">(<span class="keyword">final</span> String trigger)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (isReady) &#123;</div><div class="line">    load(trigger);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    postDelayed(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        exec(trigger);</div><div class="line">      &#125;, <span class="number">100</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>只有当 <code>rich_editor.html</code> 加载完成后 <code>isReady</code> 才会被置为 <code>true</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">protected</span> <span class="class"><span class="keyword">class</span> <span class="title">EditorWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>&#123;</div><div class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    isReady = url.equalsIgnoreCase(SETUP_HTML);</div><div class="line">    <span class="keyword">if</span> (mLoadListener != <span class="keyword">null</span>) &#123;</div><div class="line">      mLoadListener.onAfterInitialLoad(isReady);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// other methods</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>构造函数在加载 <code>editor.html</code> 之前已经设置了一个 <code>EditorWebViewClient</code> 的实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">RichEditor</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">  <span class="comment">// other statements</span></div><div class="line">  setWebViewClient(createWebviewClient());</div><div class="line">  loadUrl(SETUP_HTML)</div><div class="line">  <span class="comment">// other statements</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">protected</span> EditorWebViewClient <span class="title">createWebviewClient</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> EditorWebViewClient();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当 <code>editor.html</code> 加载完成，<code>isReady</code> 被设为 <code>true</code> 之后，<code>exec</code> 方法就可以调用 <code>load(trigger)</code> 执行 js 了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(String trigger)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.KITKAT) &#123;</div><div class="line">    evaluateJavascript(trigger, <span class="keyword">null</span>);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    loadUrl(trigger);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>evaluateJavascript</code> 以及 <code>loadUrl</code> 都是 <code>Webview</code> 提供的方法。</p>
+<p><code>evaluateJavascript</code> 是从 API 19 开始引入的，可以异步执行 js 代码。<em>Asynchronously evaluates JavaScript in the context of the currently displayed page.</em></p>
+<h2 id="SCHEME"><a href="#SCHEME" class="headerlink" title="SCHEME"></a>SCHEME</h2><p>RichEditor 提供了两个 Scheme 负责回调 java 代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CALLBACK_SCHEME = <span class="string">"re-callback://"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String STATE_SCHEME = <span class="string">"re-state://"</span>;</div></pre></td></tr></table></figure>
+<p>然后在 <code>EditorWebViewClient</code> 中重写了 <code>shouldOverrideUrlLoading</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">protected</span> <span class="class"><span class="keyword">class</span> <span class="title">EditorWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>&#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    isReady = url.equalsIgnoreCase(SETUP_HTML);</div><div class="line">    <span class="keyword">if</span> (mLoadListener != <span class="keyword">null</span>) &#123;</div><div class="line">      mLoadListener.onAfterInitialLoad(isReady);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldOverrideUrlLoading</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    String decode;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      decode = URLDecoder.decode(url, <span class="string">"UTF-8"</span>);</div><div class="line">    &#125; <span class="keyword">catch</span> (UnsupportedEncodingException e) &#123;</div><div class="line">      <span class="comment">// No handling</span></div><div class="line">      <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (TextUtils.indexOf(url, CALLBACK_SCHEME) == <span class="number">0</span>) &#123;</div><div class="line">      callback(decode);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (TextUtils.indexOf(url, STATE_SCHEME) == <span class="number">0</span>) &#123;</div><div class="line">      stateCheck(decode);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.shouldOverrideUrlLoading(view, url);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果 url 符合 CALLBACK 的 scheme，就会执行 <code>callback</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callback</span><span class="params">(String text)</span> </span>&#123;</div><div class="line">  mContents = text.replaceFirst(CALLBACK_SCHEME, <span class="string">""</span>);</div><div class="line">  <span class="keyword">if</span> (mTextChangeListener != <span class="keyword">null</span>) &#123;</div><div class="line">    mTextChangeListener.onTextChange(mContents);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果 url 符合 STATE 的 scheme，就会执行 <code>stateCheck</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">stateCheck</span><span class="params">(String text)</span> </span>&#123;</div><div class="line">  String state = text.replaceFirst(STATE_SCHEME, <span class="string">""</span>).toUpperCase(Locale.ENGLISH);</div><div class="line">  List&lt;Type&gt; types = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">  <span class="keyword">for</span> (Type type : Type.values()) &#123;</div><div class="line">    <span class="keyword">if</span> (TextUtils.indexOf(state, type.name()) != -<span class="number">1</span>) &#123;</div><div class="line">      types.add(type);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (mDecorationStateListener != <span class="keyword">null</span>) &#123;</div><div class="line">    mDecorationStateListener.onStateChangeListener(state, types);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过以下两个 set 方法可以设置回调。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnDecorationChangeListener</span><span class="params">(OnDecorationStateListener listener)</span> </span>&#123;</div><div class="line">  mDecorationStateListener = listener;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnInitialLoadListener</span><span class="params">(AfterInitialLoadListener listener)</span> </span>&#123;</div><div class="line">  mLoadListener = listener;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>编辑器的核心功能由 js 实现，RichEditor 封装了 js 的功能，为上层提供了 java 接口。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://github.com/wasabeef/richeditor-android" target="_blank" rel="external">https://github.com/wasabeef/richeditor-android</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/技术/">技术</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/12/google-io-expectation/">Google IO 看点</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/09/build-my-world/">计划</a>
+      </li>
+    
+      <li>
+        <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
+      </li>
+    
+      <li>
+        <a href="/2016/03/31/wtf-wired-things-recently/">形式和内容</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+    <li><a href="http://www.liaohuqiu.net/">秋百万</li>
+    <li><a href="http://yifeiyuan.me/">程序亦非猿</li>
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
