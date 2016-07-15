@@ -95,83 +95,32 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-01-29T06:53:26.000Z"><a href="/2016/01/29/the-first-time-to-change-a-spare-tire/">2016-01-29</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/29/the-first-time-to-change-a-spare-tire/">第一次换备胎</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>新技能 Get，记录一下<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/01/29/the-first-time-to-change-a-spare-tire/#more" class="more-link">更多...</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
         <time datetime="2016-01-28T03:24:30.000Z"><a href="/2016/01/28/unit-test-on-android/">2016-01-28</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/01/28/unit-test-on-android/">Unit Test on Android</a></h1>
+    <h1 class="title"><a href="/2016/01/28/unit-test-on-android/">Android 单元测试</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>Android Studio 和 Android Gradle Plugin 可以让我们脱离 <code>android.jar</code> 在 development machine 上执行单元测试。</p>
-<p><em>Unit tests run on a local JVM on your development machine</em></p>
-<p>Gradle 插件会编译执行位于 <code>src/test/java</code> 下的代码，运行时会用到一个修改过的 <code>android.jar</code>，去掉了所有的 <code>final</code> 修饰符，这样就可以利用多态引入 <strong>mocking libraries</strong>：</p>
+        <p>Android Studio 和 Android Gradle Plugin 可以让我们脱离 <code>android.jar</code> 直接在 development machine 上执行单元测试。</p>
+<blockquote>
+<p>Unit tests run on a local JVM on your development machine</p>
+</blockquote>
+<p>Gradle 插件会编译 <code>src/test/java</code> 的代码，运行时会用到一个修改过的 <code>android.jar</code>（去掉了所有的 <code>final</code> 修饰符），这样就可以利用多态引入 <strong>mocking libraries</strong>。</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">  testCompile <span class="string">'junit:junit:4.12'</span></div><div class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew test --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
 <p>等价于</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
 <p>其中 <code>--continue</code> 表示即使某个 case 失败了，也会继续执行剩下的 case。</p>
 <h2 id="Flavors-amp-Build-type"><a href="#Flavors-amp-Build-type" class="headerlink" title="Flavors &amp; Build type"></a>Flavors &amp; Build type</h2><p>遵守规范</p>
-<table>
-<thead>
-<tr>
-<th>Production class</th>
-<th>Test class</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>src/main/java/Foo.java</td>
-<td>src/test/java/FooTest.java</td>
-</tr>
-<tr>
-<td>src/debug/java/Foo.java</td>
-<td>src/testDebug/java/FooTest.java</td>
-</tr>
-<tr>
-<td>src/myFlavor/java/Foo.java</td>
-<td>src/testMyFlavor/java/FooTest.java</td>
-</tr>
-</tbody>
-</table>
+<ul>
+<li>src/main/java/Foo.java -&gt; src/test/java/FooTest.java</li>
+<li>src/debug/java/Foo.java -&gt; src/testDebug/java/FooTest.java</li>
+<li>src/myFlavor/java/Foo.java -&gt; src/testMyFlavor/java/FooTest.java</li>
+</ul>
 <h2 id="“Method-…-not-mocked-”"><a href="#“Method-…-not-mocked-”" class="headerlink" title="“Method … not mocked.”"></a>“Method … not mocked.”</h2><p>今天遇到的就是这个问题：</p>
 <pre>
 java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
@@ -182,7 +131,9 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
 <p>修改配置，让 mock 方法返回默认值还是不行：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  testOptions &#123; </div><div class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></div><div class="line">  &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>结果却是：</p>
-<p><em>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</em></p>
+<blockquote>
+<p>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</p>
+</blockquote>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
 <li><code>android.jar</code> 是被 mock 过的，所以有些 Android API 返回值可能会不是预期值。</li>
 <li>JUnit 本身是针对 java 代码的单测，所以尽量不要用于使用了 Android API 的方法。</li>
@@ -316,6 +267,71 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
 
 
 
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-26T01:31:56.000Z"><a href="/2016/01/26/2016-todo/">2016-01-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/26/2016-todo/">2016 计划</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="技术-我对自己的定位是什么？"><a href="#技术-我对自己的定位是什么？" class="headerlink" title="技术 - 我对自己的定位是什么？"></a><em>技术 - 我对自己的定位是什么？</em></h2><ul>
+<li>技术需要真爱</li>
+<li>像读书一样去读代码，多读多记录，少造劣质轮子<ul>
+<li><a href="https://github.com/square/okhttp" target="_blank" rel="external">okHttp</a></li>
+<li><a href="https://github.com/facebook/fresco" target="_blank" rel="external">fresco</a></li>
+<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">RxJava</a></li>
+</ul>
+</li>
+<li>理清楚移动开发的<code>理り</code><ul>
+<li>完全用 Swift 开发 iOS</li>
+<li>ReactNative</li>
+</ul>
+</li>
+</ul>
+<h2 id="能力养成-提高执行力，让内心更强大"><a href="#能力养成-提高执行力，让内心更强大" class="headerlink" title="能力养成 - 提高执行力，让内心更强大"></a><em>能力养成 - 提高执行力，让内心更强大</em></h2><ul>
+<li><code>搞定</code>三册、<code>活法</code>四册</li>
+<li>The Willpower</li>
+</ul>
+<h2 id="语言-这是一个怎样的世界？"><a href="#语言-这是一个怎样的世界？" class="headerlink" title="语言 - 这是一个怎样的世界？"></a><em>语言 - 这是一个怎样的世界？</em></h2><ul>
+<li>阅读</li>
+<li>日剧</li>
+</ul>
+<h2 id="工作-不仅仅是技术"><a href="#工作-不仅仅是技术" class="headerlink" title="工作 - 不仅仅是技术"></a><em>工作 - 不仅仅是技术</em></h2><ul>
+<li>向所有人学习</li>
+<li>多接触不同领域的人，多聊天</li>
+<li>锻炼<strong>产品</strong>、<strong>运营</strong>思维</li>
+<li>做一个好 APP（不仅仅是技术）</li>
+</ul>
+<h2 id="生活-与身体对话"><a href="#生活-与身体对话" class="headerlink" title="生活 - 与身体对话"></a><em>生活 - 与身体对话</em></h2><ul>
+<li>健身（减脂）</li>
+<li>买车（目标 320Li）</li>
+<li>东南亚旅行</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
 
 <nav id="pagination">
   
@@ -340,7 +356,7 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 10px;">Retrofit</a> <a href="/tags/Retrofit-RxJava/" style="font-size: 10px;">Retrofit, RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -351,6 +367,14 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
   <ul class="entry">
     
       <li>
+        <a href="/2016/07/10/diagram-retrofit-service-method/">图解 Retrofit - ServiceMethod</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/06/My-practice-of-retrofit-and-rxandroid/">Retrofit + RxAndroid 实践总结</a>
+      </li>
+    
+      <li>
         <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
       </li>
     
@@ -359,15 +383,7 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
       </li>
     
       <li>
-        <a href="/2016/05/09/build-my-world/">计划</a>
-      </li>
-    
-      <li>
         <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
-      </li>
-    
-      <li>
-        <a href="/2016/03/31/wtf-wired-things-recently/">形式和内容</a>
       </li>
     
   </ul>

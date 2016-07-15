@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Unit Test on Android | 梁飞</title>
+  <title>Android 单元测试 | 梁飞</title>
   <meta name="author" content="liangfei">
   
   <meta name="description" content="梁飞的个人博客">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Unit Test on Android"/>
+  <meta property="og:title" content="Android 单元测试"/>
   <meta property="og:site_name" content="梁飞"/>
 
   
@@ -58,43 +58,28 @@
       
       
   
-    <h1 class="title">Unit Test on Android</h1>
+    <h1 class="title">Android 单元测试</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>Android Studio 和 Android Gradle Plugin 可以让我们脱离 <code>android.jar</code> 在 development machine 上执行单元测试。</p>
-<p><em>Unit tests run on a local JVM on your development machine</em></p>
-<p>Gradle 插件会编译执行位于 <code>src/test/java</code> 下的代码，运行时会用到一个修改过的 <code>android.jar</code>，去掉了所有的 <code>final</code> 修饰符，这样就可以利用多态引入 <strong>mocking libraries</strong>：</p>
+        <p>Android Studio 和 Android Gradle Plugin 可以让我们脱离 <code>android.jar</code> 直接在 development machine 上执行单元测试。</p>
+<blockquote>
+<p>Unit tests run on a local JVM on your development machine</p>
+</blockquote>
+<p>Gradle 插件会编译 <code>src/test/java</code> 的代码，运行时会用到一个修改过的 <code>android.jar</code>（去掉了所有的 <code>final</code> 修饰符），这样就可以利用多态引入 <strong>mocking libraries</strong>。</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">  testCompile <span class="string">'junit:junit:4.12'</span></div><div class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew test --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
 <p>等价于</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
 <p>其中 <code>--continue</code> 表示即使某个 case 失败了，也会继续执行剩下的 case。</p>
 <h2 id="Flavors-amp-Build-type"><a href="#Flavors-amp-Build-type" class="headerlink" title="Flavors &amp; Build type"></a>Flavors &amp; Build type</h2><p>遵守规范</p>
-<table>
-<thead>
-<tr>
-<th>Production class</th>
-<th>Test class</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>src/main/java/Foo.java</td>
-<td>src/test/java/FooTest.java</td>
-</tr>
-<tr>
-<td>src/debug/java/Foo.java</td>
-<td>src/testDebug/java/FooTest.java</td>
-</tr>
-<tr>
-<td>src/myFlavor/java/Foo.java</td>
-<td>src/testMyFlavor/java/FooTest.java</td>
-</tr>
-</tbody>
-</table>
+<ul>
+<li>src/main/java/Foo.java -&gt; src/test/java/FooTest.java</li>
+<li>src/debug/java/Foo.java -&gt; src/testDebug/java/FooTest.java</li>
+<li>src/myFlavor/java/Foo.java -&gt; src/testMyFlavor/java/FooTest.java</li>
+</ul>
 <h2 id="“Method-…-not-mocked-”"><a href="#“Method-…-not-mocked-”" class="headerlink" title="“Method … not mocked.”"></a>“Method … not mocked.”</h2><p>今天遇到的就是这个问题：</p>
 <pre>
 java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
@@ -105,7 +90,9 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
 <p>修改配置，让 mock 方法返回默认值还是不行：</p>
 <figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  testOptions &#123; </div><div class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></div><div class="line">  &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>结果却是：</p>
-<p><em>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</em></p>
+<blockquote>
+<p>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</p>
+</blockquote>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
 <li><code>android.jar</code> 是被 mock 过的，所以有些 Android API 返回值可能会不是预期值。</li>
 <li>JUnit 本身是针对 java 代码的单测，所以尽量不要用于使用了 Android API 的方法。</li>
@@ -120,7 +107,7 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
         
   
   <div class="tags">
-    <a href="/tags/技术/">技术</a>
+    <a href="/tags/Android/">Android</a>
   </div>
 
         
@@ -156,7 +143,7 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 10px;">Retrofit</a> <a href="/tags/Retrofit-RxJava/" style="font-size: 10px;">Retrofit, RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -167,6 +154,14 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
   <ul class="entry">
     
       <li>
+        <a href="/2016/07/10/diagram-retrofit-service-method/">图解 Retrofit - ServiceMethod</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/06/My-practice-of-retrofit-and-rxandroid/">Retrofit + RxAndroid 实践总结</a>
+      </li>
+    
+      <li>
         <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
       </li>
     
@@ -175,15 +170,7 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
       </li>
     
       <li>
-        <a href="/2016/05/09/build-my-world/">计划</a>
-      </li>
-    
-      <li>
         <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
-      </li>
-    
-      <li>
-        <a href="/2016/03/31/wtf-wired-things-recently/">形式和内容</a>
       </li>
     
   </ul>

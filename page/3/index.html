@@ -55,71 +55,6 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-01-26T01:31:56.000Z"><a href="/2016/01/26/2016-todo/">2016-01-26</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/26/2016-todo/">2016 计划</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="技术-我对自己的定位是什么？"><a href="#技术-我对自己的定位是什么？" class="headerlink" title="技术 - 我对自己的定位是什么？"></a><em>技术 - 我对自己的定位是什么？</em></h2><ul>
-<li><code>技术需要真爱</code></li>
-<li>像读书一样去读代码，多读多记录，少造劣质轮子<ul>
-<li><a href="https://github.com/square/okhttp" target="_blank" rel="external">okHttp</a></li>
-<li><a href="https://github.com/facebook/fresco" target="_blank" rel="external">fresco</a></li>
-<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">RxJava</a></li>
-</ul>
-</li>
-<li>理清楚移动开发的<code>理り</code><ul>
-<li>完全用 Swift 开发 iOS</li>
-<li>ReactNative</li>
-</ul>
-</li>
-</ul>
-<h2 id="能力养成-提高执行力，让内心更强大"><a href="#能力养成-提高执行力，让内心更强大" class="headerlink" title="能力养成 - 提高执行力，让内心更强大"></a><em>能力养成 - 提高执行力，让内心更强大</em></h2><ul>
-<li><code>搞定</code>三册、<code>活法</code>四册</li>
-<li>The Willpower</li>
-</ul>
-<h2 id="语言-这是一个怎样的世界？"><a href="#语言-这是一个怎样的世界？" class="headerlink" title="语言 - 这是一个怎样的世界？"></a><em>语言 - 这是一个怎样的世界？</em></h2><ul>
-<li>阅读</li>
-<li>日剧</li>
-</ul>
-<h2 id="工作-不仅仅是技术"><a href="#工作-不仅仅是技术" class="headerlink" title="工作 - 不仅仅是技术"></a><em>工作 - 不仅仅是技术</em></h2><ul>
-<li>向所有人学习</li>
-<li>多接触不同领域的人，多聊天</li>
-<li>锻炼<code>产品</code>、<code>运营</code>思维</li>
-<li>做一个好 APP（不仅仅是技术）</li>
-</ul>
-<h2 id="生活-与身体对话"><a href="#生活-与身体对话" class="headerlink" title="生活 - 与身体对话"></a><em>生活 - 与身体对话</em></h2><ul>
-<li>健身（减脂）</li>
-<li>买车（目标 320Li）</li>
-<li>东南亚旅行</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
         <time datetime="2016-01-25T05:54:00.000Z"><a href="/2016/01/25/hexo-summary/">2016-01-25</a></time>
       
       
@@ -338,6 +273,149 @@
 
 
 
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-06-19T16:00:00.000Z"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">2015-06-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">如何获取 Android 设备的CPU核数、时钟频率以及内存大小</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>因项目需要，分析了一下 Facebook 的开源项目 - <a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">Device Year Class</a>。</p>
+<p><strong>Device Year Class</strong> 的主要功能是根据 <em>CPU核数</em>、<em>时钟频率</em> 以及 <em>内存大小</em> 对设备进行分级。代码很简单，只包含两个类:</p>
+<ul>
+<li><code>DeviceInfo</code> -&gt; 获取设备参数，</li>
+<li><code>YearClass</code> -&gt; 根据参数进行分级。</li>
+</ul>
+<p>下表是 Facebook 公司提供的<a href="https://github.com/facebook/device-year-class/blob/master/README.md" target="_blank" rel="external">分级标准</a>，其中 <code>Year</code> 栏表示分级结果。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Year</th>
+<th style="text-align:right">Cores</th>
+<th style="text-align:right">Clock</th>
+<th style="text-align:right">RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">2008</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">528MHz</td>
+<td style="text-align:right">192MB</td>
+</tr>
+<tr>
+<td style="text-align:right">2009</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">600MHz</td>
+<td style="text-align:right">290MB</td>
+</tr>
+<tr>
+<td style="text-align:right">2010</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">1.0GHz</td>
+<td style="text-align:right">512MB</td>
+</tr>
+<tr>
+<td style="text-align:right">2011</td>
+<td style="text-align:right">2</td>
+<td style="text-align:right">1.2GHz</td>
+<td style="text-align:right">1GB</td>
+</tr>
+<tr>
+<td style="text-align:right">2012</td>
+<td style="text-align:right">4</td>
+<td style="text-align:right">1.5GHz</td>
+<td style="text-align:right">1.5GB</td>
+</tr>
+<tr>
+<td style="text-align:right">2013</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">2.0GHz</td>
+<td style="text-align:right">2GB</td>
+</tr>
+<tr>
+<td style="text-align:right">2014</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">&gt;2GHz</td>
+<td style="text-align:right">&gt;2GB</td>
+</tr>
+</tbody>
+</table>
+<p>关于输出年份的计算方法可以参考<a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">源码</a>，本文只把一些比较常用的功能抽取出来做一个简要介绍。</p>
+<h2 id="获取-CPU-核数"><a href="#获取-CPU-核数" class="headerlink" title="获取 CPU 核数"></a>获取 CPU 核数</h2><p>我们都知道，Linux 中的设备都是以文件的形式存在，CPU 也不例外，因此 CPU 的文件个数就等价与<strong>核数</strong>。</p>
+<p>Android 的 CPU 设备文件位于 <code>/sys/devices/system/cpu/</code> 目录，文件名的的格式为 <code>cpu\d+</code>。</p>
+<pre>
+root@generic_x86_64:/sys/devices/system/cpu # ls
+<b>cpu0</b>
+cpufreq
+cpuidle
+kernel_max
+modalias
+offline
+online
+possible
+power
+present
+uevent
+</pre>
+
+<p>统计一下文件个数便可以获得 CPU 核数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getNumberOfCPUCores</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &lt;= Build.VERSION_CODES.GINGERBREAD_MR1) &#123;</div><div class="line">    <span class="comment">// Gingerbread doesn't support giving a single application access to both cores, but a</span></div><div class="line">    <span class="comment">// handful of devices (Atrix 4G and Droid X2 for example) were released with a dual-core</span></div><div class="line">    <span class="comment">// chipset and Gingerbread; that can let an app in the background run without impacting</span></div><div class="line">    <span class="comment">// the foreground application. But for our purposes, it makes them single core.</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">int</span> cores;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    cores = <span class="keyword">new</span> File(<span class="string">"/sys/devices/system/cpu/"</span>).listFiles(CPU_FILTER).length;</div><div class="line">  &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125; <span class="keyword">catch</span> (NullPointerException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> cores;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FileFilter CPU_FILTER = <span class="keyword">new</span> FileFilter() &#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File pathname)</span> </span>&#123;</div><div class="line">    String path = pathname.getName();</div><div class="line">    <span class="comment">//regex is slow, so checking char by char.</span></div><div class="line">    <span class="keyword">if</span> (path.startsWith(<span class="string">"cpu"</span>)) &#123;</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">3</span>; i &lt; path.length(); i++) &#123;</div><div class="line">        <span class="keyword">if</span> (path.charAt(i) &lt; <span class="string">'0'</span> || path.charAt(i) &gt; <span class="string">'9'</span>) &#123;</div><div class="line">          <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="获取时钟频率"><a href="#获取时钟频率" class="headerlink" title="获取时钟频率"></a>获取时钟频率</h2><p>获取<strong>时钟频率</strong>需要读取系统文件 - <code>/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq</code> 或者 <code>/proc/cpuinfo</code>。</p>
+<p>我的 Android 模拟器中并没有 <code>cpuinfo_max_freq</code> 文件，因此只能读取 <code>/proc/cpuinfo</code>。</p>
+<p><code>/proc/cpuinfo</code> 包含了很多 cpu 数据。</p>
+<pre>
+processor    : 0
+vendor_id    : GenuineIntel
+cpu family    : 6
+model        : 70
+model name    : Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
+stepping    : 1
+cpu MHz        : 0.000
+cache size    : 1024 KB
+fdiv_bug    : no
+hlt_bug        : no
+f00f_bug    : no
+coma_bug    : no
+fpu        : yes
+fpu_exception    : yes
+cpuid level    : 4
+wp        : yes
+</pre>
+
+<p>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getCPUMaxFreqKHz</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> maxFreq = DEVICEINFO_UNKNOWN;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; getNumberOfCPUCores(); i++) &#123;</div><div class="line">      String filename =</div><div class="line">          <span class="string">"/sys/devices/system/cpu/cpu"</span> + i + <span class="string">"/cpufreq/cpuinfo_max_freq"</span>;</div><div class="line">      File cpuInfoMaxFreqFile = <span class="keyword">new</span> File(filename);</div><div class="line">      <span class="keyword">if</span> (cpuInfoMaxFreqFile.exists()) &#123;</div><div class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">128</span>];</div><div class="line">        FileInputStream stream = <span class="keyword">new</span> FileInputStream(cpuInfoMaxFreqFile);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">          stream.read(buffer);</div><div class="line">          <span class="keyword">int</span> endIndex = <span class="number">0</span>;</div><div class="line">          <span class="comment">//Trim the first number out of the byte buffer.</span></div><div class="line">          <span class="keyword">while</span> (buffer[endIndex] &gt;= <span class="string">'0'</span> &amp;&amp; buffer[endIndex] &lt;= <span class="string">'9'</span></div><div class="line">              &amp;&amp; endIndex &lt; buffer.length) endIndex++;</div><div class="line">          String str = <span class="keyword">new</span> String(buffer, <span class="number">0</span>, endIndex);</div><div class="line">          Integer freqBound = Integer.parseInt(str);</div><div class="line">          <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">        &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</div><div class="line">          <span class="comment">//Fall through and use /proc/cpuinfo.</span></div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">          stream.close();</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (maxFreq == DEVICEINFO_UNKNOWN) &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/cpuinfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">int</span> freqBound = parseFileForValue(<span class="string">"cpu MHz"</span>, stream);</div><div class="line">        freqBound *= <span class="number">1000</span>; <span class="comment">//MHz -&gt; kHz</span></div><div class="line">        <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    maxFreq = DEVICEINFO_UNKNOWN; <span class="comment">//Fall through and return unknown.</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> maxFreq;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="获取内存大小"><a href="#获取内存大小" class="headerlink" title="获取内存大小"></a>获取内存大小</h2><p>如果 SDK 版本大于等于 <code>JELLY_BEAN</code> ，可以通过 <code>ActivityManager</code> 来获取内从大小。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">am.getMemoryInfo(memInfo);</div></pre></td></tr></table></figure>
+<p>如果版本低于 <code>JELLY_BEAN</code> ，则只能读取系统文件了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div></pre></td></tr></table></figure>
+<p>完整代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@TargetApi</span>(Build.VERSION_CODES.JELLY_BEAN)</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getTotalMemory</span><span class="params">(Context c)</span> </span>&#123;</div><div class="line">  <span class="comment">// memInfo.totalMem not supported in pre-Jelly Bean APIs.</span></div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</div><div class="line">    ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">    ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">    am.getMemoryInfo(memInfo);</div><div class="line">    <span class="keyword">if</span> (memInfo != <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="keyword">return</span> memInfo.totalMem;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">return</span> DEVICEINFO_UNKNOWN;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">long</span> totalMem = DEVICEINFO_UNKNOWN;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div><div class="line">        totalMem *= <span class="number">1024</span>;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> totalMem;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
 
 <nav id="pagination">
   
@@ -360,7 +438,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/技术/" style="font-size: 20px;">技术</a> <a href="/tags/杂谈/" style="font-size: 13.33px;">杂谈</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 10px;">Retrofit</a> <a href="/tags/Retrofit-RxJava/" style="font-size: 10px;">Retrofit, RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -371,6 +449,14 @@
   <ul class="entry">
     
       <li>
+        <a href="/2016/07/10/diagram-retrofit-service-method/">图解 Retrofit - ServiceMethod</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/06/My-practice-of-retrofit-and-rxandroid/">Retrofit + RxAndroid 实践总结</a>
+      </li>
+    
+      <li>
         <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
       </li>
     
@@ -379,15 +465,7 @@
       </li>
     
       <li>
-        <a href="/2016/05/09/build-my-world/">计划</a>
-      </li>
-    
-      <li>
         <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
-      </li>
-    
-      <li>
-        <a href="/2016/03/31/wtf-wired-things-recently/">形式和内容</a>
       </li>
     
   </ul>
