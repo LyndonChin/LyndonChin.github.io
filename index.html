@@ -217,102 +217,37 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-05-16T02:08:45.000Z"><a href="/2016/05/16/basic-car-knowledge/">2016-05-16</a></time>
+        <time datetime="2016-05-24T13:02:45.000Z"><a href="/2016/05/24/difference-between-application-id-and-package-name/">2016-05-24</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>刚毕业那会参加工作，稀里糊涂地选择了所谓的发动机开发，虽然呵呵，但是几个月的发动机原理培训还是不错的（亲手拆过发动机），至少现在也能受益。</p>
-<p>最近又看了两本汽车原理的科普书：</p>
-<ul>
-<li><a href="https://book.douban.com/subject/7054896/" target="_blank" rel="external">《汽车为什么会“跑”》</a></li>
-<li><a href="https://book.douban.com/subject/25761310/" target="_blank" rel="external">《汽车是怎样跑起来的》</a></li>
-</ul>
-<p>顺带还回答了一个问题 - <a href="https://www.zhihu.com/question/25500912/answer/100649900" target="_blank" rel="external">如何系统性学习汽车知识？有哪些经典的书籍可供学习？</a>。</p>
-<p>大概似乎懂了一些。</p>
-<ul>
-<li>理解了马力和扭矩的作用 - <a href="https://www.zhihu.com/question/20224153" target="_blank" rel="external">汽车发动机的两个参数马力和扭矩，哪个更能体现动力性？</a>。</li>
-<li>汽车的“三大件” - 发动机、变速箱、底盘</li>
-<li>动力总成（万向节、差速器）</li>
-<li>发动机的性能参数（直喷、排量、可变气门、稀薄燃烧、机械增压、涡轮增压。。。）</li>
-<li>变速箱的原理（双离合、无级变速CVT、手动变速、手自一体）</li>
-<li>底盘（独立悬架非独立悬架的区别、减震器、减震弹簧等）</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-12T08:54:19.000Z"><a href="/2016/05/12/google-io-expectation/">2016-05-12</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/12/google-io-expectation/">Google IO 看点</a></h1>
+    <h1 class="title"><a href="/2016/05/24/difference-between-application-id-and-package-name/">ApplicationId 与 PackageName 的区别</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <h2 id="Java8"><a href="#Java8" class="headerlink" title="Java8"></a>Java8</h2><p>终于可以用 Java8 写 Android 应用了，想想都有点激动，告别面条代码，拥抱FP！</p>
-<blockquote>
-<p>In order to use the new Java 8 language features, you need to also use the new Jack toolchain</p>
-</blockquote>
-<p>现在，要使用 Java8 必须依赖 Jack，因为为了兼容 old SDK，Jack 会进行字节码转换（例如，把 JDK8 的字节码转成 JDK7 or JDK6）</p>
-<h2 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h2><p>抓紧时间看 <code>Fragment</code> 源码</p>
-<blockquote>
-<p>When should you use a fragment? How? Why? </p>
-<p>In this session we’ll cover effective use of fragments along with new features. </p>
-<p>We’ll also go over improvements that enable new use cases and improve existing ones.</p>
-</blockquote>
-<h2 id="Android-Studio"><a href="#Android-Studio" class="headerlink" title="Android Studio"></a>Android Studio</h2><p>工欲善其事必先利其器，做为一名 Vim 党对快捷键没什么兴趣，但是很期待新的 debug &amp; analysis tool。</p>
-<p><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/" target="_blank" rel="external">Android Studio Tips Of the Day</a></p>
-<h2 id="Doze"><a href="#Doze" class="headerlink" title="Doze"></a>Doze</h2><p>Android battery and memory optimizations</p>
-<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS "></a>HTTPS </h2><p>尽快看完 okHttp 源码。</p>
-<p>HTTPS 到底安不安全？会浪费流量吗？</p>
-<h2 id="Data-Binding"><a href="#Data-Binding" class="headerlink" title="Data Binding"></a>Data Binding</h2><p>Data Binding 的 new features</p>
-<ul>
-<li>two-way data binding</li>
-<li>lambda expressions</li>
-</ul>
-<h2 id="Android-themes-amp-styles-demystified"><a href="#Android-themes-amp-styles-demystified" class="headerlink" title="Android themes &amp; styles demystified"></a>Android themes &amp; styles demystified</h2><p>怎样写好 UI</p>
-<h2 id="APK-瘦身"><a href="#APK-瘦身" class="headerlink" title="APK 瘦身"></a>APK 瘦身</h2><blockquote>
-<p>Lean and fast: Putting your app on a diet</p>
-</blockquote>
-<h2 id="图形图像"><a href="#图形图像" class="headerlink" title="图形图像 "></a>图形图像 </h2><ol>
-<li><strong>Image compression</strong> for Android developers（图像压缩的实践，干货）</li>
-<li>Vulkan (全新的图形框架，OpenGL ES 替代品)</li>
+        <p>在 <code>Android Gradle Build System</code> 之前，<code>PackageName</code> 就是 App 的进程 id。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">manifest</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line">    <span class="attr">package</span>=<span class="string">"com.example.my.app"</span></div><div class="line">    <span class="attr">android:versionCode</span>=<span class="string">"1"</span></div><div class="line">    <span class="attr">android:versionName</span>=<span class="string">"1.0"</span> &gt;</div></pre></td></tr></table></figure>
+<p>此处的 package 属性有两个用途：</p>
+<ol>
+<li>App 的进程 ID</li>
+<li><code>R</code> 的包名以及 Manifest 中 Activity 等四大组件的相对包名。</li>
 </ol>
-<h2 id="Material-Design"><a href="#Material-Design" class="headerlink" title="Material Design"></a>Material Design</h2><p>无感，稍微看一下</p>
-<h2 id="播放器"><a href="#播放器" class="headerlink" title="播放器 "></a>播放器 </h2><p>Streaming media with ExoPlayer（取代 MediaPlayer）</p>
-<h2 id="VR"><a href="#VR" class="headerlink" title="VR"></a>VR</h2><ul>
-<li>Introducing Project Tango Area Learning</li>
-<li>Making Android sensors and location work for you</li>
-<li>VR at Google</li>
-<li>VR &amp; Cinema</li>
+<p>但是，Android 利用 Gradle 作为 Build System 之后就“起风了”。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></div><div class="line"></div><div class="line">android &#123;</div><div class="line">    compileSdkVersion <span class="number">19</span></div><div class="line">    buildToolsVersion <span class="string">"19.1"</span></div><div class="line"></div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId <span class="string">"com.example.my.app"</span></div><div class="line">        minSdkVersion <span class="number">15</span></div><div class="line">        targetSdkVersion <span class="number">19</span></div><div class="line">        versionCode <span class="number">1</span></div><div class="line">        versionName <span class="string">"1.0"</span></div><div class="line">    &#125;</div><div class="line">    ...</div></pre></td></tr></table></figure>
+<p><code>com.android.application</code> 插件的 <code>android</code> 这个 DSL container 中定义了一个 <code>applicationId</code>，这个 <code>applicationId</code> 取代 package name 成为 App 的进程 id。</p>
+<p>不同的 flavor 或者 build type 可以拥有不同的 application id，也就是不同的进程 id。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">productFlavors &#123;</div><div class="line">    pro &#123;</div><div class="line">        applicationId = <span class="string">"com.example.my.pkg.pro"</span></div><div class="line">    &#125;</div><div class="line">    free &#123;</div><div class="line">        applicationId = <span class="string">"com.example.my.pkg.free"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">buildTypes &#123;</div><div class="line">    debug &#123;</div><div class="line">        applicationIdSuffix <span class="string">".debug"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">....</div></pre></td></tr></table></figure>
+<p>所以，application id 与 package name 分工明确。</p>
+<ol>
+<li><strong>application id</strong> 负责 App 的进程 ID</li>
+<li><strong>package name</strong> 负责 <code>R</code> 的包名以及 Manifest 中 Activity 等四大组件的相对包名</li>
+</ol>
+<p>如果 build.gradle 中没有指定 <code>applicationId</code>，那么 application id 的默认值就是 <code>manifest</code> 的 <code>package</code> 属性值。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<li><a href="http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename" target="_blank" rel="external">ApplicationId versus PackageName</a></li>
 </ul>
-<h2 id="用户留存"><a href="#用户留存" class="headerlink" title="用户留存"></a>用户留存</h2><p>Mobile app user acquisition and retention</p>
 
       
     </div>
@@ -335,25 +270,79 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-04-10T17:33:07.000Z"><a href="/2016/04/11/too-famous-is-bad-md/">2016-04-11</a></time>
+        <time datetime="2016-05-23T16:00:00.000Z"><a href="/2016/05/24/error-caused-by-a-third-party-package/">2016-05-24</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a></h1>
+    <h1 class="title"><a href="/2016/05/24/error-caused-by-a-third-party-package/">引入三方包导致 Theme 失效</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p>最近开源社区出现了两件比较好玩的事情。</p>
-<p>第一件事是有些 Android 开发者，把 github 上大神（例如 Jake）添加到自己的 repo 中，然后这个 repo 就会出现在大神 follower 的时间线上，以此来刷 star。然后大神就火了，直接把 repo 给推平了，并附加了一个 SHAME 的 commit message。</p>
-<p>小事一件，估计过几天话题性也就消失了，但是第二件事就比较好玩了，已经上了知乎 - <a href="https://www.zhihu.com/question/42256682" target="_blank" rel="external">如何评价 GitHub 中国区粉丝数前 100 名的用户？</a></p>
-<p>话题源自某社区网站的一篇文章 - Github 中国区前 100 名到第是什么样的人？，文中根据 follower 数对中国区的程序员进行了一个排序，然后扒出了这些人的照片和一些介绍信息，其中有一个妹子用非常 low 的手段刷了不少粉，引起了大家的热议。</p>
-<p>一开始参与开源时，也老想着去刷 star，写一个简单的 UI 库，微博上 at 一圈，让大V帮忙转发，star 数就上来了，然后把 Group 改成 Alibaba（现在我仍然舍不得改回去，因为我还想着有一天。。。），csdn博客、简书、知乎上再营销一把，follower 也上来了，刚开始有点沾沾自喜，微博上与大V互粉，组织线下活动，以为自己终于牛逼了，后来发现有人玩得更溜，各种“粉丝群”，俨然就是一个 super star，小弟自愧不如。</p>
-<p>后来觉得这样做没什么意思，刷粉刷到最后又能怎么样？会带给你内心的安定吗？ 最近我也一直在思考，如何在这个比较浮躁的环境下安心做技术。 </p>
-<p>我希望技术带给我的是【自信 + 安全感】，如果能够在某个方面做到非常深入，然后成为自己技术小世界的国王，其中的一切在自己的运筹帷幄之中，非常美好。</p>
-<p>从阿里出来之后，就一直在想这个问题，最后得出来一个结论：<strong>技术需要真爱</strong>。</p>
-<p>不要名利，不要报酬，认真地写下每一行代码，不会你就学，不懂你就问，就是如此简单。</p>
+        <p>引入一个三方包之后导致 App 主题失效，定位了一个下午，做个记录。</p>
+<p><code>AndroidManifest.xml</code> 文件中 <code>application</code> 节点配置如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;application</div><div class="line">    android:allowBackup=<span class="string">"false"</span></div><div class="line">    android:icon=<span class="string">"@mipmap/app_icon"</span></div><div class="line">    android:label=<span class="string">"@string/app_name"</span></div><div class="line">    android:theme=<span class="string">"@style/AppTheme"</span></div><div class="line">    tools:replace=<span class="string">"android:allowBackup"</span>&gt;</div></pre></td></tr></table></figure>
+<p>刚开始觉得应该是 App 的 theme 被覆盖掉了，然后添加了一个 <strong>replace</strong>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tools:replace="android:allowBackup, android:theme"</div></pre></td></tr></table></figure>
+<p>结果主题依然失效，然后把三方包中在 AndroidManifest 中注册的 <code>Activity</code> 挪到 App 的 Manifest 中，还是不行。</p>
+<p>最后跳转 <code>@style/AppTheme</code> 时发现三方包的依赖包中也定义了一个同名的 Style，而且还是在 <strong>values-21</strong> 文件下，而 App 并没有定义 <strong>values-21</strong> 下的 Style，所以 APP 的主题就被三方包的 Style 给覆盖掉了，而 <code>android:replace=&#39;android:theme</code> 只有在属性冲突的时候起作用，我的 App 并没有提供 values-21 的 Style，因此没有冲突，无法 <code>replace</code>，于是悲剧了。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>App 的主题名字最好具有唯一性， 不要叫 <code>AppTheme</code>，容易同名。</li>
+<li>App 的主题要定义完整，比如 values / values-21</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-05-18T16:00:00.000Z"><a href="/2016/05/19/why-android-hate-soft-reference/">2016-05-19</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>JDK 中除了默认的 Strong Reference 之外，还有三个其他的 Reference：</p>
+<ul>
+<li>WeakReference</li>
+<li>SoftReference</li>
+<li>PhantomReference</li>
+</ul>
+<p>他们都是为了更高效地利用 Heap。</p>
+<h2 id="WeakReference"><a href="#WeakReference" class="headerlink" title="WeakReference"></a>WeakReference</h2><p>如果一个变量的 Reference 只剩下 <code>WeakReference</code>，那么 GC 会毫不留情地把这个变量回收掉。也就是说，<code>WeakReference</code> 没有能力能够让这个变量可以在内存中再飞一会。</p>
+<p>Android 开发者应该都了解 <code>WeakReference</code> 的用法，一个比较典型的应用场景是 <code>Handler</code> ，为了避免 Memory Leak，我们会定义一个内部静态类，然后以 <code>WeakReference</code> 的形式引用 <code>Activity</code>，这样一来，队列中的 <code>Message</code> （可能会排队很长时间）就不会干扰到 GC 回收 <code>Activity</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MSG_ID = <span class="number">0x00</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSafeHandler</span><span class="params">()</span> </span>&#123;</div><div class="line">        SafeHandler handler = <span class="keyword">new</span> SafeHandler(<span class="keyword">this</span>);</div><div class="line">        handler.sendEmptyMessage(MSG_ID);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeHandler</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> WeakReference&lt;Activity&gt; mActivityRef;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SafeHandler</span><span class="params">(Activity activity)</span> </span>&#123;</div><div class="line">            mActivityRef = <span class="keyword">new</span> WeakReference&lt;&gt;(activity);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">            <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">                <span class="keyword">case</span> MSG_ID:</div><div class="line">                    Activity activity = mActivityRef.get();</div><div class="line">                    <span class="keyword">if</span> (activity != <span class="keyword">null</span>) &#123;</div><div class="line">                        activity.finish();</div><div class="line">                    &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="SoftReference"><a href="#SoftReference" class="headerlink" title="SoftReference"></a>SoftReference</h2><p>从 <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的官方定义</a> 来看，只有当内存告急（即将 OOM）时，才会对只剩下 Soft Reference 的变量进行回收，因此 SoftReference 比较适合用来做 Cache：</p>
+<blockquote>
+<p>Soft references are most often used to implement memory-sensitive caches.</p>
+</blockquote>
+<p>但是 <a href="https://developer.android.com/reference/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的 Android 版本</a> 对此<strong>持不同意见</strong>：</p>
+<blockquote>
+<p>In practice, soft references are inefficient for caching.</p>
+</blockquote>
+<p>因为 SoftReference 无法提供足够的信息可以让 runtime 很轻松地决定 clear 它还是 keep 它。举个例子，如果有 10 个 SoftReference 变量，并且他们所引用的变量都没有了 Strong Reference，那么 runtime 就懵逼了，因为它不知道该 clear 哪几个或者 keep 哪几个。更要命的是，runtime 不知道应该是 clear 掉 SoftReference 还是增大 Heap。</p>
+<p>所以 Android 放弃了 <code>SoftReference</code>，推荐使用 <code>android.util.LruCache</code> 做 Cache 管理，至少 <code>LruCache</code> 可以根据变量的<strong>使用频次</strong>来决定是否应该 clear 掉它，这样就比单纯使用 <code>SoftReference</code> 多了一个决策条件 - 使用频次。</p>
 
       
     </div>
@@ -392,7 +381,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -411,15 +400,15 @@
       </li>
     
       <li>
-        <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
+        <a href="/2016/05/24/difference-between-application-id-and-package-name/">ApplicationId 与 PackageName 的区别</a>
       </li>
     
       <li>
-        <a href="/2016/05/12/google-io-expectation/">Google IO 看点</a>
+        <a href="/2016/05/24/error-caused-by-a-third-party-package/">引入三方包导致 Theme 失效</a>
       </li>
     
       <li>
-        <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
+        <a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a>
       </li>
     
   </ul>

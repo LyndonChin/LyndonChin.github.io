@@ -55,6 +55,183 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-01-27T02:09:06.000Z"><a href="/2016/01/27/source-analysis-rich-editor/">2016-01-27</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/27/source-analysis-rich-editor/">RichEditor 源码解析</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h2><p><code>RichEditor</code> 是一个继承自 <code>WebView</code> 的自定义 view，枚举类型 <code>Type</code> 定了它所支持的排版格式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Type &#123;</div><div class="line">  BOLD,</div><div class="line">  ITALIC,</div><div class="line">  SUBSCRIPT,</div><div class="line">  SUPERSCRIPT,</div><div class="line">  STRIKETHROUGH,</div><div class="line">  UNDERLINE,</div><div class="line">  H1,</div><div class="line">  H2,</div><div class="line">  H3,</div><div class="line">  H4,</div><div class="line">  H5,</div><div class="line">  H6</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先在构造函数中加载一个 html 文件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SETUP_HTML = <span class="string">"file:///android_asset/editor.html"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">RichEditor</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">  <span class="keyword">super</span>(context, attrs, defStyleAttr);</div><div class="line">  setVerticalScrollBarEnabled(<span class="keyword">false</span>);</div><div class="line">  setHorizontalScrollBarEnabled(<span class="keyword">false</span>);</div><div class="line">  getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);</div><div class="line">  setWebChromeClient(<span class="keyword">new</span> WebChromeClient());</div><div class="line">  setWebViewClient(createWebviewClient());</div><div class="line"></div><div class="line">  <span class="comment">// 加载 html 文件</span></div><div class="line">  loadUrl(SETUP_HTML);</div><div class="line"></div><div class="line">  applyAttributes(context, attrs);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中 html 文件 - <code>editor.html</code> 加载了两个 css 文件 - <code>normalize.css</code> &amp; <code>style.css</code>，一个 js 文件 - <code>rich_editor.js</code>。</p>
+<p><code>body</code> 中插入了一个 <code>contentEditable=&quot;true&quot;</code> 的 <code>div</code>。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"user-scalable=no"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"normalize.css"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"style.css"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"editor"</span> <span class="attr">contentEditable</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"rich_editor.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<p><code>rich_editor.js</code> 中定义了很多排版功能的 API，<code>RichEditor</code> 类似 proxy，对外提供了 Java API。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEditorFontColor</span><span class="params">(<span class="keyword">int</span> color)</span> </span>&#123;</div><div class="line">  String hex = convertHexColorString(color);</div><div class="line">  exec(<span class="string">"javascript:RE.setBaseTextColor('"</span> + hex + <span class="string">"');"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>其中 <code>exec</code> 用于执行 js 代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">exec</span><span class="params">(<span class="keyword">final</span> String trigger)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (isReady) &#123;</div><div class="line">    load(trigger);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    postDelayed(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        exec(trigger);</div><div class="line">      &#125;, <span class="number">100</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>只有当 <code>rich_editor.html</code> 加载完成后 <code>isReady</code> 才会被置为 <code>true</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">protected</span> <span class="class"><span class="keyword">class</span> <span class="title">EditorWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>&#123;</div><div class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    isReady = url.equalsIgnoreCase(SETUP_HTML);</div><div class="line">    <span class="keyword">if</span> (mLoadListener != <span class="keyword">null</span>) &#123;</div><div class="line">      mLoadListener.onAfterInitialLoad(isReady);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// other methods</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>构造函数在加载 <code>editor.html</code> 之前已经设置了一个 <code>EditorWebViewClient</code> 的实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">RichEditor</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">  <span class="comment">// other statements</span></div><div class="line">  setWebViewClient(createWebviewClient());</div><div class="line">  loadUrl(SETUP_HTML)</div><div class="line">  <span class="comment">// other statements</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">protected</span> EditorWebViewClient <span class="title">createWebviewClient</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> EditorWebViewClient();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当 <code>editor.html</code> 加载完成，<code>isReady</code> 被设为 <code>true</code> 之后，<code>exec</code> 方法就可以调用 <code>load(trigger)</code> 执行 js 了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(String trigger)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.KITKAT) &#123;</div><div class="line">    evaluateJavascript(trigger, <span class="keyword">null</span>);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    loadUrl(trigger);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>evaluateJavascript</code> 以及 <code>loadUrl</code> 都是 <code>Webview</code> 提供的方法。</p>
+<p><code>evaluateJavascript</code> 是从 API 19 开始引入的，可以异步执行 js 代码。<em>Asynchronously evaluates JavaScript in the context of the currently displayed page.</em></p>
+<h2 id="SCHEME"><a href="#SCHEME" class="headerlink" title="SCHEME"></a>SCHEME</h2><p>RichEditor 提供了两个 Scheme 负责回调 java 代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CALLBACK_SCHEME = <span class="string">"re-callback://"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String STATE_SCHEME = <span class="string">"re-state://"</span>;</div></pre></td></tr></table></figure>
+<p>然后在 <code>EditorWebViewClient</code> 中重写了 <code>shouldOverrideUrlLoading</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">protected</span> <span class="class"><span class="keyword">class</span> <span class="title">EditorWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>&#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    isReady = url.equalsIgnoreCase(SETUP_HTML);</div><div class="line">    <span class="keyword">if</span> (mLoadListener != <span class="keyword">null</span>) &#123;</div><div class="line">      mLoadListener.onAfterInitialLoad(isReady);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldOverrideUrlLoading</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    String decode;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      decode = URLDecoder.decode(url, <span class="string">"UTF-8"</span>);</div><div class="line">    &#125; <span class="keyword">catch</span> (UnsupportedEncodingException e) &#123;</div><div class="line">      <span class="comment">// No handling</span></div><div class="line">      <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (TextUtils.indexOf(url, CALLBACK_SCHEME) == <span class="number">0</span>) &#123;</div><div class="line">      callback(decode);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (TextUtils.indexOf(url, STATE_SCHEME) == <span class="number">0</span>) &#123;</div><div class="line">      stateCheck(decode);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.shouldOverrideUrlLoading(view, url);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果 url 符合 CALLBACK 的 scheme，就会执行 <code>callback</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callback</span><span class="params">(String text)</span> </span>&#123;</div><div class="line">  mContents = text.replaceFirst(CALLBACK_SCHEME, <span class="string">""</span>);</div><div class="line">  <span class="keyword">if</span> (mTextChangeListener != <span class="keyword">null</span>) &#123;</div><div class="line">    mTextChangeListener.onTextChange(mContents);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果 url 符合 STATE 的 scheme，就会执行 <code>stateCheck</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">stateCheck</span><span class="params">(String text)</span> </span>&#123;</div><div class="line">  String state = text.replaceFirst(STATE_SCHEME, <span class="string">""</span>).toUpperCase(Locale.ENGLISH);</div><div class="line">  List&lt;Type&gt; types = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">  <span class="keyword">for</span> (Type type : Type.values()) &#123;</div><div class="line">    <span class="keyword">if</span> (TextUtils.indexOf(state, type.name()) != -<span class="number">1</span>) &#123;</div><div class="line">      types.add(type);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (mDecorationStateListener != <span class="keyword">null</span>) &#123;</div><div class="line">    mDecorationStateListener.onStateChangeListener(state, types);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过以下两个 set 方法可以设置回调。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnDecorationChangeListener</span><span class="params">(OnDecorationStateListener listener)</span> </span>&#123;</div><div class="line">  mDecorationStateListener = listener;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnInitialLoadListener</span><span class="params">(AfterInitialLoadListener listener)</span> </span>&#123;</div><div class="line">  mLoadListener = listener;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>编辑器的核心功能由 js 实现，RichEditor 封装了 js 的功能，为上层提供了 java 接口。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://github.com/wasabeef/richeditor-android" target="_blank" rel="external">https://github.com/wasabeef/richeditor-android</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-26T06:43:45.000Z"><a href="/2016/01/26/my-git-config/">2016-01-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/26/my-git-config/">我的 git 配置</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="alias"><a href="#alias" class="headerlink" title="alias"></a>alias</h2><pre>
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    last = log -1 HEAD
+    unstage = reset HEAD --
+    visual = !"gitk"
+    lg1 = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+    lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+    lg = !"git lg2"
+</pre>
+
+<h2 id="editor"><a href="#editor" class="headerlink" title="editor"></a>editor</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git config --global core.editor &quot;vim&quot;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-25T16:00:00.000Z"><a href="/2016/01/26/2016-todo/">2016-01-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/26/2016-todo/">2016 计划</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="技术-我对自己的定位是什么？"><a href="#技术-我对自己的定位是什么？" class="headerlink" title="技术 - 我对自己的定位是什么？"></a><em>技术 - 我对自己的定位是什么？</em></h2><ul>
+<li>技术需要真爱</li>
+<li>像读书一样去读代码，多读多记录，少造劣质轮子<ul>
+<li><a href="https://github.com/square/okhttp" target="_blank" rel="external">okHttp</a></li>
+<li><a href="https://github.com/facebook/fresco" target="_blank" rel="external">fresco</a></li>
+<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">RxJava</a></li>
+</ul>
+</li>
+<li>理清楚移动开发的<code>理り</code><ul>
+<li>完全用 Swift 开发 iOS</li>
+<li>ReactNative</li>
+</ul>
+</li>
+</ul>
+<h2 id="能力养成-提高执行力，让内心更强大"><a href="#能力养成-提高执行力，让内心更强大" class="headerlink" title="能力养成 - 提高执行力，让内心更强大"></a><em>能力养成 - 提高执行力，让内心更强大</em></h2><ul>
+<li><code>搞定</code>三册、<code>活法</code>四册</li>
+<li>The Willpower</li>
+</ul>
+<h2 id="语言-这是一个怎样的世界？"><a href="#语言-这是一个怎样的世界？" class="headerlink" title="语言 - 这是一个怎样的世界？"></a><em>语言 - 这是一个怎样的世界？</em></h2><ul>
+<li>阅读</li>
+<li>日剧</li>
+</ul>
+<h2 id="工作-不仅仅是技术"><a href="#工作-不仅仅是技术" class="headerlink" title="工作 - 不仅仅是技术"></a><em>工作 - 不仅仅是技术</em></h2><ul>
+<li>向所有人学习</li>
+<li>多接触不同领域的人，多聊天</li>
+<li>锻炼<strong>产品</strong>、<strong>运营</strong>思维</li>
+<li>做一个好 APP（不仅仅是技术）</li>
+</ul>
+<h2 id="生活-与身体对话"><a href="#生活-与身体对话" class="headerlink" title="生活 - 与身体对话"></a><em>生活 - 与身体对话</em></h2><ul>
+<li>健身（减脂）</li>
+<li>买车（目标 320Li）</li>
+<li>东南亚旅行</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-01-25T05:54:00.000Z"><a href="/2016/01/25/hexo-summary/">2016-01-25</a></time>
       
       
@@ -154,273 +331,13 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-11-09T08:53:09.000Z"><a href="/2015/11/09/how-to-use-synchronized-in-static-method/">2015-11-09</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/11/09/how-to-use-synchronized-in-static-method/">怎样在静态方法中使用 synchronized</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="synchronized-的实现方式"><a href="#synchronized-的实现方式" class="headerlink" title="synchronized 的实现方式"></a>synchronized 的实现方式</h2><p><code>synchronized</code> 的类型可以分为两种：</p>
-<ol>
-<li>synchronized method</li>
-<li>synchronized block</li>
-</ol>
-<p>两者的实现方式是不一样的，jvm 规范中写道，编译后的 synchronized method 会有一个 <strong>ACC_SYNCHRONIZED</strong> 的 flag，也就是说当 jvm 的方法调用指令（the method invocation instruction）从 the run-time constant pool 中查找到这个 method 的时候，已经知道它是一个synchronized method，所以锁操作是由<strong>方法调用</strong>以及<strong>返回</strong>指令来控制的。</p>
-<p>而 <strong>synchronized block</strong> 的锁是由 <code>monitorenter</code> 和 <code>monitorexit</code> 这两个指令来控制。</p>
-<p>可以通过 javap 命令来“反汇编”一下 class 文件。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticMethodTest</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">staticMethod</span><span class="params">()</span> </span>&#123; &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">staticMethod1</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (StaticMethodTest.class) &#123;</div><div class="line">        <span class="comment">// ...</span></div><div class="line">    &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">memberMethod</span><span class="params">()</span> </span>&#123; &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>编译成 class 文件后执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">javap -verbose StaticMethodTest</div></pre></td></tr></table></figure></p>
-<p>两个静态方法的输出结果分别为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">public static synchronized void staticMethod();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC, ACC_STATIC, ACC_SYNCHRONIZED</div><div class="line">  Code:</div><div class="line">    stack=0, locals=0, args_size=0</div><div class="line">       0: return</div><div class="line">    LineNumberTable:</div><div class="line">      line 2: 0</div><div class="line">public static void staticMethod1();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC, ACC_STATIC</div><div class="line">  Code:</div><div class="line">    stack=2, locals=2, args_size=0</div><div class="line">       0: ldc           #2                  // class StaticMethodTest</div><div class="line">       2: dup</div><div class="line">       3: astore_0</div><div class="line">       4: monitorenter</div><div class="line">       5: aload_0</div><div class="line">       6: monitorexit</div><div class="line">       7: goto          15</div><div class="line">      10: astore_1</div><div class="line">      11: aload_0</div><div class="line">      12: monitorexit</div><div class="line">      13: aload_1</div><div class="line">      14: athrow</div><div class="line">      15: return</div><div class="line">    Exception table:</div><div class="line">       from    to  target type</div><div class="line">           5     7    10   any</div><div class="line">          10    13    10   any</div></pre></td></tr></table></figure></p>
-<p>其实不管静态方法还是成员方法，<code>synchronized</code> 的实现方式都是一样的，那么类和对象究竟有什么关系呢？</p>
-<h2 id="类和对象"><a href="#类和对象" class="headerlink" title="类和对象"></a>类和对象</h2><p>首先要了解的就是<strong>类究竟是怎么来的</strong>。 </p>
-<p>JVM 拿到编译器编译好的 class 文件后，首先会把文件载入到内存中，class 文件当然会有自己的格式，所以需要由 ClassLoader 来解析文件的内容，这个解析出来的内容会用一个 <code>Class</code> 类的实例 - Class object 来表示，这个 object 可以通过 Java 的 <code>ClassName.class</code>来获取。</p>
-<p>也就是说，Class object 是一个 <code>Class</code> 类型的实例（instance），而对象是一个 ClassName 的 instance。Class 和 ClassName都是类型，ClassName是由 <code>class</code> 关键字定义的，而Class是内置类型。</p>
-<p>因此成员方法的synchronized method 就等价于 synchronized (this) block，即下面两种方式是等价的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>成员方法是属于 <code>this</code>，而静态方法是属于 Class Object，那么静态方法的 synchronized method 也就等价于下面这种形式的 synchronized block 了。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">synchronized</span> (ClassName.class) &#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="验证代码"><a href="#验证代码" class="headerlink" title="验证代码"></a>验证代码</h2><p>定义了三个静态方法，分别采用不同的锁机制，并且每个方法都是一个死循环。然后再定义三个线程分别执行调用三个方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.concurrent.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedTest</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object lock = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            System.out.println(<span class="string">"in fun"</span>);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (SynchronizedTest.class) &#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                System.out.println(<span class="string">"in fun1"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (lock) &#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                System.out.println(<span class="string">"in fun2"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line">    </div><div class="line">    </div><div class="line">       <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun1();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line"></div><div class="line"></div><div class="line">        <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun2();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>运行结果就是 in fun 和 in fun2 交替出现，就是没有 in fun1。<br>只要运行 fun 的线程不交出锁，fun1 就无法被调用，因为他们都是共享了 Class object 的锁。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-06-23T08:47:40.000Z"><a href="/2015/06/23/dpi-dp-sp/">2015-06-23</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/06/23/dpi-dp-sp/">详解 Android 开发中常用的 DPI / DP / SP</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Android的碎片化已经被喷了好多年，随着国内手机厂商的崛起，碎片化也越来越严重，根据<a href="http://thenextweb.com/mobile/2014/08/21/18796-different-android-devices-according-opensignals-latest-fragmentation-report/" target="_blank" rel="external">OpenSignal的最新调查</a>，2014年市面上有18796种不同的Android设备，作为开发者，一个无法回避的难题就是需要适配各种各样奇奇怪怪的机型。</p>
-<p>设备机型不同必然也会导致屏幕大小和分辨率（Resolution）的不同，但是无论分辨率有多大，屏幕有多大，我们手指触控范围的大小不会发生变化，所以最优的适配方式应该是<strong>指定大小的控件在所有的设备上的显示都一样</strong>。</p>
-<p>Android的官方文档对此也有明确的说明</p>
-<blockquote>
-<p>When adding support for multiple screens, applications <em>do not work directly with resolution</em>; applications should be concerned <em>only with screen size and density</em>, as specified by the generalized size and density groups.</p>
-</blockquote>
-<p>所以，适配应该与分辨率无关，只与屏幕大小和屏幕密度相关，首先来看一下什么是屏幕密度 － DPI。</p>
-<h3 id="DPI"><a href="#DPI" class="headerlink" title="DPI"></a>DPI</h3><p>DPI的全称是 Dots Per Inch，Inch是一个物理单位（无论在任何设备上，其大小都是固定的），所以DPI就指在一个Inch的物理长度内有多少个Dot，160DPI的屏幕就表示一个Inch包含160个Dot，320DPI的屏幕表示一个Inch有320个Dot，所以说Dot的大小是不固定的。</p>
-<p>Android设备用DPI来表示屏幕密度(Density)，屏幕密度大就表示一个Inch包含的Dot比较多。那PPI是什么呢？<br>我们会经常看到iPad、iPhone是用PPI来表示屏幕密度，小米Pad也是用PPI来表示。<br><img src="http://img4.tbcdn.cn/L1/461/1/ffa8ab85d4cc4d9e8b9cb379143bb83bcaf40a28" alt="PPI in mi pad"></p>
-<p>其实对Android而言，DPI等价于PPI(Pixels-Per-Inch)，DPI最早是用于印刷行业，跟PPI还是有本质不同的，Android应该是误用了DPI这个概念。具体可以参考<a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference/" target="_blank" rel="external">PPI vs. DPI: what’s the difference?</a>。</p>
-<p>其实我们只要知道在Android设备中，DPI 等价于 PPI 就可以了。<br><img src="http://img2.tbcdn.cn/L1/461/1/73e824419477f8c604791f6318f8a4701c91d165" alt="PPI 定义"></p>
-<p>通常我们说一个设备是多少寸时，指的是屏幕对角线(Diagonal)是多少inch，所以用对角线的像素值（px）除以对角线长度（inch），就可以计算出PPI。<br><img src="http://img1.tbcdn.cn/L1/461/1/af31a9366de3232f78a9e48904f5b0463875ec25" alt="PPI 计算公式"></p>
-<p>为了简化适配工作，Android根据屏幕大小（Inch）和屏幕密度（DPI）对设备做了如下划分：<br><img src="http://img1.tbcdn.cn/L1/461/1/5a7fe24f76a7f23cbdea5efa088b1188d73597f5" alt="PPI 对应屏幕尺寸"></p>
-<h3 id="DP"><a href="#DP" class="headerlink" title="DP"></a>DP</h3><p>既然有那么多不同分辨率、不同大小的屏幕，使用PX必然会导致适配困难，为了进一步简化适配工作，Android为我们提供了一个虚拟的像素单位 － DP 或者 DIP (Density-Independent pixel)，当然也可以理解为 Device-Independent Pixel。为什么说是<strong>虚拟</strong>呢，因为它的大小不是一个物理（Phisical）值，而是由操作系统根据屏幕大小和密度动态渲染出来的。</p>
-<p>PX跟DP之间的换算关系很简单 </p>
-<blockquote>
-<p> px = dp * (dpi / 160)</p>
-</blockquote>
-<p>举例来说，小米Pad的屏幕密度为326dpi，如果需要显示的图片大小为20dp，那么就需要提供一个 <code>20 <em> (326 / 160) = 40px</em></code>的图片才能达到最佳显示效果，如果还要适配一个163dpi的屏幕，那么还需要再提供一个<code>20  (163 / 160) = 20px</code>的图片。</p>
-<p>那么一个20dp的图片，在不同设备上的显示效果如何呢？我们以iPad为例来说明。<br><img src="http://img4.tbcdn.cn/L1/461/1/2c18879aebe47f6faa42c3f3d2e21ccc7e77d66d" alt="iPad 屏幕参数"></p>
-<p>iPad2 和 iPad Retina的物理尺寸都是 9.7 inch，不同的是分辨率和PPI，一个是1024x768 / 132ppi，另一个是2048x1536 / 264ppi，</p>
-<p>分别计算一下20dp对应多少inch</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ipad2 = <span class="number">20</span> * (<span class="number">132</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">1024</span> * <span class="number">1024</span> + <span class="number">768</span> * <span class="number">768</span>))) </div><div class="line">ipad_retina = <span class="number">20</span> * (<span class="number">264</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">2048</span> * <span class="number">2048</span> + <span class="number">1536</span> * <span class="number">1536</span>)))</div></pre></td></tr></table></figure>
-<p>计算结果都是0.1018359375，这就是dp的功能，它能保证在所有的设备上显示的大小都一样。</p>
-<p>如果只提供了一个大小为20px的图片，为了保证图片在所有设备上的物理大小都一样，高DPI的设备上系统会拉伸图片，低DPI的设备上图片会被缩小，这样既会影响UE也会影响APP的执行效率。所以我们需要为不同屏幕密度的设备提供不同的图片，他们之间的对应关系如下。<br><img src="http://img1.tbcdn.cn/L1/461/1/7d691bde9a6f414a5f93082b0312c1589289494d" alt="Android 设备屏幕分级"></p>
-<p>我们在用Sketch作图的时候，如果1x图片对应的是屏幕是MDPI (160dpi)，那么1.5x，2x就分别对应HDPI，XHDPI。<br><img src="http://img4.tbcdn.cn/L1/461/1/4c46ea76d3cf05a87bdf101ac931a1d00ff730ef" alt="screens_densities"></p>
-<h3 id="SP"><a href="#SP" class="headerlink" title="SP"></a>SP</h3><p>SP 全称是 Scale-independent Pixels，用于字体大小，其概念与DP是一致的，也是为了保持设备无关。因为Android用户可以根据喜好来调整字体大小，所以要使用sp来表示字体大小。<br><img src="http://img4.tbcdn.cn/L1/461/1/ed1118ab7e089febd541bd8f1ed454e009edec24" alt="changing_android_font_size"></p>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ol>
-<li><a href="http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts" target="_blank" rel="external">http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts</a></li>
-<li><a href="http://developer.android.com/training/multiscreen/screendensities.html" target="_blank" rel="external">http://developer.android.com/training/multiscreen/screendensities.html</a></li>
-<li><a href="http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android" target="_blank" rel="external">http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android</a></li>
-<li><a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference" target="_blank" rel="external">http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference</a></li>
-</ol>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-06-19T16:00:00.000Z"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">2015-06-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">如何获取 Android 设备的CPU核数、时钟频率以及内存大小</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>因项目需要，分析了一下 Facebook 的开源项目 - <a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">Device Year Class</a>。</p>
-<p><strong>Device Year Class</strong> 的主要功能是根据 <em>CPU核数</em>、<em>时钟频率</em> 以及 <em>内存大小</em> 对设备进行分级。代码很简单，只包含两个类:</p>
-<ul>
-<li><code>DeviceInfo</code> -&gt; 获取设备参数，</li>
-<li><code>YearClass</code> -&gt; 根据参数进行分级。</li>
-</ul>
-<p>下表是 Facebook 公司提供的<a href="https://github.com/facebook/device-year-class/blob/master/README.md" target="_blank" rel="external">分级标准</a>，其中 <code>Year</code> 栏表示分级结果。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:right">Year</th>
-<th style="text-align:right">Cores</th>
-<th style="text-align:right">Clock</th>
-<th style="text-align:right">RAM</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right">2008</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">528MHz</td>
-<td style="text-align:right">192MB</td>
-</tr>
-<tr>
-<td style="text-align:right">2009</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">600MHz</td>
-<td style="text-align:right">290MB</td>
-</tr>
-<tr>
-<td style="text-align:right">2010</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">1.0GHz</td>
-<td style="text-align:right">512MB</td>
-</tr>
-<tr>
-<td style="text-align:right">2011</td>
-<td style="text-align:right">2</td>
-<td style="text-align:right">1.2GHz</td>
-<td style="text-align:right">1GB</td>
-</tr>
-<tr>
-<td style="text-align:right">2012</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">1.5GHz</td>
-<td style="text-align:right">1.5GB</td>
-</tr>
-<tr>
-<td style="text-align:right">2013</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">2.0GHz</td>
-<td style="text-align:right">2GB</td>
-</tr>
-<tr>
-<td style="text-align:right">2014</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">&gt;2GHz</td>
-<td style="text-align:right">&gt;2GB</td>
-</tr>
-</tbody>
-</table>
-<p>关于输出年份的计算方法可以参考<a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">源码</a>，本文只把一些比较常用的功能抽取出来做一个简要介绍。</p>
-<h2 id="获取-CPU-核数"><a href="#获取-CPU-核数" class="headerlink" title="获取 CPU 核数"></a>获取 CPU 核数</h2><p>我们都知道，Linux 中的设备都是以文件的形式存在，CPU 也不例外，因此 CPU 的文件个数就等价与<strong>核数</strong>。</p>
-<p>Android 的 CPU 设备文件位于 <code>/sys/devices/system/cpu/</code> 目录，文件名的的格式为 <code>cpu\d+</code>。</p>
-<pre>
-root@generic_x86_64:/sys/devices/system/cpu # ls
-<b>cpu0</b>
-cpufreq
-cpuidle
-kernel_max
-modalias
-offline
-online
-possible
-power
-present
-uevent
-</pre>
-
-<p>统计一下文件个数便可以获得 CPU 核数。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getNumberOfCPUCores</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &lt;= Build.VERSION_CODES.GINGERBREAD_MR1) &#123;</div><div class="line">    <span class="comment">// Gingerbread doesn't support giving a single application access to both cores, but a</span></div><div class="line">    <span class="comment">// handful of devices (Atrix 4G and Droid X2 for example) were released with a dual-core</span></div><div class="line">    <span class="comment">// chipset and Gingerbread; that can let an app in the background run without impacting</span></div><div class="line">    <span class="comment">// the foreground application. But for our purposes, it makes them single core.</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">int</span> cores;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    cores = <span class="keyword">new</span> File(<span class="string">"/sys/devices/system/cpu/"</span>).listFiles(CPU_FILTER).length;</div><div class="line">  &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125; <span class="keyword">catch</span> (NullPointerException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> cores;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FileFilter CPU_FILTER = <span class="keyword">new</span> FileFilter() &#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File pathname)</span> </span>&#123;</div><div class="line">    String path = pathname.getName();</div><div class="line">    <span class="comment">//regex is slow, so checking char by char.</span></div><div class="line">    <span class="keyword">if</span> (path.startsWith(<span class="string">"cpu"</span>)) &#123;</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">3</span>; i &lt; path.length(); i++) &#123;</div><div class="line">        <span class="keyword">if</span> (path.charAt(i) &lt; <span class="string">'0'</span> || path.charAt(i) &gt; <span class="string">'9'</span>) &#123;</div><div class="line">          <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<h2 id="获取时钟频率"><a href="#获取时钟频率" class="headerlink" title="获取时钟频率"></a>获取时钟频率</h2><p>获取<strong>时钟频率</strong>需要读取系统文件 - <code>/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq</code> 或者 <code>/proc/cpuinfo</code>。</p>
-<p>我的 Android 模拟器中并没有 <code>cpuinfo_max_freq</code> 文件，因此只能读取 <code>/proc/cpuinfo</code>。</p>
-<p><code>/proc/cpuinfo</code> 包含了很多 cpu 数据。</p>
-<pre>
-processor    : 0
-vendor_id    : GenuineIntel
-cpu family    : 6
-model        : 70
-model name    : Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
-stepping    : 1
-cpu MHz        : 0.000
-cache size    : 1024 KB
-fdiv_bug    : no
-hlt_bug        : no
-f00f_bug    : no
-coma_bug    : no
-fpu        : yes
-fpu_exception    : yes
-cpuid level    : 4
-wp        : yes
-</pre>
-
-<p>代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getCPUMaxFreqKHz</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> maxFreq = DEVICEINFO_UNKNOWN;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; getNumberOfCPUCores(); i++) &#123;</div><div class="line">      String filename =</div><div class="line">          <span class="string">"/sys/devices/system/cpu/cpu"</span> + i + <span class="string">"/cpufreq/cpuinfo_max_freq"</span>;</div><div class="line">      File cpuInfoMaxFreqFile = <span class="keyword">new</span> File(filename);</div><div class="line">      <span class="keyword">if</span> (cpuInfoMaxFreqFile.exists()) &#123;</div><div class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">128</span>];</div><div class="line">        FileInputStream stream = <span class="keyword">new</span> FileInputStream(cpuInfoMaxFreqFile);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">          stream.read(buffer);</div><div class="line">          <span class="keyword">int</span> endIndex = <span class="number">0</span>;</div><div class="line">          <span class="comment">//Trim the first number out of the byte buffer.</span></div><div class="line">          <span class="keyword">while</span> (buffer[endIndex] &gt;= <span class="string">'0'</span> &amp;&amp; buffer[endIndex] &lt;= <span class="string">'9'</span></div><div class="line">              &amp;&amp; endIndex &lt; buffer.length) endIndex++;</div><div class="line">          String str = <span class="keyword">new</span> String(buffer, <span class="number">0</span>, endIndex);</div><div class="line">          Integer freqBound = Integer.parseInt(str);</div><div class="line">          <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">        &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</div><div class="line">          <span class="comment">//Fall through and use /proc/cpuinfo.</span></div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">          stream.close();</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (maxFreq == DEVICEINFO_UNKNOWN) &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/cpuinfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">int</span> freqBound = parseFileForValue(<span class="string">"cpu MHz"</span>, stream);</div><div class="line">        freqBound *= <span class="number">1000</span>; <span class="comment">//MHz -&gt; kHz</span></div><div class="line">        <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    maxFreq = DEVICEINFO_UNKNOWN; <span class="comment">//Fall through and return unknown.</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> maxFreq;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="获取内存大小"><a href="#获取内存大小" class="headerlink" title="获取内存大小"></a>获取内存大小</h2><p>如果 SDK 版本大于等于 <code>JELLY_BEAN</code> ，可以通过 <code>ActivityManager</code> 来获取内从大小。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">am.getMemoryInfo(memInfo);</div></pre></td></tr></table></figure>
-<p>如果版本低于 <code>JELLY_BEAN</code> ，则只能读取系统文件了。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@TargetApi</span>(Build.VERSION_CODES.JELLY_BEAN)</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getTotalMemory</span><span class="params">(Context c)</span> </span>&#123;</div><div class="line">  <span class="comment">// memInfo.totalMem not supported in pre-Jelly Bean APIs.</span></div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</div><div class="line">    ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">    ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">    am.getMemoryInfo(memInfo);</div><div class="line">    <span class="keyword">if</span> (memInfo != <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="keyword">return</span> memInfo.totalMem;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">return</span> DEVICEINFO_UNKNOWN;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">long</span> totalMem = DEVICEINFO_UNKNOWN;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div><div class="line">        totalMem *= <span class="number">1024</span>;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> totalMem;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
     <a href="/page/2/" class="alignleft prev">上一页</a>
   
+  
+    <a href="/page/4/" class="alignright next">下一页</a>
   
   <div class="clearfix"></div>
 </nav></div></div>
@@ -438,7 +355,7 @@ wp        : yes
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -457,15 +374,15 @@ wp        : yes
       </li>
     
       <li>
-        <a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a>
+        <a href="/2016/05/24/difference-between-application-id-and-package-name/">ApplicationId 与 PackageName 的区别</a>
       </li>
     
       <li>
-        <a href="/2016/05/12/google-io-expectation/">Google IO 看点</a>
+        <a href="/2016/05/24/error-caused-by-a-third-party-package/">引入三方包导致 Theme 失效</a>
       </li>
     
       <li>
-        <a href="/2016/04/11/too-famous-is-bad-md/">还是老老实实写代码吧</a>
+        <a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a>
       </li>
     
   </ul>

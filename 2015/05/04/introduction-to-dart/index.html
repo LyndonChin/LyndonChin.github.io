@@ -1,0 +1,246 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Dart是一个怎样的语言 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Dart是一个怎样的语言"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/">一切唯心造（清も濁も全ては心が作り出すもの）</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-05-03T16:00:00.000Z"><a href="/2015/05/04/introduction-to-dart/">2015-05-04</a></time>
+      
+      
+  
+    <h1 class="title">Dart是一个怎样的语言</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>这几天看到一篇新闻 - <a href="http://36kr.com/p/532461.html" target="_blank" rel="external">白兼容了？Google 正在为 Android 准备一个去 Java 化的 Dart 应用运行框架</a>，对与新闻的标题和内容无力吐槽，不做评论。但是Google推出 <a href="https://github.com/domokit/sky_sdk" target="_blank" rel="external">sky</a> 似乎证明了native的开发方式越来越向web方式靠近的趋势，最近比较火的要数 <a href="https://github.com/facebook/react-native" target="_blank" rel="external">react-native</a> 了，他们的原理是类似的，都是先构造一个 <em>virtual dom tree</em>，然后只更新发生变化的 dom。sky 的 readme 也说自己参考了 <a href="https://github.com/facebook/react" target="_blank" rel="external">react</a>，那两者最大的区别应该是开发语言了，react-native 是 javascript，而 Google 用的是自己的亲儿子 - <a href="https://www.dartlang.org/" target="_blank" rel="external">Dart</a>。</p>
+<p><img src="http://img.blog.csdn.net/20150504004814626" alt="The Sky framework"></p>
+<p>Node.js 推出后统一了前后端，如今 node 开发真可谓炙手可热。Google 当初推出 Dart 也是为了统一前后端开发，但是这两年一直不温不火，好像国内使用 <a href="https://github.com/Polymer/polymer" target="_blank" rel="external">Polymer</a> 的开发者也不多，现在用 突然宣布说用 Dart 替换 Android 的开发语言 java，而且还举办了第一个第一届 <a href="https://www.dartlang.org/events/2015/summit/" target="_blank" rel="external">Dart Developer Summit</a>，看来 Google 准备在 Dart 上发力了，相信 Dart 会是五月底 Google IO 大会上的一个重要议题。<br>趁着今天放假，跟着 <a href="https://www.dartlang.org/codelabs/darrrt/" target="_blank" rel="external">Dart 官网的教程</a>玩了一下 Dart，发现 Dart 这门语言确实不错。</p>
+<hr>
+<h2 id="引用包"><a href="#引用包" class="headerlink" title="引用包"></a>引用包</h2><p>包的引用方式与 Python 和 Go 类似，都是用 <code>import</code>：<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> <span class="string">'dart:html'</span>;</div></pre></td></tr></table></figure></p>
+<p>不过只导入包的某个组件的方式比较特殊：<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> <span class="string">'dart:math'</span> show Random;</div><div class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span> show JSON;</div><div class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span> show Future;</div></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p><s>Dart 与 Python 一样是一个强类型语言</s>。</p>
+<p>Dart 的变量类型是可选的，叫做 static type annotations。</p>
+<pre>
+Dart’s optional types are static type annotations that act as documentation, clearly expressing your intent.
+</pre>
+
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Random indexGen = <span class="keyword">new</span> Random();</div><div class="line"><span class="built_in">String</span> _firstName;</div><div class="line"><span class="built_in">String</span> _appellation;</div></pre></td></tr></table></figure>
+<p>Dart 没有 <code>private</code> 关键字，如果变量或方法是私有类型，需要在名称前面加上下划线。</p>
+<p><strong>私有变量</strong><br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PirateName</span> </span>&#123;</div><div class="line">  # ...</div><div class="line">  <span class="built_in">String</span> _firstName;</div><div class="line">  <span class="built_in">String</span> _appellation;</div><div class="line">  # ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>私有方法</strong><br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> _parsePirateNamesFromJSON(<span class="built_in">String</span> jsonString) &#123;</div><div class="line">  <span class="built_in">Map</span> pirateNames = JSON.decode(jsonString);</div><div class="line">  names = pirateNames[<span class="string">'names'</span>];</div><div class="line">  appellations = pirateNames[<span class="string">'appellations'</span>];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><p>Dart 用关键字 <code>as</code> 来做类型转换。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> updateBadge(Event e) &#123;</div><div class="line">  <span class="built_in">String</span> inputName = (e.target <span class="keyword">as</span> InputElement).value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>对于某些特定方法，Dart 提供了语法糖，写法很简单。例如，表达式的值即为返回值的情况，可以这么写：</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span> toString() =&gt; pirateName;</div></pre></td></tr></table></figure>
+<p>不用写成这样：<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span> toString() &#123;</div><div class="line">  <span class="keyword">return</span> pirateName;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果是 <code>get</code> 方法，可以直接在返回值类型和方法名之间加上一个关键词 <code>get</code>，而且方法名不需要加括号，调用的时候也不需要加括号。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span> <span class="keyword">get</span> jsonString =&gt; JSON.encode(&#123;<span class="string">"f"</span>: _firstName, <span class="string">"a"</span>: _appellation&#125;);</div><div class="line"></div><div class="line"><span class="built_in">String</span> <span class="keyword">get</span> pirateName =&gt;</div><div class="line">    _firstName.isEmpty ? <span class="string">''</span> : <span class="string">'$_firstName the $_appellation'</span>;</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="级联操作符（-）"><a href="#级联操作符（-）" class="headerlink" title="级联操作符（..）"></a>级联操作符（..）</h2><p>级联操作符（<em>The cascade operator (..)</em>）可以允许在一个成员变量上执行多个操作。</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">genButton..disabled = <span class="keyword">false</span></div><div class="line">         ..text = <span class="string">'Aye! Gimme a name!'</span>;</div></pre></td></tr></table></figure>
+<p>以上语句就等价于<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">genButton.disabled = <span class="keyword">false</span>;</div><div class="line">genButton.text = <span class="string">'Aye! Gimme a name!'</span>;</div></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="字符串转换"><a href="#字符串转换" class="headerlink" title="字符串转换"></a>字符串转换</h2><p>Dart 中变量转化成字符串比 Java 方便多了，跟 Python 有一拼，直接在变量名前加上$符号就可以了。<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="string">'$_firstName the $_appellation'</span>;</div></pre></td></tr></table></figure></p>
+<hr>
+<h2 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h2><p>Dart 支持有名字的构造方法，这一点比 Java 和 Python 都先进。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">PirateName.fromJSON(String jsonString) &#123;</div><div class="line">  Map storedName = JSON.decode(jsonString);</div><div class="line">  _firstName = storedName[&apos;f&apos;];</div><div class="line">  _appellation = storedName[&apos;a&apos;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里 <code>PirateName.fromJSON</code> 是一个整体，用的时候要写全了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">return new PirateName.fromJSON(storedName);</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>跟 Python 一样，Dart 也支持 <em><a href="http://www.diveintopython.net/power_of_introspection/optional_arguments.html" target="_blank" rel="external">Optional and Named Arguments</a></em>，例如参数可以这么写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">PirateName(&#123;String firstName, String appellation&#125;) &#123;</div><div class="line">  # ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>参数要用一个大括号括起来，应该是需要把参数封装成一个类似于 Python 的 <code>Dictionary</code>。</p>
+<p>但是调用的时候不需要传递所有的参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">new PirateName(firstName: inputName)</div></pre></td></tr></table></figure>
+<hr>
+<h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p>Dart 支持泛型，这点跟 Java 很像，例如要定义一个 <code>List</code> 变量可以写成这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">static List names = [];</div><div class="line">static List appellations = [];</div></pre></td></tr></table></figure>
+<p>如果要写明类型，就需要在 <code>List</code> 后的简括后内加上类型。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">static List&lt;String&gt; names = [];</div><div class="line">static List&lt;String&gt; appellations = [];</div></pre></td></tr></table></figure></p>
+<p>关于泛型类型是否像 java 那样支持 <code>super</code>、 <code>extend</code>还没看到，暂时不知道。</p>
+<hr>
+<h2 id="异步操作"><a href="#异步操作" class="headerlink" title="异步操作"></a>异步操作</h2><p>Dart 语言原生支持异步操作，主要是用两个关键词 <code>await</code> 和 <code>async</code>。<br>例如，如果我们要定义一个异步方法，不需要像 java 那样去 <strong>new Thread</strong>，直接在方法后面加上 <code>async</code> 关键字就OK了，这样调用时，该方法时会直接返回一个 <code>Future</code>，caller 无需等待。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">static Future readyThePirates() async &#123;</div><div class="line">  String path = &apos;piratenames.json&apos;;</div><div class="line">  String jsonString = await HttpRequest.getString(path);</div><div class="line">  _parsePirateNamesFromJSON(jsonString);    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>await</code> 跟 java中的 wait 方法用法一样，表示等待，但是它只能用于 <code>async</code> 的方法中。</p>
+<p>例如上面代码片段中， <code>await HttpRequest.getString(path)</code> 就表示必须要等到 <code>HttpRequest.getString(path)</code> 返回的 <code>Future</code> 有了最终结果才会继续往下执行 <code>_parsePirateNamesFromJSON(jsonString);</code>。</p>
+<hr>
+<p>不知道 Dart 支不支持一些高大上的语言特性，比如 闭包（Closure）、Lambda表达式（Lambda expression）、生成器（Generator）等，期待后续的学习。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Hybrid/">Hybrid</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 13.33px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/工具/" style="font-size: 13.33px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/10/diagram-retrofit-service-method/">图解 Retrofit 之 ServiceMethod</a>
+      </li>
+    
+      <li>
+        <a href="/2016/07/06/my-practice-with-retrofit-and-rxjava/">Retrofit + RxAndroid 实践总结</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/24/difference-between-application-id-and-package-name/">ApplicationId 与 PackageName 的区别</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/24/error-caused-by-a-third-party-package/">引入三方包导致 Theme 失效</a>
+      </li>
+    
+      <li>
+        <a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+  <div class="widget tag">
+  <h3 class="title">友情链接</h3>
+  <ul class="entry">
+    <li><a href="http://www.liaohuqiu.net/">秋百万</li>
+    <li><a href="http://yifeiyuan.me/">程序亦非猿</li>
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
