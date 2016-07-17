@@ -55,6 +55,72 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-01-28T03:24:30.000Z"><a href="/2016/01/28/unit-test-on-android/">2016-01-28</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/28/unit-test-on-android/">Android 单元测试</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Android Studio 和 Android Gradle Plugin 可以让我们脱离 <code>android.jar</code> 直接在 development machine 上执行单元测试。</p>
+<blockquote>
+<p>Unit tests run on a local JVM on your development machine</p>
+</blockquote>
+<p>Gradle 插件会编译 <code>src/test/java</code> 的代码，运行时会用到一个修改过的 <code>android.jar</code>（去掉了所有的 <code>final</code> 修饰符），这样就可以利用多态引入 <strong>mocking libraries</strong>。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">  testCompile <span class="string">'junit:junit:4.12'</span></div><div class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew test --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
+<p>等价于</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
+<p>其中 <code>--continue</code> 表示即使某个 case 失败了，也会继续执行剩下的 case。</p>
+<h2 id="Flavors-amp-Build-type"><a href="#Flavors-amp-Build-type" class="headerlink" title="Flavors &amp; Build type"></a>Flavors &amp; Build type</h2><p>遵守规范</p>
+<ul>
+<li>src/main/java/Foo.java -&gt; src/test/java/FooTest.java</li>
+<li>src/debug/java/Foo.java -&gt; src/testDebug/java/FooTest.java</li>
+<li>src/myFlavor/java/Foo.java -&gt; src/testMyFlavor/java/FooTest.java</li>
+</ul>
+<h2 id="“Method-…-not-mocked-”"><a href="#“Method-…-not-mocked-”" class="headerlink" title="“Method … not mocked.”"></a>“Method … not mocked.”</h2><p>今天遇到的就是这个问题：</p>
+<pre>
+java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
+</pre>
+
+<p>加了 mock 依赖后还是搞不定：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">testCompile <span class="string">"org.mockito:mockito-core:1.9.5</span></div></pre></td></tr></table></figure>
+<p>修改配置，让 mock 方法返回默认值还是不行：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  testOptions &#123; </div><div class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></div><div class="line">  &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果却是：</p>
+<blockquote>
+<p>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><code>android.jar</code> 是被 mock 过的，所以有些 Android API 返回值可能会不是预期值。</li>
+<li>JUnit 本身是针对 java 代码的单测，所以尽量不要用于使用了 Android API 的方法。</li>
+<li>Android Gradle 插件提供的 mocked android.jar 跟我刚开始工作时做过的测试框架原理类似。</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-01-27T02:09:06.000Z"><a href="/2016/01/27/source-analysis-rich-editor/">2016-01-27</a></time>
       
       
@@ -274,63 +340,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-01-25T02:57:15.000Z"><a href="/2016/01/25/2015-summary/">2016-01-25</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/25/2015-summary/">2015 年总结</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <blockquote>
-<p>2015 关键词：结婚、开源、日本游、换工作。</p>
-</blockquote>
-<p>回首这一年，首先要感恩阿里，不但让我开阔了眼界，而且意外地进入了开源圈子，拓宽了人脉。</p>
-<p>但是我已经不满足仅仅做一个码农了，外面的世界那么精彩，人生怎么可能只有埋头苦干、升P加薪、贷款买房。失去想象力的生活是无趣的，所以我选择拥抱变化，离开阿里，去做更好玩的事，认识更好玩的人。</p>
-<h2 id="开源"><a href="#开源" class="headerlink" title="开源"></a>开源</h2><p>把格局放大后才发现能够影响到自己的人不只是身边那一拨，还有散落在世界各地素未谋面的一群人。<strong>感谢开源</strong>，就像日语那样，让我又发现了一个新的世界。 </p>
-<p>以前只是那个坐在看台最远处，只能静静看他们演出的观众，现在一只脚已经踏上了舞台，随时准备一场属于自己的浮夸。</p>
-<ul>
-<li>无心插柳柳成荫，一个只是为了练手的项目，居然收获了 1K+ 的 star，诚惶诚恐。</li>
-<li>一篇用心写的 Data Binding 教程收获了快 1K 的 star。</li>
-<li>感谢贵人相助，成功组织了两次线下开发者聚餐，谢谢小伙伴们捧场，何德何能。</li>
-</ul>
-<h2 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h2><p>工作虽然很苦逼，但是技术长进感觉超过了前三年之和，再一次体会到量变引起质变的感觉。</p>
-<ul>
-<li>从第0行代码开始了<strong>天猫安卓HD</strong>版本的开发，感受到了沟通的成本。</li>
-<li>入门 iOS 开发，开发了<strong>天猫HD</strong>的<strong>足迹</strong>页面。</li>
-<li>独立开发了手机天猫的<strong>全局导航</strong>功能，体验到了人与人认知的差异，有的人做事真得太狠。</li>
-<li>成功组织了团队 outing 日本游，高富帅真得很好相处，屌丝有一种丢不了的气质。</li>
-</ul>
-<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><ul>
-<li>结婚领证了 ：）</li>
-<li>赶在离职之前来了一个东京深度蜜月之旅。</li>
-<li>考出了驾照</li>
-<li>一共跑了 173 公里，可惜没能坚持住，最长跑了 17 公里。</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -355,7 +364,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 10px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -364,6 +373,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/17/一切唯心造/">一切唯心造</a>
+      </li>
     
       <li>
         <a href="/2016/07/10/diagram-retrofit-service-method/">图解 Retrofit 之 ServiceMethod</a>
@@ -379,10 +392,6 @@
     
       <li>
         <a href="/2016/05/24/error-caused-by-a-third-party-package/">引入三方包导致 Theme 失效</a>
-      </li>
-    
-      <li>
-        <a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a>
       </li>
     
   </ul>

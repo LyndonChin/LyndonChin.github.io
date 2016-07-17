@@ -55,6 +55,42 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-07-17T15:21:41.000Z"><a href="/2016/07/17/一切唯心造/">2016-07-17</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/17/一切唯心造/">一切唯心造</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>清も濁もすべては心がつくりだすもの<br>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/07/17/一切唯心造/#more" class="more-link">更多...</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-07-09T16:00:00.000Z"><a href="/2016/07/10/diagram-retrofit-service-method/">2016-07-10</a></time>
       
       
@@ -307,58 +343,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-18T16:00:00.000Z"><a href="/2016/05/19/why-android-hate-soft-reference/">2016-05-19</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>JDK 中除了默认的 Strong Reference 之外，还有三个其他的 Reference：</p>
-<ul>
-<li>WeakReference</li>
-<li>SoftReference</li>
-<li>PhantomReference</li>
-</ul>
-<p>他们都是为了更高效地利用 Heap。</p>
-<h2 id="WeakReference"><a href="#WeakReference" class="headerlink" title="WeakReference"></a>WeakReference</h2><p>如果一个变量的 Reference 只剩下 <code>WeakReference</code>，那么 GC 会毫不留情地把这个变量回收掉。也就是说，<code>WeakReference</code> 没有能力能够让这个变量可以在内存中再飞一会。</p>
-<p>Android 开发者应该都了解 <code>WeakReference</code> 的用法，一个比较典型的应用场景是 <code>Handler</code> ，为了避免 Memory Leak，我们会定义一个内部静态类，然后以 <code>WeakReference</code> 的形式引用 <code>Activity</code>，这样一来，队列中的 <code>Message</code> （可能会排队很长时间）就不会干扰到 GC 回收 <code>Activity</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MSG_ID = <span class="number">0x00</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSafeHandler</span><span class="params">()</span> </span>&#123;</div><div class="line">        SafeHandler handler = <span class="keyword">new</span> SafeHandler(<span class="keyword">this</span>);</div><div class="line">        handler.sendEmptyMessage(MSG_ID);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeHandler</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> WeakReference&lt;Activity&gt; mActivityRef;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SafeHandler</span><span class="params">(Activity activity)</span> </span>&#123;</div><div class="line">            mActivityRef = <span class="keyword">new</span> WeakReference&lt;&gt;(activity);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">            <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">                <span class="keyword">case</span> MSG_ID:</div><div class="line">                    Activity activity = mActivityRef.get();</div><div class="line">                    <span class="keyword">if</span> (activity != <span class="keyword">null</span>) &#123;</div><div class="line">                        activity.finish();</div><div class="line">                    &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="SoftReference"><a href="#SoftReference" class="headerlink" title="SoftReference"></a>SoftReference</h2><p>从 <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的官方定义</a> 来看，只有当内存告急（即将 OOM）时，才会对只剩下 Soft Reference 的变量进行回收，因此 SoftReference 比较适合用来做 Cache：</p>
-<blockquote>
-<p>Soft references are most often used to implement memory-sensitive caches.</p>
-</blockquote>
-<p>但是 <a href="https://developer.android.com/reference/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的 Android 版本</a> 对此<strong>持不同意见</strong>：</p>
-<blockquote>
-<p>In practice, soft references are inefficient for caching.</p>
-</blockquote>
-<p>因为 SoftReference 无法提供足够的信息可以让 runtime 很轻松地决定 clear 它还是 keep 它。举个例子，如果有 10 个 SoftReference 变量，并且他们所引用的变量都没有了 Strong Reference，那么 runtime 就懵逼了，因为它不知道该 clear 哪几个或者 keep 哪几个。更要命的是，runtime 不知道应该是 clear 掉 SoftReference 还是增大 Heap。</p>
-<p>所以 Android 放弃了 <code>SoftReference</code>，推荐使用 <code>android.util.LruCache</code> 做 Cache 管理，至少 <code>LruCache</code> 可以根据变量的<strong>使用频次</strong>来决定是否应该 clear 掉它，这样就比单纯使用 <code>SoftReference</code> 多了一个决策条件 - 使用频次。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -381,7 +365,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 10px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -390,6 +374,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/17/一切唯心造/">一切唯心造</a>
+      </li>
     
       <li>
         <a href="/2016/07/10/diagram-retrofit-service-method/">图解 Retrofit 之 ServiceMethod</a>
@@ -405,10 +393,6 @@
     
       <li>
         <a href="/2016/05/24/error-caused-by-a-third-party-package/">引入三方包导致 Theme 失效</a>
-      </li>
-    
-      <li>
-        <a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a>
       </li>
     
   </ul>
