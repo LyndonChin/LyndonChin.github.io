@@ -55,6 +55,44 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-07-21T06:45:32.000Z"><a href="/2016/07/21/松樹千年翠/">2016-07-21</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/21/松樹千年翠/">松樹千年翠</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <blockquote>
+<p>変わらぬもの価値を見失わないで</p>
+</blockquote>
+      
+    </div>
+    <footer>
+      
+        
+          <div class="alignleft">
+            <a href="/2016/07/21/松樹千年翠/#more" class="more-link">更多...</a>
+          </div>
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-07-20T13:33:33.000Z"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">2016-07-20</a></time>
       
       
@@ -307,59 +345,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-24T13:02:45.000Z"><a href="/2016/05/24/difference-between-application-id-and-package-name/">2016-05-24</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/24/difference-between-application-id-and-package-name/">ApplicationId 与 PackageName 的区别</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>在 <code>Android Gradle Build System</code> 之前，<code>PackageName</code> 就是 App 的进程 id。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">manifest</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line">    <span class="attr">package</span>=<span class="string">"com.example.my.app"</span></div><div class="line">    <span class="attr">android:versionCode</span>=<span class="string">"1"</span></div><div class="line">    <span class="attr">android:versionName</span>=<span class="string">"1.0"</span> &gt;</div></pre></td></tr></table></figure>
-<p>此处的 package 属性有两个用途：</p>
-<ol>
-<li>App 的进程 ID</li>
-<li><code>R</code> 的包名以及 Manifest 中 Activity 等四大组件的相对包名。</li>
-</ol>
-<p>但是，Android 利用 Gradle 作为 Build System 之后就“起风了”。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">apply <span class="string">plugin:</span> <span class="string">'com.android.application'</span></div><div class="line"></div><div class="line">android &#123;</div><div class="line">    compileSdkVersion <span class="number">19</span></div><div class="line">    buildToolsVersion <span class="string">"19.1"</span></div><div class="line"></div><div class="line">    defaultConfig &#123;</div><div class="line">        applicationId <span class="string">"com.example.my.app"</span></div><div class="line">        minSdkVersion <span class="number">15</span></div><div class="line">        targetSdkVersion <span class="number">19</span></div><div class="line">        versionCode <span class="number">1</span></div><div class="line">        versionName <span class="string">"1.0"</span></div><div class="line">    &#125;</div><div class="line">    ...</div></pre></td></tr></table></figure>
-<p><code>com.android.application</code> 插件的 <code>android</code> 这个 DSL container 中定义了一个 <code>applicationId</code>，这个 <code>applicationId</code> 取代 package name 成为 App 的进程 id。</p>
-<p>不同的 flavor 或者 build type 可以拥有不同的 application id，也就是不同的进程 id。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">productFlavors &#123;</div><div class="line">    pro &#123;</div><div class="line">        applicationId = <span class="string">"com.example.my.pkg.pro"</span></div><div class="line">    &#125;</div><div class="line">    free &#123;</div><div class="line">        applicationId = <span class="string">"com.example.my.pkg.free"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">buildTypes &#123;</div><div class="line">    debug &#123;</div><div class="line">        applicationIdSuffix <span class="string">".debug"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">....</div></pre></td></tr></table></figure>
-<p>所以，application id 与 package name 分工明确。</p>
-<ol>
-<li><strong>application id</strong> 负责 App 的进程 ID</li>
-<li><strong>package name</strong> 负责 <code>R</code> 的包名以及 Manifest 中 Activity 等四大组件的相对包名</li>
-</ol>
-<p>如果 build.gradle 中没有指定 <code>applicationId</code>，那么 application id 的默认值就是 <code>manifest</code> 的 <code>package</code> 属性值。</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a href="http://tools.android.com/tech-docs/new-build-system/applicationid-vs-packagename" target="_blank" rel="external">ApplicationId versus PackageName</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -382,7 +367,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 10px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12.5px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 10px;">Japanese</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 17.5px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -391,6 +376,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/21/松樹千年翠/">松樹千年翠</a>
+      </li>
     
       <li>
         <a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a>
@@ -406,10 +395,6 @@
     
       <li>
         <a href="/2016/07/06/my-practice-with-retrofit-and-rxjava/">Retrofit + RxAndroid 实践总结</a>
-      </li>
-    
-      <li>
-        <a href="/2016/05/24/difference-between-application-id-and-package-name/">ApplicationId 与 PackageName 的区别</a>
       </li>
     
   </ul>

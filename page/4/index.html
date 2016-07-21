@@ -55,6 +55,71 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-01-25T16:00:00.000Z"><a href="/2016/01/26/2016-todo/">2016-01-26</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/26/2016-todo/">2016 计划</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="技术-我对自己的定位是什么？"><a href="#技术-我对自己的定位是什么？" class="headerlink" title="技术 - 我对自己的定位是什么？"></a><em>技术 - 我对自己的定位是什么？</em></h2><ul>
+<li>技术需要真爱</li>
+<li>像读书一样去读代码，多读多记录，少造劣质轮子<ul>
+<li><a href="https://github.com/square/okhttp" target="_blank" rel="external">okHttp</a></li>
+<li><a href="https://github.com/facebook/fresco" target="_blank" rel="external">fresco</a></li>
+<li><a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="external">RxJava</a></li>
+</ul>
+</li>
+<li>理清楚移动开发的<code>理り</code><ul>
+<li>完全用 Swift 开发 iOS</li>
+<li>ReactNative</li>
+</ul>
+</li>
+</ul>
+<h2 id="能力养成-提高执行力，让内心更强大"><a href="#能力养成-提高执行力，让内心更强大" class="headerlink" title="能力养成 - 提高执行力，让内心更强大"></a><em>能力养成 - 提高执行力，让内心更强大</em></h2><ul>
+<li><code>搞定</code>三册、<code>活法</code>四册</li>
+<li>The Willpower</li>
+</ul>
+<h2 id="语言-这是一个怎样的世界？"><a href="#语言-这是一个怎样的世界？" class="headerlink" title="语言 - 这是一个怎样的世界？"></a><em>语言 - 这是一个怎样的世界？</em></h2><ul>
+<li>阅读</li>
+<li>日剧</li>
+</ul>
+<h2 id="工作-不仅仅是技术"><a href="#工作-不仅仅是技术" class="headerlink" title="工作 - 不仅仅是技术"></a><em>工作 - 不仅仅是技术</em></h2><ul>
+<li>向所有人学习</li>
+<li>多接触不同领域的人，多聊天</li>
+<li>锻炼<strong>产品</strong>、<strong>运营</strong>思维</li>
+<li>做一个好 APP（不仅仅是技术）</li>
+</ul>
+<h2 id="生活-与身体对话"><a href="#生活-与身体对话" class="headerlink" title="生活 - 与身体对话"></a><em>生活 - 与身体对话</em></h2><ul>
+<li>健身（减脂）</li>
+<li>买车（目标 320Li）</li>
+<li>东南亚旅行</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-01-25T05:54:00.000Z"><a href="/2016/01/25/hexo-summary/">2016-01-25</a></time>
       
       
@@ -319,91 +384,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-08-03T16:00:00.000Z"><a href="/2015/08/04/introduction-to-git-flow/">2015-08-04</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/08/04/introduction-to-git-flow/">Git Flow 用法总结</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Git Flow 是 Git 一个扩展，基于 Vincent Driessen 提出的 <a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">A successful Git branching model</a>。</p>
-<p><strong>注意</strong></p>
-<ul>
-<li>Git Flow 基于 <code>merge</code> 而不是 <code>rebase</code>，基于 <code>merge</code> 的优势在于可以很快定位到出问题的 <code>commit</code>，便于快速回滚。</li>
-<li>git merge –no-ff 可以保证即使是 fast-forward 也会产生一个 merge commit。</li>
-</ul>
-<p><img src="http://nvie.com/img/git-model@2x.png" alt=""></p>
-<p>基于以下五类 branch 进行项目管理。</p>
-<ol>
-<li>master - 每一个 commit 都是一个可发布的版本</li>
-<li>develop - 开发分支</li>
-<li>release - 发布分支，fork 自 develop 分支</li>
-<li>feature - 新功能分支，fork 自 develop 分支</li>
-<li>hotfix - 线上紧急修复</li>
-</ol>
-<p>以上五种 branch 基本可以覆盖我们开发中常见的活动。</p>
-<h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><h3 id="master"><a href="#master" class="headerlink" title="master"></a>master</h3><p>master 是主分支，必须保证它的每一个 commit 都是可以发布的，每一个正式发布的版本都要打上 tag。</p>
-<p>release- 分支以及 hotfix- 分支都要 merge 到此分支。</p>
-<h3 id="develop"><a href="#develop" class="headerlink" title="develop"></a>develop</h3><p>develop 是开发分支，当需要新功能开发时，首先从 develop 分支 fork 出一个 feature- 分支，开发完成后再 merge 回 develop 分支。</p>
-<p>feature- 分支可以是实验性的功能，也可能是一个下一个版本需要的功能。</p>
-<h3 id="release"><a href="#release" class="headerlink" title="release"></a>release</h3><p>realse 分支是临近发布时从 develop 分支拉取的分支，这样可以保证当前的发布版本不会影响到下一个版本的新功能开发。</p>
-<pre>
-          |develop
-          |
-          *
-          |\
-          | \
-         /*  |relase
-        / |  |
-feature|  |  |
-       |  |  |
-       |  |  |
-</pre>
-
-<p>release 分支创建以后，还可以继续在 develop 上进行新功能开发，但是 release 分支只允许小的 bug fix，不能有大功能改动。</p>
-<p>最后 release 分支还是要 merge 回 master 和 feature 分支。</p>
-<h3 id="feature"><a href="#feature" class="headerlink" title="feature"></a>feature</h3><p>feature 负责新功能开发，开发完毕后需要 merge 回 develop 分支。</p>
-<h3 id="hotfix"><a href="#hotfix" class="headerlink" title="hotfix"></a>hotfix</h3><p>hotfix 的主要用于线上 bug 的紧急修复，fork 自 master 分支，修复完毕后需要 merge 回 master 分支和 develop 分支。</p>
-<p>如果此时 release 分支还存在，hotfix 需要 merge 到 release 分支而不是 develop 分支，因为 release 分支最终会被 merge 到 develop 分支上。</p>
-<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><h3 id="创建-feature-分支"><a href="#创建-feature-分支" class="headerlink" title="创建 feature 分支"></a>创建 feature 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git checkout -b myfeature develop</div></pre></td></tr></table></figure>
-<h3 id="完成-feature-分支"><a href="#完成-feature-分支" class="headerlink" title="完成 feature 分支"></a>完成 feature 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ git checkout develop</div><div class="line">$ git merge --no-ff myfeature</div><div class="line">$ git branch <span class="_">-d</span> myfeature</div><div class="line">$ git push origin develop</div></pre></td></tr></table></figure>
-<h3 id="创建-release-分支"><a href="#创建-release-分支" class="headerlink" title="创建 release 分支"></a>创建 release 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ git checkout -b relese-1.2 develop</div><div class="line">$ ./bump-version.sh 1.2</div><div class="line">$ git commit <span class="_">-a</span> -m <span class="string">"Bumped version number to 1.2"</span></div></pre></td></tr></table></figure>
-<h3 id="完成-release-分支"><a href="#完成-release-分支" class="headerlink" title="完成 release 分支"></a>完成 release 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ git checkout master</div><div class="line">$ git merge --no-ff release-1.2</div><div class="line">$ git tag <span class="_">-a</span> 1.2</div><div class="line">$ git checkout develop</div><div class="line">$ git merge --no-ff release-1.2</div><div class="line">$ git branch <span class="_">-d</span> release-1.2</div></pre></td></tr></table></figure>
-<h3 id="创建-hotfix-分支"><a href="#创建-hotfix-分支" class="headerlink" title="创建 hotfix 分支"></a>创建 hotfix 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ git checkout -b hotfix-1.2.1 master</div><div class="line">$ ./bump-version.sh 1.2.1</div><div class="line">$ git commit <span class="_">-a</span> -m <span class="string">"Bumped version number to 1.2.1"</span></div><div class="line">$ git commit -m<span class="string">"Fixed savere production problem"</span></div></pre></td></tr></table></figure>
-<h3 id="完成-hotfix-分支"><a href="#完成-hotfix-分支" class="headerlink" title="完成 hotfix 分支"></a>完成 hotfix 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ git checkout master</div><div class="line">$ git merge --no-ff hotfix-1.2.1</div><div class="line">$ git tag <span class="_">-a</span> 1.2.1</div><div class="line">$ git checkout develop</div><div class="line">$ git merge --no-ff hotfix-1.2.1</div><div class="line">$ git branch <span class="_">-d</span> hotfix-1.2.1</div></pre></td></tr></table></figure>
-<h2 id="Git-Flow-命令"><a href="#Git-Flow-命令" class="headerlink" title="Git Flow 命令"></a>Git Flow 命令</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ git flow init</div></pre></td></tr></table></figure>
-<h3 id="feature-1"><a href="#feature-1" class="headerlink" title="feature"></a>feature</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git flow feature start &lt;name&gt;</div><div class="line">$ git flow feature finish &lt;name&gt;</div></pre></td></tr></table></figure>
-<h3 id="release-1"><a href="#release-1" class="headerlink" title="release"></a>release</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git flow release start &lt;release&gt; [&lt;base&gt;]</div><div class="line">$ git flow release finish &lt;release&gt;</div></pre></td></tr></table></figure>
-<h3 id="hotfix-1"><a href="#hotfix-1" class="headerlink" title="hotfix"></a>hotfix</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git flow hotfix start &lt;release&gt; [&lt;base&gt;]</div><div class="line">$ git flow hotfix finish &lt;release&gt;</div></pre></td></tr></table></figure>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://github.com/danielkummer/git-flow-cheatsheet" target="_blank" rel="external">git-flow-cheatsheet</a></li>
-<li><a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">A successful Git branching model</a></li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -428,7 +408,7 @@ feature|  |  |
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 13.33px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 13.33px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 10px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 13.33px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 16.67px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12.5px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 10px;">Japanese</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 17.5px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -437,6 +417,10 @@ feature|  |  |
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2016/07/21/松樹千年翠/">松樹千年翠</a>
+      </li>
     
       <li>
         <a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a>
@@ -452,10 +436,6 @@ feature|  |  |
     
       <li>
         <a href="/2016/07/06/my-practice-with-retrofit-and-rxjava/">Retrofit + RxAndroid 实践总结</a>
-      </li>
-    
-      <li>
-        <a href="/2016/05/24/difference-between-application-id-and-package-name/">ApplicationId 与 PackageName 的区别</a>
       </li>
     
   </ul>
