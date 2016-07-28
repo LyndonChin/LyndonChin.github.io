@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Google IO 看点 | 梁飞</title>
+  <title>半年总结 | 梁飞</title>
   <meta name="author" content="liangfei">
   
   <meta name="description" content="梁飞的个人博客">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Google IO 看点"/>
+  <meta property="og:title" content="半年总结"/>
   <meta property="og:site_name" content="梁飞"/>
 
   
@@ -54,54 +54,92 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-05-12T08:54:19.000Z"><a href="/2016/05/12/google-io-expectation/">2016-05-12</a></time>
+        <time datetime="2016-07-28T14:40:00.000Z"><a href="/2016/07/28/work-summary-after-half-year-leaving/">2016-07-28</a></time>
       
       
   
-    <h1 class="title">Google IO 看点</h1>
+    <h1 class="title">半年总结</h1>
   
 
     </header>
     <div class="entry">
       
-        <h2 id="Java8"><a href="#Java8" class="headerlink" title="Java8"></a>Java8</h2><p>终于可以用 Java8 写 Android 应用了，想想都有点激动，告别面条代码，拥抱FP！</p>
-<blockquote>
-<p>In order to use the new Java 8 language features, you need to also use the new Jack toolchain</p>
+        <p>今年 1.11 入职有赞，到现在差不多 7 个多月。</p>
+<h2 id="一点微小的工作"><a href="#一点微小的工作" class="headerlink" title="一点微小的工作"></a>一点微小的工作</h2><blockquote>
+<p>统一 Maven 仓库</p>
 </blockquote>
-<p>现在，要使用 Java8 必须依赖 Jack，因为为了兼容 old SDK，Jack 会进行字节码转换（例如，把 JDK8 的字节码转成 JDK7 or JDK6）</p>
-<h2 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h2><p>抓紧时间看 <code>Fragment</code> 源码</p>
-<blockquote>
-<p>When should you use a fragment? How? Why? </p>
-<p>In this session we’ll cover effective use of fragments along with new features. </p>
-<p>We’ll also go over improvements that enable new use cases and improve existing ones.</p>
-</blockquote>
-<h2 id="Android-Studio"><a href="#Android-Studio" class="headerlink" title="Android Studio"></a>Android Studio</h2><p>工欲善其事必先利其器，做为一名 Vim 党对快捷键没什么兴趣，但是很期待新的 debug &amp; analysis tool。</p>
-<p><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/" target="_blank" rel="external">Android Studio Tips Of the Day</a></p>
-<h2 id="Doze"><a href="#Doze" class="headerlink" title="Doze"></a>Doze</h2><p>Android battery and memory optimizations</p>
-<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS "></a>HTTPS </h2><p>尽快看完 okHttp 源码。</p>
-<p>HTTPS 到底安不安全？会浪费流量吗？</p>
-<h2 id="Data-Binding"><a href="#Data-Binding" class="headerlink" title="Data Binding"></a>Data Binding</h2><p>Data Binding 的 new features</p>
+<p>旧的二方包部署方式非常不专业，统一打包脚本之后，使协作变得高效。</p>
 <ul>
-<li>two-way data binding</li>
-<li>lambda expressions</li>
+<li>所有二方包全部部署到公司内部 Maven 仓库，删掉所有跟随源码的私有仓库，节约 git 服务器空间。</li>
+<li>把源码、注释、文档全部打进二方包，方便接入方查看源码。</li>
+<li>坚持代码为中心，文档（README、WIKI）跟着代码走。</li>
 </ul>
-<h2 id="Android-themes-amp-styles-demystified"><a href="#Android-themes-amp-styles-demystified" class="headerlink" title="Android themes &amp; styles demystified"></a>Android themes &amp; styles demystified</h2><p>怎样写好 UI</p>
-<h2 id="APK-瘦身"><a href="#APK-瘦身" class="headerlink" title="APK 瘦身"></a>APK 瘦身</h2><blockquote>
-<p>Lean and fast: Putting your app on a diet</p>
+<p><em>这是我在有赞做的第一件事</em>。</p>
+<blockquote>
+<p>统一 WebView 框架</p>
 </blockquote>
-<h2 id="图形图像"><a href="#图形图像" class="headerlink" title="图形图像 "></a>图形图像 </h2><ol>
-<li><strong>Image compression</strong> for Android developers（图像压缩的实践，干货）</li>
-<li>Vulkan (全新的图形框架，OpenGL ES 替代品)</li>
+<p>重构旧的 WebView 框架，重构之后的优势：</p>
+<ol>
+<li>只有 4.2 以下版本使用注入 js 的方式实现 hybrid api，&gt;= 4.2 的版本使用 <code>@javascriptinterface</code>，大大降低了旧方式注入失败的概率。</li>
+<li>每个 hybrid api 相互独立，独自定义 model 类。（旧方式是共享一个 Model，导致 Model 无比臃肿）。</li>
+<li>注入、回调的接口更加合理。</li>
+<li>接入 Web Cache</li>
 </ol>
-<h2 id="Material-Design"><a href="#Material-Design" class="headerlink" title="Material Design"></a>Material Design</h2><p>无感，稍微看一下</p>
-<h2 id="播放器"><a href="#播放器" class="headerlink" title="播放器 "></a>播放器 </h2><p>Streaming media with ExoPlayer（取代 MediaPlayer）</p>
-<h2 id="VR"><a href="#VR" class="headerlink" title="VR"></a>VR</h2><ul>
-<li>Introducing Project Tango Area Learning</li>
-<li>Making Android sensors and location work for you</li>
-<li>VR at Google</li>
-<li>VR &amp; Cinema</li>
+<blockquote>
+<p>引入 RxJava + Retrofit</p>
+</blockquote>
+<p>替换旧的网络框架，在<strong>有赞商家版</strong>中接入 Retrofit &amp; RxJava。</p>
+<ul>
+<li>输出一篇 <a href="http://www.liangfei.me/2016/07/06/my-practice-with-retrofit-and-rxjava/" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a></li>
+<li>读完了 Retrofit 源码，输出一篇 <a href="http://www.liangfei.me/2016/07/10/diagram-retrofit-service-method/" target="_blank" rel="external">图解 Retrofit 之 ServiceMethod</a></li>
 </ul>
-<h2 id="用户留存"><a href="#用户留存" class="headerlink" title="用户留存"></a>用户留存</h2><p>Mobile app user acquisition and retention</p>
+<blockquote>
+<p>排查 Memory Leaks</p>
+</blockquote>
+<ul>
+<li>接入 <code>LeakCanary</code>，居然有 static 的 view 变量。ありえない！</li>
+<li>读完了源码 - <a href="https://github.com/LyndonChin/wo/tree/master/leakcanary" target="_blank" rel="external">LeakCanary 原理分析</a></li>
+</ul>
+<blockquote>
+<p>开发数据图表库</p>
+</blockquote>
+<ul>
+<li>基于 <a href="https://github.com/PhilJay/MPAndroidChart" target="_blank" rel="external">MPAndroidChart</a> 二次开发，加了一些特殊交互。</li>
+<li>花了三周时间彻底搞懂了源码 - <a href="https://github.com/LyndonChin/wo/tree/master/mpandroicharts" target="_blank" rel="external">MPAndroidCharts 源码解析</a></li>
+</ul>
+<p><em>MPAndroidCharts 的代码质量跟 star 数完全不匹配</em></p>
+<blockquote>
+<p>使用 product flavor 适配 pos 机</p>
+</blockquote>
+<ul>
+<li>POS 机特有代码互不干扰</li>
+<li>减小包大小</li>
+</ul>
+<p><em>只用了一个晚上</em></p>
+<blockquote>
+<p>读了很多内部源码</p>
+</blockquote>
+<ul>
+<li>商家版 APP 源码</li>
+<li>基于 okhttp 的网络库</li>
+<li>23 版本后的权限适配库</li>
+<li>基于 AndFix 的热修复库</li>
+<li>一些 UI 库</li>
+</ul>
+<blockquote>
+<p>做了一些技术分享</p>
+</blockquote>
+<ol>
+<li>RxJava 入门</li>
+<li>GOOGLE/IO 2016</li>
+<li>30分钟精通 Retrofit</li>
+</ol>
+<h2 id="正在进行中的事"><a href="#正在进行中的事" class="headerlink" title="正在进行中的事"></a>正在进行中的事</h2><ul>
+<li>性能指标、优化方案</li>
+<li>apk size 优化</li>
+<li>okhttp 源码（至少要搞懂 https）</li>
+<li>Android 底层源码</li>
+</ul>
 
       
     </div>
@@ -111,7 +149,7 @@
         
   
   <div class="tags">
-    <a href="/tags/Android/">Android</a>
+    <a href="/tags/生活/">生活</a>
   </div>
 
         
