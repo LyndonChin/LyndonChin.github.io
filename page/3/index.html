@@ -55,6 +55,58 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-05-18T16:00:00.000Z"><a href="/2016/05/19/why-android-hate-soft-reference/">2016-05-19</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>JDK 中除了默认的 Strong Reference 之外，还有三个其他的 Reference：</p>
+<ul>
+<li>WeakReference</li>
+<li>SoftReference</li>
+<li>PhantomReference</li>
+</ul>
+<p>他们都是为了更高效地利用 Heap。</p>
+<h2 id="WeakReference"><a href="#WeakReference" class="headerlink" title="WeakReference"></a>WeakReference</h2><p>如果一个变量的 Reference 只剩下 <code>WeakReference</code>，那么 GC 会毫不留情地把这个变量回收掉。也就是说，<code>WeakReference</code> 没有能力能够让这个变量可以在内存中再飞一会。</p>
+<p>Android 开发者应该都了解 <code>WeakReference</code> 的用法，一个比较典型的应用场景是 <code>Handler</code> ，为了避免 Memory Leak，我们会定义一个内部静态类，然后以 <code>WeakReference</code> 的形式引用 <code>Activity</code>，这样一来，队列中的 <code>Message</code> （可能会排队很长时间）就不会干扰到 GC 回收 <code>Activity</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MSG_ID = <span class="number">0x00</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSafeHandler</span><span class="params">()</span> </span>&#123;</div><div class="line">        SafeHandler handler = <span class="keyword">new</span> SafeHandler(<span class="keyword">this</span>);</div><div class="line">        handler.sendEmptyMessage(MSG_ID);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeHandler</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> WeakReference&lt;Activity&gt; mActivityRef;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SafeHandler</span><span class="params">(Activity activity)</span> </span>&#123;</div><div class="line">            mActivityRef = <span class="keyword">new</span> WeakReference&lt;&gt;(activity);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">            <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">                <span class="keyword">case</span> MSG_ID:</div><div class="line">                    Activity activity = mActivityRef.get();</div><div class="line">                    <span class="keyword">if</span> (activity != <span class="keyword">null</span>) &#123;</div><div class="line">                        activity.finish();</div><div class="line">                    &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="SoftReference"><a href="#SoftReference" class="headerlink" title="SoftReference"></a>SoftReference</h2><p>从 <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的官方定义</a> 来看，只有当内存告急（即将 OOM）时，才会对只剩下 Soft Reference 的变量进行回收，因此 SoftReference 比较适合用来做 Cache：</p>
+<blockquote>
+<p>Soft references are most often used to implement memory-sensitive caches.</p>
+</blockquote>
+<p>但是 <a href="https://developer.android.com/reference/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的 Android 版本</a> 对此<strong>持不同意见</strong>：</p>
+<blockquote>
+<p>In practice, soft references are inefficient for caching.</p>
+</blockquote>
+<p>因为 SoftReference 无法提供足够的信息可以让 runtime 很轻松地决定 clear 它还是 keep 它。举个例子，如果有 10 个 SoftReference 变量，并且他们所引用的变量都没有了 Strong Reference，那么 runtime 就懵逼了，因为它不知道该 clear 哪几个或者 keep 哪几个。更要命的是，runtime 不知道应该是 clear 掉 SoftReference 还是增大 Heap。</p>
+<p>所以 Android 放弃了 <code>SoftReference</code>，推荐使用 <code>android.util.LruCache</code> 做 Cache 管理，至少 <code>LruCache</code> 可以根据变量的<strong>使用频次</strong>来决定是否应该 clear 掉它，这样就比单纯使用 <code>SoftReference</code> 多了一个决策条件 - 使用频次。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-05-16T02:08:45.000Z"><a href="/2016/05/16/basic-car-knowledge/">2016-05-16</a></time>
       
       
@@ -248,72 +300,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-01-28T03:24:30.000Z"><a href="/2016/01/28/unit-test-on-android/">2016-01-28</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/28/unit-test-on-android/">Android 单元测试</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Android Studio 和 Android Gradle Plugin 可以让我们脱离 <code>android.jar</code> 直接在 development machine 上执行单元测试。</p>
-<blockquote>
-<p>Unit tests run on a local JVM on your development machine</p>
-</blockquote>
-<p>Gradle 插件会编译 <code>src/test/java</code> 的代码，运行时会用到一个修改过的 <code>android.jar</code>（去掉了所有的 <code>final</code> 修饰符），这样就可以利用多态引入 <strong>mocking libraries</strong>。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">  testCompile <span class="string">'junit:junit:4.12'</span></div><div class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew test --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
-<p>等价于</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
-<p>其中 <code>--continue</code> 表示即使某个 case 失败了，也会继续执行剩下的 case。</p>
-<h2 id="Flavors-amp-Build-type"><a href="#Flavors-amp-Build-type" class="headerlink" title="Flavors &amp; Build type"></a>Flavors &amp; Build type</h2><p>遵守规范</p>
-<ul>
-<li>src/main/java/Foo.java -&gt; src/test/java/FooTest.java</li>
-<li>src/debug/java/Foo.java -&gt; src/testDebug/java/FooTest.java</li>
-<li>src/myFlavor/java/Foo.java -&gt; src/testMyFlavor/java/FooTest.java</li>
-</ul>
-<h2 id="“Method-…-not-mocked-”"><a href="#“Method-…-not-mocked-”" class="headerlink" title="“Method … not mocked.”"></a>“Method … not mocked.”</h2><p>今天遇到的就是这个问题：</p>
-<pre>
-java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
-</pre>
-
-<p>加了 mock 依赖后还是搞不定：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">testCompile <span class="string">"org.mockito:mockito-core:1.9.5</span></div></pre></td></tr></table></figure>
-<p>修改配置，让 mock 方法返回默认值还是不行：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  testOptions &#123; </div><div class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></div><div class="line">  &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>结果却是：</p>
-<blockquote>
-<p>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</p>
-</blockquote>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li><code>android.jar</code> 是被 mock 过的，所以有些 Android API 返回值可能会不是预期值。</li>
-<li>JUnit 本身是针对 java 代码的单测，所以尽量不要用于使用了 Android API 的方法。</li>
-<li>Android Gradle 插件提供的 mocked android.jar 跟我刚开始工作时做过的测试框架原理类似。</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -349,6 +335,10 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
   <ul class="entry">
     
       <li>
+        <a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a>
+      </li>
+    
+      <li>
         <a href="/2016/08/14/身心脱落/">身心脱落</a>
       </li>
     
@@ -362,10 +352,6 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
     
       <li>
         <a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a>
-      </li>
-    
-      <li>
-        <a href="/2016/07/17/一切唯心造/">一切唯心造</a>
       </li>
     
   </ul>

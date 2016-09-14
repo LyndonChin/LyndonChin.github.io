@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>梁飞</title>
+  <title>写 Gradle 插件的一点经验 | 梁飞</title>
   <meta name="author" content="liangfei">
   
   <meta name="description" content="梁飞的个人博客">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="写 Gradle 插件的一点经验"/>
   <meta property="og:site_name" content="梁飞"/>
 
   
@@ -48,8 +48,7 @@
 <div class="clearfix"></div>
 </header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-  <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -59,7 +58,7 @@
       
       
   
-    <h1 class="title"><a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a></h1>
+    <h1 class="title">写 Gradle 插件的一点经验</h1>
   
 
     </header>
@@ -120,43 +119,11 @@
       
         
         
-      
-      <div class="clearfix"></div>
-    </footer>
+  
+  <div class="tags">
+    <a href="/tags/Android/">Android</a>
   </div>
-</article>
 
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-08-14T13:19:27.000Z"><a href="/2016/08/14/身心脱落/">2016-08-14</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/08/14/身心脱落/">身心脱落</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <blockquote>
-<p>心と体を覆っているものを削ぎ落とそう</p>
-</blockquote>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/08/14/身心脱落/#more" class="more-link">更多...</a>
-          </div>
-        
         
       
       <div class="clearfix"></div>
@@ -165,210 +132,17 @@
 </article>
 
 
+<section id="comment">
+  <h1 class="title">留言</h1>
 
-
-  <article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-28T14:40:00.000Z"><a href="/2016/07/28/work-summary-after-half-year-leaving/">2016-07-28</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/28/work-summary-after-half-year-leaving/">半年总结</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>今年 1.11 入职有赞，到现在差不多 7 个多月。</p>
-<h2 id="一点微小的工作"><a href="#一点微小的工作" class="headerlink" title="一点微小的工作"></a>一点微小的工作</h2><hr>
-<h3 id="统一-Maven-仓库"><a href="#统一-Maven-仓库" class="headerlink" title="统一 Maven 仓库"></a>统一 Maven 仓库</h3><p>旧的二方包部署方式非常不专业，统一打包脚本之后，使协作变得高效。</p>
-<ul>
-<li>所有二方包全部部署到公司内部 Maven 仓库，删掉所有跟随源码的私有仓库，节约 git 服务器空间。</li>
-<li>把源码、注释、文档全部打进二方包，方便接入方查看源码。</li>
-<li>坚持代码为中心，文档（README、WIKI）跟着代码走。</li>
-</ul>
-<blockquote>
-<p>这是我在有赞做的第一件事</p>
-</blockquote>
-<hr>
-<h3 id="统一-WebView-框架"><a href="#统一-WebView-框架" class="headerlink" title="统一 WebView 框架"></a>统一 WebView 框架</h3><p>重构旧的 WebView 框架，重构之后的优势：</p>
-<ol>
-<li>只有 4.2 以下版本使用注入 js 的方式实现 hybrid api，&gt;= 4.2 的版本使用 <code>@javascriptinterface</code>，大大降低了旧方式注入失败的概率。</li>
-<li>每个 hybrid api 相互独立，独自定义 Model 类。（旧方式是共享一个 Model，导致 Model 无比臃肿）。</li>
-<li>注入、回调的接口更加合理。</li>
-<li>同时支持新旧协议。</li>
-<li>接入 Web Cache。</li>
-</ol>
-<hr>
-<h3 id="引入-RxJava-Retrofit"><a href="#引入-RxJava-Retrofit" class="headerlink" title="引入 RxJava + Retrofit"></a>引入 RxJava + Retrofit</h3><p>替换旧的网络框架，在<strong>有赞商家版</strong>中接入 Retrofit &amp; RxJava。</p>
-<ul>
-<li>输出一篇 <a href="http://www.liangfei.me/2016/07/06/my-practice-with-retrofit-and-rxjava/" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a>。</li>
-<li>读完了 Retrofit 源码，输出一篇 <a href="http://www.liangfei.me/2016/07/10/diagram-retrofit-service-method/" target="_blank" rel="external">图解 Retrofit 之 ServiceMethod</a>。</li>
-</ul>
-<hr>
-<h3 id="排查-Memory-Leaks"><a href="#排查-Memory-Leaks" class="headerlink" title="排查 Memory Leaks"></a>排查 Memory Leaks</h3><ul>
-<li>接入 <code>LeakCanary</code>，居然有 static 的 view 变量。ありえない！</li>
-<li>读完了源码 - <a href="https://github.com/LyndonChin/wo/tree/master/leakcanary" target="_blank" rel="external">LeakCanary 原理分析</a>。</li>
-</ul>
-<hr>
-<h3 id="开发数据图表库"><a href="#开发数据图表库" class="headerlink" title="开发数据图表库"></a>开发数据图表库</h3><ul>
-<li>基于 <a href="https://github.com/PhilJay/MPAndroidChart" target="_blank" rel="external">MPAndroidChart</a> 二次开发，加了一些特殊交互。</li>
-<li>花了三周时间彻底搞懂了源码 - <a href="https://github.com/LyndonChin/wo/tree/master/mpandroicharts" target="_blank" rel="external">MPAndroidCharts 源码解析</a>。</li>
-</ul>
-<blockquote>
-<p>MPAndroidCharts 的代码质量跟 star 数完全不匹配</p>
-</blockquote>
-<hr>
-<h3 id="使用-product-flavor-适配-pos-机"><a href="#使用-product-flavor-适配-pos-机" class="headerlink" title="使用 product flavor 适配 pos 机"></a>使用 product flavor 适配 pos 机</h3><ul>
-<li>POS 机特有代码互不干扰。</li>
-<li>减小包大小。</li>
-</ul>
-<blockquote>
-<p>只用了一个晚上</p>
-</blockquote>
-<hr>
-<h3 id="读了很多内部源码"><a href="#读了很多内部源码" class="headerlink" title="读了很多内部源码"></a>读了很多内部源码</h3><ul>
-<li>商家版 APP 源码</li>
-<li>基于 okhttp 的网络库</li>
-<li>23 版本后的权限适配库</li>
-<li>基于 AndFix 的热修复库</li>
-<li>一些 UI 库</li>
-</ul>
-<hr>
-<h3 id="做了一些技术分享"><a href="#做了一些技术分享" class="headerlink" title="做了一些技术分享"></a>做了一些技术分享</h3><ol>
-<li>RxJava 入门</li>
-<li>GOOGLE/IO 2016</li>
-<li>30分钟精通 Retrofit</li>
-</ol>
-<hr>
-<p>生活变得更加有序，心态要平和。</p>
-<blockquote>
-<p>性格を優しくしないと！</p>
-</blockquote>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
-</article>
-
-
-
-
-  <article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-21T06:45:32.000Z"><a href="/2016/07/21/松樹千年翠/">2016-07-21</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/21/松樹千年翠/">松樹千年翠</a></h1>
-  
+</section>
 
-    </header>
-    <div class="entry">
-      
-        <blockquote>
-<p>変わらぬもの価値を見失わないで</p>
-</blockquote>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/07/21/松樹千年翠/#more" class="more-link">更多...</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-20T13:33:33.000Z"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">2016-07-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>今天又遇到一个比较难搞的问题，记一下流水账。</p>
-<p>APP 中引用了一个二方包，编译成功，结果运行时报错 - <code>NoClassDefFoundError</code>。</p>
-<h2 id="try-1-multiDexKeepProguard"><a href="#try-1-multiDexKeepProguard" class="headerlink" title="try #1 - multiDexKeepProguard"></a>try #1 - multiDexKeepProguard</h2><p>首先确认是不是由于类没有被放到 main dex 中导致了这个问题。打开文件 <code>build/intermediates/multi-dex/debug/maindexlist.txt</code>，查找类名，发现文件中包含了我们要找的类。</p>
-<p>不放心，说不定是 Multidex 的bug，手动把这个“丢失”的类放进 main dex。</p>
-<p><em>build.gralde</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  defaultConfig &#123;</div><div class="line">    multiDexEnabled = <span class="literal">true</span></div><div class="line">    multiDexKeepProguard file(<span class="string">'multidex.pro'</span>)</div><div class="line">  &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><em>multidex.pro</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-keep public the-full-name-of-the-missing-class &#123; *; &#125;</div></pre></td></tr></table></figure></p>
-<p>编译运行，问题依然，并没有什么卵用。</p>
-<p>既然不是 main dex 问题，那我们先来确认一下问题是否由 MultiDex 引起。</p>
-<h2 id="try-2-关掉-Multidex"><a href="#try-2-关掉-Multidex" class="headerlink" title="try #2 - 关掉 Multidex"></a>try #2 - 关掉 Multidex</h2><p>关掉 multidex 然后打一个 release 包。</p>
-<blockquote>
-<p>由于方法数受限，关掉 Multidex 之后打不出 Debug 包，但是混淆过后方法数减少很多，可以顺利打出 Release 包。</p>
-</blockquote>
-<p><em>build.gradle</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">defaultConfig &#123;</div><div class="line">  multiDexEnabled <span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>编译运行，依然出错，可以确定不是 Multidex 的锅。</p>
-<h2 id="try-3-传递依赖"><a href="#try-3-传递依赖" class="headerlink" title="try #3 - 传递依赖"></a>try #3 - 传递依赖</h2><p>把依赖由只依赖 aar 改为传递依赖。</p>
-<p><del><code>compile &#39;me.liangfei.android:weird-1.0.0@aar&#39;</code></del><br><code>compile &#39;me.liangfei.android:weird-1.0.0&#39;</code></p>
-<p>结果却发现 <code>weird.aar</code> 引用了一个<strong>服务端已经删除但是有本地缓存</strong>的包，也就是说 <code>weird.aar</code> 引用了一个并不存在的包，所以改为传递依赖之后，gradle 无法获取这个并不存在的包。</p>
-<p>由此推断出，<code>weird.aar</code> 肯定不是一个“正确”的包，估计上面的问题也是由此引发（待确认）。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><ul>
-<li>本地打包不可信</li>
-<li>必须要通过 CI 发包</li>
-</ul>
-<h3 id="ClassNotFoundException-vs-NoClassDefFoundError"><a href="#ClassNotFoundException-vs-NoClassDefFoundError" class="headerlink" title="ClassNotFoundException vs NoClassDefFoundError"></a>ClassNotFoundException vs NoClassDefFoundError</h3><ul>
-<li><code>ClassNotFoundException</code> 一般是 <code>ClassLoader</code> 无法找到类导致的，例如 <code>Class.forName(&quot;your-class&quot;)</code>。</li>
-<li><code>NoClassDefFoundError</code> 一般是属于 <strong>Link Error</strong>，主要是由于打包之后缺失文件导致的，例如 <code>new</code> 一个对象。</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-<nav id="pagination">
-  
-  
-    <a href="/page/2/" class="alignright next">下一页</a>
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
@@ -437,7 +211,7 @@ var disqus_shortname = 'liangfeizc';
   var dsq = document.createElement('script');
   dsq.type = 'text/javascript';
   dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
   (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
 }());
 </script>

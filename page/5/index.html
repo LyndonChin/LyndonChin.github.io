@@ -55,6 +55,63 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-01-25T02:57:15.000Z"><a href="/2016/01/25/2015-summary/">2016-01-25</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/25/2015-summary/">2015 年总结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <blockquote>
+<p>2015 关键词：结婚、开源、日本游、换工作。</p>
+</blockquote>
+<p>回首这一年，首先要感恩阿里，不但让我开阔了眼界，而且意外地进入了开源圈子，拓宽了人脉。</p>
+<p>但是我已经不满足仅仅做一个码农了，外面的世界那么精彩，人生怎么可能只有埋头苦干、升P加薪、贷款买房。失去想象力的生活是无趣的，所以我选择拥抱变化，离开阿里，去做更好玩的事，认识更好玩的人。</p>
+<h2 id="开源"><a href="#开源" class="headerlink" title="开源"></a>开源</h2><p>把格局放大后才发现能够影响到自己的人不只是身边那一拨，还有散落在世界各地素未谋面的一群人。<strong>感谢开源</strong>，就像日语那样，让我又发现了一个新的世界。 </p>
+<p>以前只是那个坐在看台最远处，只能静静看他们演出的观众，现在一只脚已经踏上了舞台，随时准备一场属于自己的浮夸。</p>
+<ul>
+<li>无心插柳柳成荫，一个只是为了练手的项目，居然收获了 1K+ 的 star，诚惶诚恐。</li>
+<li>一篇用心写的 Data Binding 教程收获了快 1K 的 star。</li>
+<li>感谢贵人相助，成功组织了两次线下开发者聚餐，谢谢小伙伴们捧场，何德何能。</li>
+</ul>
+<h2 id="工作"><a href="#工作" class="headerlink" title="工作"></a>工作</h2><p>工作虽然很苦逼，但是技术长进感觉超过了前三年之和，再一次体会到量变引起质变的感觉。</p>
+<ul>
+<li>从第0行代码开始了<strong>天猫安卓HD</strong>版本的开发，感受到了沟通的成本。</li>
+<li>入门 iOS 开发，开发了<strong>天猫HD</strong>的<strong>足迹</strong>页面。</li>
+<li>独立开发了手机天猫的<strong>全局导航</strong>功能，体验到了人与人认知的差异，有的人做事真得太狠。</li>
+<li>成功组织了团队 outing 日本游，高富帅真得很好相处，屌丝有一种丢不了的气质。</li>
+</ul>
+<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><ul>
+<li>结婚领证了 ：）</li>
+<li>赶在离职之前来了一个东京深度蜜月之旅。</li>
+<li>考出了驾照</li>
+<li>一共跑了 173 公里，可惜没能坚持住，最长跑了 17 公里。</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-11-08T16:00:00.000Z"><a href="/2015/11/09/how-to-use-synchronized-in-static-method/">2015-11-09</a></time>
       
       
@@ -361,71 +418,6 @@ feature|  |  |
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-06-23T08:47:40.000Z"><a href="/2015/06/23/dpi-dp-sp/">2015-06-23</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/06/23/dpi-dp-sp/">详解 Android 开发中常用的 DPI / DP / SP</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>Android的碎片化已经被喷了好多年，随着国内手机厂商的崛起，碎片化也越来越严重，根据<a href="http://thenextweb.com/mobile/2014/08/21/18796-different-android-devices-according-opensignals-latest-fragmentation-report/" target="_blank" rel="external">OpenSignal的最新调查</a>，2014年市面上有18796种不同的Android设备，作为开发者，一个无法回避的难题就是需要适配各种各样奇奇怪怪的机型。</p>
-<p>设备机型不同必然也会导致屏幕大小和分辨率（Resolution）的不同，但是无论分辨率有多大，屏幕有多大，我们手指触控范围的大小不会发生变化，所以最优的适配方式应该是<strong>指定大小的控件在所有的设备上的显示都一样</strong>。</p>
-<p>Android的官方文档对此也有明确的说明</p>
-<blockquote>
-<p>When adding support for multiple screens, applications <em>do not work directly with resolution</em>; applications should be concerned <em>only with screen size and density</em>, as specified by the generalized size and density groups.</p>
-</blockquote>
-<p>所以，适配应该与分辨率无关，只与屏幕大小和屏幕密度相关，首先来看一下什么是屏幕密度 － DPI。</p>
-<h3 id="DPI"><a href="#DPI" class="headerlink" title="DPI"></a>DPI</h3><p>DPI的全称是 Dots Per Inch，Inch是一个物理单位（无论在任何设备上，其大小都是固定的），所以DPI就指在一个Inch的物理长度内有多少个Dot，160DPI的屏幕就表示一个Inch包含160个Dot，320DPI的屏幕表示一个Inch有320个Dot，所以说Dot的大小是不固定的。</p>
-<p>Android设备用DPI来表示屏幕密度(Density)，屏幕密度大就表示一个Inch包含的Dot比较多。那PPI是什么呢？<br>我们会经常看到iPad、iPhone是用PPI来表示屏幕密度，小米Pad也是用PPI来表示。<br><img src="http://img4.tbcdn.cn/L1/461/1/ffa8ab85d4cc4d9e8b9cb379143bb83bcaf40a28" alt="PPI in mi pad"></p>
-<p>其实对Android而言，DPI等价于PPI(Pixels-Per-Inch)，DPI最早是用于印刷行业，跟PPI还是有本质不同的，Android应该是误用了DPI这个概念。具体可以参考<a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference/" target="_blank" rel="external">PPI vs. DPI: what’s the difference?</a>。</p>
-<p>其实我们只要知道在Android设备中，DPI 等价于 PPI 就可以了。<br><img src="http://img2.tbcdn.cn/L1/461/1/73e824419477f8c604791f6318f8a4701c91d165" alt="PPI 定义"></p>
-<p>通常我们说一个设备是多少寸时，指的是屏幕对角线(Diagonal)是多少inch，所以用对角线的像素值（px）除以对角线长度（inch），就可以计算出PPI。<br><img src="http://img1.tbcdn.cn/L1/461/1/af31a9366de3232f78a9e48904f5b0463875ec25" alt="PPI 计算公式"></p>
-<p>为了简化适配工作，Android根据屏幕大小（Inch）和屏幕密度（DPI）对设备做了如下划分：<br><img src="http://img1.tbcdn.cn/L1/461/1/5a7fe24f76a7f23cbdea5efa088b1188d73597f5" alt="PPI 对应屏幕尺寸"></p>
-<h3 id="DP"><a href="#DP" class="headerlink" title="DP"></a>DP</h3><p>既然有那么多不同分辨率、不同大小的屏幕，使用PX必然会导致适配困难，为了进一步简化适配工作，Android为我们提供了一个虚拟的像素单位 － DP 或者 DIP (Density-Independent pixel)，当然也可以理解为 Device-Independent Pixel。为什么说是<strong>虚拟</strong>呢，因为它的大小不是一个物理（Phisical）值，而是由操作系统根据屏幕大小和密度动态渲染出来的。</p>
-<p>PX跟DP之间的换算关系很简单 </p>
-<blockquote>
-<p> px = dp * (dpi / 160)</p>
-</blockquote>
-<p>举例来说，小米Pad的屏幕密度为326dpi，如果需要显示的图片大小为20dp，那么就需要提供一个 <code>20 <em> (326 / 160) = 40px</em></code>的图片才能达到最佳显示效果，如果还要适配一个163dpi的屏幕，那么还需要再提供一个<code>20  (163 / 160) = 20px</code>的图片。</p>
-<p>那么一个20dp的图片，在不同设备上的显示效果如何呢？我们以iPad为例来说明。<br><img src="http://img4.tbcdn.cn/L1/461/1/2c18879aebe47f6faa42c3f3d2e21ccc7e77d66d" alt="iPad 屏幕参数"></p>
-<p>iPad2 和 iPad Retina的物理尺寸都是 9.7 inch，不同的是分辨率和PPI，一个是1024x768 / 132ppi，另一个是2048x1536 / 264ppi，</p>
-<p>分别计算一下20dp对应多少inch</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ipad2 = <span class="number">20</span> * (<span class="number">132</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">1024</span> * <span class="number">1024</span> + <span class="number">768</span> * <span class="number">768</span>))) </div><div class="line">ipad_retina = <span class="number">20</span> * (<span class="number">264</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">2048</span> * <span class="number">2048</span> + <span class="number">1536</span> * <span class="number">1536</span>)))</div></pre></td></tr></table></figure>
-<p>计算结果都是0.1018359375，这就是dp的功能，它能保证在所有的设备上显示的大小都一样。</p>
-<p>如果只提供了一个大小为20px的图片，为了保证图片在所有设备上的物理大小都一样，高DPI的设备上系统会拉伸图片，低DPI的设备上图片会被缩小，这样既会影响UE也会影响APP的执行效率。所以我们需要为不同屏幕密度的设备提供不同的图片，他们之间的对应关系如下。<br><img src="http://img1.tbcdn.cn/L1/461/1/7d691bde9a6f414a5f93082b0312c1589289494d" alt="Android 设备屏幕分级"></p>
-<p>我们在用Sketch作图的时候，如果1x图片对应的是屏幕是MDPI (160dpi)，那么1.5x，2x就分别对应HDPI，XHDPI。<br><img src="http://img4.tbcdn.cn/L1/461/1/4c46ea76d3cf05a87bdf101ac931a1d00ff730ef" alt="screens_densities"></p>
-<h3 id="SP"><a href="#SP" class="headerlink" title="SP"></a>SP</h3><p>SP 全称是 Scale-independent Pixels，用于字体大小，其概念与DP是一致的，也是为了保持设备无关。因为Android用户可以根据喜好来调整字体大小，所以要使用sp来表示字体大小。<br><img src="http://img4.tbcdn.cn/L1/461/1/ed1118ab7e089febd541bd8f1ed454e009edec24" alt="changing_android_font_size"></p>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ol>
-<li><a href="http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts" target="_blank" rel="external">http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts</a></li>
-<li><a href="http://developer.android.com/training/multiscreen/screendensities.html" target="_blank" rel="external">http://developer.android.com/training/multiscreen/screendensities.html</a></li>
-<li><a href="http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android" target="_blank" rel="external">http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android</a></li>
-<li><a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference" target="_blank" rel="external">http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference</a></li>
-</ol>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -461,6 +453,10 @@ feature|  |  |
   <ul class="entry">
     
       <li>
+        <a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a>
+      </li>
+    
+      <li>
         <a href="/2016/08/14/身心脱落/">身心脱落</a>
       </li>
     
@@ -474,10 +470,6 @@ feature|  |  |
     
       <li>
         <a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a>
-      </li>
-    
-      <li>
-        <a href="/2016/07/17/一切唯心造/">一切唯心造</a>
       </li>
     
   </ul>
