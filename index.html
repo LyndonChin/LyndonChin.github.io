@@ -55,6 +55,72 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2017-02-15T14:48:03.000Z"><a href="/2017/02/15/2016-summary/">2017-02-15</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/02/15/2016-summary/">2016 年终总结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>距离<a href="http://www.liangfei.me/2016/07/28/work-summary-after-half-year-leaving/" target="_blank" rel="external">上一次写技术总结</a>半年又过去了，光陰は矢の如し。</p>
+<p>生活上又升了一级，角色+1，亲爱的悠哈，我是你爸爸，希望你健康快乐，以后代码随便写写就好了，不要当真。</p>
+<p>摇到浙A，又买了一辆车。</p>
+<p>带同事去了趟日本，买了很多宝宝用品。</p>
+<p><a href="https://book.douban.com/people/horikitamaki/" target="_blank" rel="external">读了很多书</a>。</p>
+<p>日语退化了很多:( 要注意了</p>
+<hr>
+<p>工作上较之上半年最大的改变就是开始带团队，大家一起去完成一个目标，不再孤立无援，刚开始有点压力，慢慢找到一点感觉，现在尽力做到最好–你好、我好、大家好，用不着矫情。</p>
+<h2 id="模块化"><a href="#模块化" class="headerlink" title="模块化"></a>模块化</h2><ul>
+<li>业务解耦基本完成，业务边界已划分清楚，公用模块还需进一步优化</li>
+<li>Android 端模仿 Retrofit 做了一个 Module RPC 框架，iOS 采用阿里开源的 BeeHive 框架</li>
+<li>iOS 和 Android 两端跳转协议还未完全统一</li>
+<li>沉淀出一套通用 UI 组件库 - ZUI</li>
+</ul>
+<h2 id="配置中心"><a href="#配置中心" class="headerlink" title="配置中心"></a>配置中心</h2><ul>
+<li>移动端SDK、前端配置页面、后端数据存储全部由移动同学开发完成，全栈第一步达成</li>
+<li>可动态下发常量、开关等配置项</li>
+<li>支持增量更新</li>
+</ul>
+<h2 id="基础SDK"><a href="#基础SDK" class="headerlink" title="基础SDK"></a>基础SDK</h2><ul>
+<li><strong>网络库</strong>仍然基于 Retrofit，做了较多优化，比之前优雅了很多，准备对外输出方案</li>
+<li><strong>PUSH</strong> 除了个推又新加了华为、小米，PUSH 服务端同学做了 PNS 升级</li>
+<li>接入 Tinker</li>
+<li>IconFont</li>
+</ul>
+<h2 id="容器"><a href="#容器" class="headerlink" title="容器"></a>容器</h2><ul>
+<li>WebView 正在优化（首次加载、二次加载）</li>
+<li>RN 上了一个页面，有一套完整的热部署方案</li>
+</ul>
+<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><ul>
+<li>正在做</li>
+</ul>
+<p>移动开发的技术栈算是补全了，接下来要多从产品和后端角度来看移动开发。</p>
+<p>还有就是持续对外输出，保持对新技术的敏感度。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-09-14T09:40:06.000Z"><a href="/2016/09/14/how-to-write-custom-gradle-plugin/">2016-09-14</a></time>
       
       
@@ -303,64 +369,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-20T13:33:33.000Z"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">2016-07-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>今天又遇到一个比较难搞的问题，记一下流水账。</p>
-<p>APP 中引用了一个二方包，编译成功，结果运行时报错 - <code>NoClassDefFoundError</code>。</p>
-<h2 id="try-1-multiDexKeepProguard"><a href="#try-1-multiDexKeepProguard" class="headerlink" title="try #1 - multiDexKeepProguard"></a>try #1 - multiDexKeepProguard</h2><p>首先确认是不是由于类没有被放到 main dex 中导致了这个问题。打开文件 <code>build/intermediates/multi-dex/debug/maindexlist.txt</code>，查找类名，发现文件中包含了我们要找的类。</p>
-<p>不放心，说不定是 Multidex 的bug，手动把这个“丢失”的类放进 main dex。</p>
-<p><em>build.gralde</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  defaultConfig &#123;</div><div class="line">    multiDexEnabled = <span class="literal">true</span></div><div class="line">    multiDexKeepProguard file(<span class="string">'multidex.pro'</span>)</div><div class="line">  &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><em>multidex.pro</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-keep public the-full-name-of-the-missing-class &#123; *; &#125;</div></pre></td></tr></table></figure></p>
-<p>编译运行，问题依然，并没有什么卵用。</p>
-<p>既然不是 main dex 问题，那我们先来确认一下问题是否由 MultiDex 引起。</p>
-<h2 id="try-2-关掉-Multidex"><a href="#try-2-关掉-Multidex" class="headerlink" title="try #2 - 关掉 Multidex"></a>try #2 - 关掉 Multidex</h2><p>关掉 multidex 然后打一个 release 包。</p>
-<blockquote>
-<p>由于方法数受限，关掉 Multidex 之后打不出 Debug 包，但是混淆过后方法数减少很多，可以顺利打出 Release 包。</p>
-</blockquote>
-<p><em>build.gradle</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">defaultConfig &#123;</div><div class="line">  multiDexEnabled <span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>编译运行，依然出错，可以确定不是 Multidex 的锅。</p>
-<h2 id="try-3-传递依赖"><a href="#try-3-传递依赖" class="headerlink" title="try #3 - 传递依赖"></a>try #3 - 传递依赖</h2><p>把依赖由只依赖 aar 改为传递依赖。</p>
-<p><del><code>compile &#39;me.liangfei.android:weird-1.0.0@aar&#39;</code></del><br><code>compile &#39;me.liangfei.android:weird-1.0.0&#39;</code></p>
-<p>结果却发现 <code>weird.aar</code> 引用了一个<strong>服务端已经删除但是有本地缓存</strong>的包，也就是说 <code>weird.aar</code> 引用了一个并不存在的包，所以改为传递依赖之后，gradle 无法获取这个并不存在的包。</p>
-<p>由此推断出，<code>weird.aar</code> 肯定不是一个“正确”的包，估计上面的问题也是由此引发（待确认）。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><ul>
-<li>本地打包不可信</li>
-<li>必须要通过 CI 发包</li>
-</ul>
-<h3 id="ClassNotFoundException-vs-NoClassDefFoundError"><a href="#ClassNotFoundException-vs-NoClassDefFoundError" class="headerlink" title="ClassNotFoundException vs NoClassDefFoundError"></a>ClassNotFoundException vs NoClassDefFoundError</h3><ul>
-<li><code>ClassNotFoundException</code> 一般是 <code>ClassLoader</code> 无法找到类导致的，例如 <code>Class.forName(&quot;your-class&quot;)</code>。</li>
-<li><code>NoClassDefFoundError</code> 一般是属于 <strong>Link Error</strong>，主要是由于打包之后缺失文件导致的，例如 <code>new</code> 一个对象。</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -383,7 +391,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 14px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 18px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 14px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人/" style="font-size: 10px;">个人</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 18px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -392,6 +400,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/15/2016-summary/">2016 年终总结</a>
+      </li>
     
       <li>
         <a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a>
@@ -409,10 +421,6 @@
         <a href="/2016/07/21/松樹千年翠/">松樹千年翠</a>
       </li>
     
-      <li>
-        <a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -421,7 +429,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2016 liangfei
+  &copy; 2017 liangfei
   
 </div>
 <div class="clearfix"></div></footer>

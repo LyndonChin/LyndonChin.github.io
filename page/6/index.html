@@ -55,6 +55,68 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2015-08-02T16:00:00.000Z"><a href="/2015/08/03/summary-for-ios-development-of-tmall-ipad/">2015-08-03</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/08/03/summary-for-ios-development-of-tmall-ipad/">iOS 开发总结</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>一个月之前认为不可能做到的事情，今天做到了，很高兴，深夜来篇总结，梳理一下。<br>作为一名 iOS 新手，过去只在 Android 开发之余看过一些教程，再加上对 OC 的强烈排斥，对这个需求一拖再拖，终于搞定了，长嘘一口气。</p>
+<h2 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h2><p><img src="https://github.com/LyndonChin/UICollectionViewWithMenu/raw/master/art/footprint.gif" alt=""></p>
+<p>其中的难点在于点击一个 Cell 后，会在这个 cell 与下一行之间插入一个菜单。</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>在 UICollectionView 中插入一个 Cell 作为 Menu，宽度设为 UICollectionView 的宽度，高度为0。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |<br>—————-MENU—————–<br>|     |     |<br>|     |     |</p>
+<h2 id="-1"><a href="#-1" class="headerlink" title="|     |     |"></a>|     |     |</h2><p></p>
+<p>当点击第一行的某个 Cell 之后，让高度大于0，Menu 显示。</p>
+<h2 id="-2"><a href="#-2" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
+<h2 id="-3"><a href="#-3" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>|                                   |<br>|              MENU                 |</p>
+<h2 id="-4"><a href="#-4" class="headerlink" title="|                                   |"></a>|                                   |</h2><p>|     |     |<br>|     |     |</p>
+<h2 id="-5"><a href="#-5" class="headerlink" title="|     |     |"></a>|     |     |</h2><p></p>
+<p>如果有的行 Cell 数小于6，可以填充一些 Dummy Cell。</p>
+<h2 id="-6"><a href="#-6" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
+<h2 id="-7"><a href="#-7" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>|     |     | –  | –  | –  | –  |<br>|     |     |  D  |  U  |  M  |  Y  |<br>|     |     | –  | –  | –  | –  |<br>—————-MENU—————–<br></p>
+<p>当点击第二行的某个 Cell 之后，显示隐藏在第三行的 Menu Cell。</p>
+<h2 id="-8"><a href="#-8" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
+<h2 id="-9"><a href="#-9" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>|     |     | –  | –  | –  | –  |<br>|     |     |  D  |  U  |  M  |  Y  |</p>
+<h2 id="–-–-–-–"><a href="#–-–-–-–" class="headerlink" title="|     |     | –  | –  | –  | –  |"></a>|     |     | –  | –  | –  | –  |</h2><p>|                                   |<br>|                MENU               |</p>
+<h2 id="-10"><a href="#-10" class="headerlink" title="|                                   |"></a>|                                   |</h2><p></p>
+<p>按照以上思路，可以实现基本效果，中间遇到一个问题还是挺有意思的。</p>
+<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><p>刚开始的时候，只是把 Menu 的宽度和高度都设置为0，效果如下：</p>
+<h2 id="-11"><a href="#-11" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
+<h2 id="-12"><a href="#-12" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>M     |     |<br>E     |     |<br>N     |     |<br>U————<br></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];</div><div class="line">layout.minimumInteritemSpacing = 4.0f;</div><div class="line">layout.minimumLineSpacing = 2.0f;</div><div class="line">[layout setSectionInset:UIEdgeInsetsMake(0, 4, 0, 4)];</div></pre></td></tr></table></figure>
+<p>结果当 Menu 不显示的时候，第二行只能显示5个 Cell，剩下的一个被挤到了第三行。</p>
+<blockquote>
+<p>这是因为虽然 Menu 的宽度为0，但 flow layout 设置的 Margin 对它依然有效，从而导致第二行放不下6个 Cell。</p>
+</blockquote>
+<p>iOS 的 UI 元素居然没有类似 android:visibility=”gone” 的属性。。。。:(</p>
+<p>源码请戳 <a href="https://github.com/LyndonChin/UICollectionViewWithMenu" target="_blank" rel="external">UICollectionViewWithMenu</a></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-06-23T08:47:40.000Z"><a href="/2015/06/23/dpi-dp-sp/">2015-06-23</a></time>
       
       
@@ -419,82 +481,6 @@ Dart’s optional types are static type annotations that act as documentation, c
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-10-18T16:00:00.000Z"><a href="/2014/10/19/byte-code-on-try-catch/">2014-10-19</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/10/19/byte-code-on-try-catch/">用 bytecode 来看 try-catch-finally 和 return</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>最近一直在看Java虚拟机规范，发现直接分析bytecode更能加深对Java语言的理解。<br>之前看过一篇关于 <code>return</code> 和 <code>finally</code> 执行顺序的文章，仅在 Java 的语言层面做了分析，其实我倒觉得直接看 bytecode 可能来的更清晰一点。</p>
-<p>先看一个只有 <code>try-finally</code>，没有 <code>catch</code> 的例子。</p>
-<p><strong>try - finally</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExceptionTest</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryFinally</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      tryItOut();</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">      wrapItUp();</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line"></div><div class="line">  <span class="comment">// auxiliary methods</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryItOut</span><span class="params">()</span> </span>&#123; &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">wrapItUp</span><span class="params">()</span> </span>&#123;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>通过 <code>javap -c ExceptionTest</code> 来查看它的字节码。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public void tryFinally();</div><div class="line">  Code:</div><div class="line">     0: aload_0</div><div class="line">     1: invokevirtual #2  // Method tryItOut:()V</div><div class="line">     4: aload_0</div><div class="line">     5: invokevirtual #3  // Method wrapItUp:()V</div><div class="line">     8: goto          18</div><div class="line">    11: astore_1</div><div class="line">    12: aload_0</div><div class="line">    13: invokevirtual #3  // Method wrapItUp:()V</div><div class="line">    16: aload_1</div><div class="line">    17: athrow</div><div class="line">    18: return</div><div class="line">  Exception table:</div><div class="line">     from    to  target type</div><div class="line">         0     4    11   any</div></pre></td></tr></table></figure>
-<p>如果没有抛出异常，那么它的执行顺序为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">0: aload_0</div><div class="line">1: invokevirtual #2  // Method tryItOut:()V</div><div class="line">4: aload_0</div><div class="line">5: invokevirtual #3  // Method wrapItUp:()V</div><div class="line">18: return</div></pre></td></tr></table></figure>
-<p>如果抛出了异常，JVM 会在</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Exception table:</div><div class="line">   from    to  target type</div><div class="line">       0     4    11   any</div></pre></td></tr></table></figure>
-<p>中进行控制跳转。如果是位于0到4字节之间的命令抛出了任何类型（any type）的异常，会跳转到11字节处继续运行。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">11: astore_1</div><div class="line">12: aload_0</div><div class="line">13: invokevirtual #3</div><div class="line">16: aload_1</div><div class="line">17: athrow</div></pre></td></tr></table></figure>
-<p>astore_1会把抛出的异常对象保存到local variable数组的第二个元素。下面两行指令用来调用成员方法wrapItUp。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">12: aload_0</div><div class="line">13: invokevirtual #3</div></pre></td></tr></table></figure>
-<p>最后通过</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">16: aload_1</div><div class="line">17: athrow</div></pre></td></tr></table></figure>
-<p>重新抛出异常。</p>
-<p>通过以上分析可以得出结论：</p>
-<blockquote>
-<p>在try-finally中，try块中抛出的异常会首先保存在local variable中，然后执行finally块，执行完毕后重新抛出异常。</p>
-</blockquote>
-<p>如果我们把代码修改一下，在try块中直接return。</p>
-<p><strong>try - return - finally</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryFinally</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    tryItOut();</div><div class="line">    <span class="keyword">return</span>;</div><div class="line">  &#125; <span class="keyword">finally</span> &#123;</div><div class="line">    wrapItUp();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>”反汇编“一下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"> 0: aload_0</div><div class="line"> 1: invokevirtual #2 // Method tryItOut:()V</div><div class="line"> 4: aload_0</div><div class="line"> 5: invokevirtual #3 // Method wrapItUp:()V</div><div class="line"> 8: return</div><div class="line"> 9: astore_1</div><div class="line">10: aload_0</div><div class="line">11: invokevirtual #3 // Method wrapItUp:()V</div><div class="line">14: aload_1</div><div class="line">15: athrow</div></pre></td></tr></table></figure>
-<p>可以看出finally块的代码仍然被放到了return之前。</p>
-<blockquote>
-<p>如果try块中有return statement，一定是finally中的代码先执行，然后return。</p>
-</blockquote>
-<p>JVM规范是这么说的：</p>
-<blockquote>
-<p>Compilation of a try-finally statement is similar to that of try-catch. Pior to transferring control outside thetry statement, whether that transfer is normal or abrupt, because an exception has been thrown, thefinally clause must first be execute.<br>try - catch - finally</p>
-</blockquote>
-<p>给上面的代码加一个catch块</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryCatchFinally</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    tryItOut();</div><div class="line">  &#125; <span class="keyword">catch</span> (TestExc e) &#123;</div><div class="line">    handleExc(e);</div><div class="line">  &#125; <span class="keyword">finally</span> &#123;</div><div class="line">    wrapItUp();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>javap一下</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public void tryCatchFinally();</div><div class="line">  Code:</div><div class="line">     0: aload_0</div><div class="line">     1: invokevirtual #2</div><div class="line">     4: aload_0</div><div class="line">     5: invokevirtual #3</div><div class="line">     8: goto          31</div><div class="line">    11: astore_1</div><div class="line">    12: aload_0</div><div class="line">    13: aload_1</div><div class="line">    14: invokevirtual #5                  </div><div class="line">    17: aload_0</div><div class="line">    18: invokevirtual #3</div><div class="line">    21: goto          31</div><div class="line">    24: astore_2</div><div class="line">    25: aload_0</div><div class="line">    26: invokevirtual #3</div><div class="line">    29: aload_2</div><div class="line">    30: athrow</div><div class="line">    31: return</div><div class="line">Exception table:</div><div class="line">   from    to  target type</div><div class="line">       0     4    11   Class TestExc</div><div class="line">       0     4    24   any</div><div class="line">      11    17    24   any</div></pre></td></tr></table></figure>
-<p>通过Exception table可以看出：</p>
-<ul>
-<li>catch监听 0 ~ 4 字节类型为TextExc的异常。</li>
-<li>finally为 0 ~ 4 以及 11 ~ 17 字节任何类型的异常。</li>
-</ul>
-<p>也就说 catch block 本身也在 finally block 的管辖范围之内。如果catch block 中有 return statement，那么也一定是在 finally block 之后执行。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -519,7 +505,7 @@ Dart’s optional types are static type annotations that act as documentation, c
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 14px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 18px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 14px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人/" style="font-size: 10px;">个人</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 18px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -528,6 +514,10 @@ Dart’s optional types are static type annotations that act as documentation, c
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/15/2016-summary/">2016 年终总结</a>
+      </li>
     
       <li>
         <a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a>
@@ -545,10 +535,6 @@ Dart’s optional types are static type annotations that act as documentation, c
         <a href="/2016/07/21/松樹千年翠/">松樹千年翠</a>
       </li>
     
-      <li>
-        <a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -557,7 +543,7 @@ Dart’s optional types are static type annotations that act as documentation, c
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2016 liangfei
+  &copy; 2017 liangfei
   
 </div>
 <div class="clearfix"></div></footer>

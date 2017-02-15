@@ -55,6 +55,49 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-05-23T16:00:00.000Z"><a href="/2016/05/24/error-caused-by-a-third-party-package/">2016-05-24</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/24/error-caused-by-a-third-party-package/">引入三方包导致 Theme 失效</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>引入一个三方包之后导致 App 主题失效，定位了一个下午，做个记录。</p>
+<p><code>AndroidManifest.xml</code> 文件中 <code>application</code> 节点配置如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;application</div><div class="line">    android:allowBackup=<span class="string">"false"</span></div><div class="line">    android:icon=<span class="string">"@mipmap/app_icon"</span></div><div class="line">    android:label=<span class="string">"@string/app_name"</span></div><div class="line">    android:theme=<span class="string">"@style/AppTheme"</span></div><div class="line">    tools:replace=<span class="string">"android:allowBackup"</span>&gt;</div></pre></td></tr></table></figure>
+<p>刚开始觉得应该是 App 的 theme 被覆盖掉了，然后添加了一个 <strong>replace</strong>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tools:replace="android:allowBackup, android:theme"</div></pre></td></tr></table></figure>
+<p>结果主题依然失效，然后把三方包中在 AndroidManifest 中注册的 <code>Activity</code> 挪到 App 的 Manifest 中，还是不行。</p>
+<p>最后跳转 <code>@style/AppTheme</code> 时发现三方包的依赖包中也定义了一个同名的 Style，而且还是在 <strong>values-21</strong> 文件下，而 App 并没有定义 <strong>values-21</strong> 下的 Style，所以 APP 的主题就被三方包的 Style 给覆盖掉了，而 <code>android:replace=&#39;android:theme</code> 只有在属性冲突的时候起作用，我的 App 并没有提供 values-21 的 Style，因此没有冲突，无法 <code>replace</code>，于是悲剧了。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>App 的主题名字最好具有唯一性， 不要叫 <code>AppTheme</code>，容易同名。</li>
+<li>App 的主题要定义完整，比如 values / values-21</li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-05-18T16:00:00.000Z"><a href="/2016/05/19/why-android-hate-soft-reference/">2016-05-19</a></time>
       
       
@@ -260,46 +303,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-01-31T16:00:00.000Z"><a href="/2016/02/01/passion-drives/">2016-02-01</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/02/01/passion-drives/">技术需要真爱</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>毕业这几年，大学时代的很多知识早已过时，少数不过时的技术好像也没学好，毕业之后体会也不大。 工作之后学过的技术也更新迭代了很多次，写代码的人最不缺乏的就是学习能力。</p>
-<h2 id="日语"><a href="#日语" class="headerlink" title="日语"></a>日语</h2><p>先是学日语，毫无功利性，就是喜欢，羡慕操着一口流利外语的人，想成为那样的人，然后学成了。后来发现，语言这东西就得靠环境，很多明星大腕英语溜得不要不要的，林志玲的日语也肯定比我好，想登峰造极你得放得下，舍得花钱，去国外待个几年自然就会说了。<br>然而单纯会说并没什么卵用，还得与自身已有技能相结合。日本经济不景气，日元持续贬值，对日外包不赚钱，好像除了看看片，去日本玩玩也没什么用途，短时间内好像没有用武之地，まあ、写几个 <a href="https://github.com/HelloJapan" target="_blank" rel="external">APP</a> 锻炼一下产品思维吧，<strong>拼的无非就是谁点子多，谁会玩</strong>。<br>然后，尝试写点东西吧，玩玩自媒体，游记、翻译、日语学习，<strong>写多了自然会有心得</strong>。</p>
-<h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><p>兜兜转转这几年，靠 Android 开发能吃上饭了，但是距离真正的专家还差得好远，围观大牛聊天的唯一感触：城会玩，有真爱。<br>技术也是江湖，有的人浑然天成，毫不做作，接触之后感觉非常舒服，会玩也有想象力。<br>技术同时也是一门硬功，没有捷径，吹牛只能吹一时，打铁还需自身硬，不需要浮夸，用最自然的方式去 appeal 自己，不需要瞻前顾后，吸引力法则同样适用。</p>
-<p><strong>我喜欢，所以我去做。开源、博客都要以最自然的方式产出，哗众取宠没啥鸟用，谁都不喜欢华而不实的人。</strong></p>
-<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><p>很多事情要靠缘分，着急也没什么用。人之初性本恶，锻炼与人性做斗争的能力，千锤百炼才能打造一件绝世精品，如何才能把自己雕琢成精品，找到自己的理想很重要，<strong>周游世界，发现美、创造美</strong>。</p>
-<p>体是灵魂的载体，灵魂映射成自然，必须要照顾好身体才能与自然对话，身符合规律，不违背 Convention，<strong>游泳、跑步、健身、饮食</strong>。</p>
-<p>接受一切事情，然后尽力让不好的事情朝好的方向扭转。</p>
-<h2 id="兴趣"><a href="#兴趣" class="headerlink" title="兴趣"></a>兴趣</h2><p><strong>摄影</strong> 发现美<br><strong>溜冰</strong> 锻炼和谐<br><strong>陶笛</strong> 与声音对话<br><strong>驾驶</strong> 体验操控的快感 </p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -324,7 +327,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 14px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 18px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Hybrid/" style="font-size: 12px;">Hybrid</a> <a href="/tags/Japanese/" style="font-size: 14px;">Japanese</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人/" style="font-size: 10px;">个人</a> <a href="/tags/工具/" style="font-size: 10px;">工具</a> <a href="/tags/生活/" style="font-size: 18px;">生活</a> <a href="/tags/车/" style="font-size: 10px;">车</a>
   </div>
 </div>
 
@@ -333,6 +336,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/02/15/2016-summary/">2016 年终总结</a>
+      </li>
     
       <li>
         <a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a>
@@ -350,10 +357,6 @@
         <a href="/2016/07/21/松樹千年翠/">松樹千年翠</a>
       </li>
     
-      <li>
-        <a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a>
-      </li>
-    
   </ul>
 </div>
 
@@ -362,7 +365,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2016 liangfei
+  &copy; 2017 liangfei
   
 </div>
 <div class="clearfix"></div></footer>
