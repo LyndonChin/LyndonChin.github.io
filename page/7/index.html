@@ -55,6 +55,71 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2015-06-23T08:47:40.000Z"><a href="/2015/06/23/dpi-dp-sp/">2015-06-23</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/06/23/dpi-dp-sp/">详解 Android 开发中常用的 DPI / DP / SP</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Android的碎片化已经被喷了好多年，随着国内手机厂商的崛起，碎片化也越来越严重，根据<a href="http://thenextweb.com/mobile/2014/08/21/18796-different-android-devices-according-opensignals-latest-fragmentation-report/" target="_blank" rel="external">OpenSignal的最新调查</a>，2014年市面上有18796种不同的Android设备，作为开发者，一个无法回避的难题就是需要适配各种各样奇奇怪怪的机型。</p>
+<p>设备机型不同必然也会导致屏幕大小和分辨率（Resolution）的不同，但是无论分辨率有多大，屏幕有多大，我们手指触控范围的大小不会发生变化，所以最优的适配方式应该是<strong>指定大小的控件在所有的设备上的显示都一样</strong>。</p>
+<p>Android的官方文档对此也有明确的说明</p>
+<blockquote>
+<p>When adding support for multiple screens, applications <em>do not work directly with resolution</em>; applications should be concerned <em>only with screen size and density</em>, as specified by the generalized size and density groups.</p>
+</blockquote>
+<p>所以，适配应该与分辨率无关，只与屏幕大小和屏幕密度相关，首先来看一下什么是屏幕密度 － DPI。</p>
+<h3 id="DPI"><a href="#DPI" class="headerlink" title="DPI"></a>DPI</h3><p>DPI的全称是 Dots Per Inch，Inch是一个物理单位（无论在任何设备上，其大小都是固定的），所以DPI就指在一个Inch的物理长度内有多少个Dot，160DPI的屏幕就表示一个Inch包含160个Dot，320DPI的屏幕表示一个Inch有320个Dot，所以说Dot的大小是不固定的。</p>
+<p>Android设备用DPI来表示屏幕密度(Density)，屏幕密度大就表示一个Inch包含的Dot比较多。那PPI是什么呢？<br>我们会经常看到iPad、iPhone是用PPI来表示屏幕密度，小米Pad也是用PPI来表示。<br><img src="http://img4.tbcdn.cn/L1/461/1/ffa8ab85d4cc4d9e8b9cb379143bb83bcaf40a28" alt="PPI in mi pad"></p>
+<p>其实对Android而言，DPI等价于PPI(Pixels-Per-Inch)，DPI最早是用于印刷行业，跟PPI还是有本质不同的，Android应该是误用了DPI这个概念。具体可以参考<a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference/" target="_blank" rel="external">PPI vs. DPI: what’s the difference?</a>。</p>
+<p>其实我们只要知道在Android设备中，DPI 等价于 PPI 就可以了。<br><img src="http://img2.tbcdn.cn/L1/461/1/73e824419477f8c604791f6318f8a4701c91d165" alt="PPI 定义"></p>
+<p>通常我们说一个设备是多少寸时，指的是屏幕对角线(Diagonal)是多少inch，所以用对角线的像素值（px）除以对角线长度（inch），就可以计算出PPI。<br><img src="http://img1.tbcdn.cn/L1/461/1/af31a9366de3232f78a9e48904f5b0463875ec25" alt="PPI 计算公式"></p>
+<p>为了简化适配工作，Android根据屏幕大小（Inch）和屏幕密度（DPI）对设备做了如下划分：<br><img src="http://img1.tbcdn.cn/L1/461/1/5a7fe24f76a7f23cbdea5efa088b1188d73597f5" alt="PPI 对应屏幕尺寸"></p>
+<h3 id="DP"><a href="#DP" class="headerlink" title="DP"></a>DP</h3><p>既然有那么多不同分辨率、不同大小的屏幕，使用PX必然会导致适配困难，为了进一步简化适配工作，Android为我们提供了一个虚拟的像素单位 － DP 或者 DIP (Density-Independent pixel)，当然也可以理解为 Device-Independent Pixel。为什么说是<strong>虚拟</strong>呢，因为它的大小不是一个物理（Phisical）值，而是由操作系统根据屏幕大小和密度动态渲染出来的。</p>
+<p>PX跟DP之间的换算关系很简单 </p>
+<blockquote>
+<p> px = dp * (dpi / 160)</p>
+</blockquote>
+<p>举例来说，小米Pad的屏幕密度为326dpi，如果需要显示的图片大小为20dp，那么就需要提供一个 <code>20 <em> (326 / 160) = 40px</em></code>的图片才能达到最佳显示效果，如果还要适配一个163dpi的屏幕，那么还需要再提供一个<code>20  (163 / 160) = 20px</code>的图片。</p>
+<p>那么一个20dp的图片，在不同设备上的显示效果如何呢？我们以iPad为例来说明。<br><img src="http://img4.tbcdn.cn/L1/461/1/2c18879aebe47f6faa42c3f3d2e21ccc7e77d66d" alt="iPad 屏幕参数"></p>
+<p>iPad2 和 iPad Retina的物理尺寸都是 9.7 inch，不同的是分辨率和PPI，一个是1024x768 / 132ppi，另一个是2048x1536 / 264ppi，</p>
+<p>分别计算一下20dp对应多少inch</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ipad2 = <span class="number">20</span> * (<span class="number">132</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">1024</span> * <span class="number">1024</span> + <span class="number">768</span> * <span class="number">768</span>))) </div><div class="line">ipad_retina = <span class="number">20</span> * (<span class="number">264</span> / <span class="number">160</span>) * (<span class="number">7.9</span> / (math.sqrt(<span class="number">2048</span> * <span class="number">2048</span> + <span class="number">1536</span> * <span class="number">1536</span>)))</div></pre></td></tr></table></figure>
+<p>计算结果都是0.1018359375，这就是dp的功能，它能保证在所有的设备上显示的大小都一样。</p>
+<p>如果只提供了一个大小为20px的图片，为了保证图片在所有设备上的物理大小都一样，高DPI的设备上系统会拉伸图片，低DPI的设备上图片会被缩小，这样既会影响UE也会影响APP的执行效率。所以我们需要为不同屏幕密度的设备提供不同的图片，他们之间的对应关系如下。<br><img src="http://img1.tbcdn.cn/L1/461/1/7d691bde9a6f414a5f93082b0312c1589289494d" alt="Android 设备屏幕分级"></p>
+<p>我们在用Sketch作图的时候，如果1x图片对应的是屏幕是MDPI (160dpi)，那么1.5x，2x就分别对应HDPI，XHDPI。<br><img src="http://img4.tbcdn.cn/L1/461/1/4c46ea76d3cf05a87bdf101ac931a1d00ff730ef" alt="screens_densities"></p>
+<h3 id="SP"><a href="#SP" class="headerlink" title="SP"></a>SP</h3><p>SP 全称是 Scale-independent Pixels，用于字体大小，其概念与DP是一致的，也是为了保持设备无关。因为Android用户可以根据喜好来调整字体大小，所以要使用sp来表示字体大小。<br><img src="http://img4.tbcdn.cn/L1/461/1/ed1118ab7e089febd541bd8f1ed454e009edec24" alt="changing_android_font_size"></p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ol>
+<li><a href="http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts" target="_blank" rel="external">http://developer.android.com/guide/practices/screens_support.html#DeclaringTabletLayouts</a></li>
+<li><a href="http://developer.android.com/training/multiscreen/screendensities.html" target="_blank" rel="external">http://developer.android.com/training/multiscreen/screendensities.html</a></li>
+<li><a href="http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android" target="_blank" rel="external">http://stackoverflow.com/questions/2025282/difference-between-px-dp-dip-and-sp-in-android</a></li>
+<li><a href="http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference" target="_blank" rel="external">http://99designs.com/designer-blog/2013/02/26/ppi-vs-dpi-whats-the-difference</a></li>
+</ol>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-06-19T16:00:00.000Z"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">2015-06-20</a></time>
       
       
@@ -430,120 +495,6 @@ Dart’s optional types are static type annotations that act as documentation, c
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-08-19T16:00:00.000Z"><a href="/2014/08/20/something-about-closure/">2014-08-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/08/20/something-about-closure/">关于闭包</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>先来看一个问题：</p>
-<blockquote>
-<p>为什么内部类（inner class）用到的外部变量只能是final类型？</p>
-</blockquote>
-<p>例如以下代码中变量 x 为什么必须声明为 <code>final</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> x = args.length;</div><div class="line">    <span class="keyword">new</span> Thread() &#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(x);</div><div class="line">      &#125;</div><div class="line">    &#125;.start();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如果去掉 final 关键字，编译阶段就会报错：</p>
-<pre>
-Closure.java:6: local variable x is accessed from within inner class; needs to be declared final
-        System.out.println(x);
-                           ^
-1 error
-</pre>
-
-<p>Java编程思想 中虽然提到了这个规则，但也没有说明为什么。</p>
-<blockquote>
-<p>If you’re defining an anonymous inner class and want to use an object that’s defined outside the anonymous inner class, the compiler requires that the argument reference be final.</p>
-</blockquote>
-<p>JLS 8.1.3 中对此的说明：</p>
-<blockquote>
-<p>Any local variable, formal method parameter or exception handler parameter used but not declared in an inner class must be declared final. Any local variable, used but not declared in an inner class must be definitely assigned before the body of the inner class.*</p>
-</blockquote>
-<p>但是为什么会有这样的语法规则呢？</p>
-<p>其中这就是 Java 中的闭包（Closure），虽然它不是严格意义上的闭包。</p>
-<h2 id="什么是闭包"><a href="#什么是闭包" class="headerlink" title="什么是闭包"></a>什么是闭包</h2><p>引用 wikipedia 的定义：</p>
-<blockquote>
-<p>In programming languages, a closure (also lexical closure or function closure) is a function or reference to a function together with a referencing environment—a table storing a reference to each of the non-local variables (also called free variables or upvalues) of that function.A closure—unlike a plain function pointer—allows a function to access those non-local variables even when invoked outside its immediate lexical scope.*</p>
-</blockquote>
-<p>简而言之</p>
-<blockquote>
-<p>闭包就是一个带数据的函数，这个函数有一个函数环境，环境内包含了函数所用到的非本地变量。</p>
-</blockquote>
-<p>下面以python代码为例，演示闭包的用法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">maker</span><span class="params">(N)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">action</span><span class="params">(X)</span>:</span></div><div class="line">        <span class="keyword">return</span> X \*\* N</div><div class="line">    <span class="keyword">return</span> action</div></pre></td></tr></table></figure>
-<p><code>maker</code> 函数返回了一个嵌套函数（Nested Function）<code>action</code>，其中 <code>action</code> 用到了 <code>maker</code> 的变量 <code>N</code>。</p>
-<p>执行一下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">f = maker(<span class="number">2</span>)</div><div class="line">print(f)</div></pre></td></tr></table></figure>
-<p>结果为</p>
-<pre>
-<function maker.<locals="">;.action at x7ff257b62950>*
-</function></pre>
-
-<p>可以看出 <code>f</code> 是函数 <code>maker</code> 的一个 local 函数 —- <code>action</code><br><code>f = maker(2)</code> 返回之后，<code>maker</code> 的生命周期也结束了，按道理它的 local 变量N，也应该会被释放掉，但是当我们执行如下语句时</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">print(f(<span class="number">3</span>))</div><div class="line">print(f(<span class="number">4</span>))</div></pre></td></tr></table></figure>
-<p>返回值为</p>
-<pre>
-9
-16
-</pre>
-
-<p>也就是说，即使maker函数的生命周期已经结束，但是action仍然记住了它所用到的maker的局部变量N。<br>在这里，f就是一个闭包，它包含的不仅是action函数，还有action用到的数据 —- a table storing a reference to each of the non-local variables (also called free variables or upvalues) of that function</p>
-<p>如果使用 lambda 表达式，上面的 maker 可以修改为</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">maker</span><span class="params">(N)</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="keyword">lambda</span> x: x ** N</div></pre></td></tr></table></figure>
-<p>以上就是 Python 中闭包的用法，但是以上用法在 Java 根本无法实现，因为 Java 是一个面向对象的语言，不可能返回一个函数，那么 Java 语言中对闭包又是如何处理的呢？</p>
-<h2 id="闭包跟对象的区别"><a href="#闭包跟对象的区别" class="headerlink" title="闭包跟对象的区别"></a>闭包跟对象的区别</h2><p>《こーどの未来》中解释了两者的区别。</p>
-<blockquote>
-<p>「手続き（関数）とデータの一体化」というのは、オブジェクト指向のオブジェクトを形容するときによく用いられる表現です。オブジェクトはデータにメソッドという形で手続きが内包されているものですが、クロージャーは手続きに環境という形でデータが内包されています。つまり、オブジェクトとクロージャーは表裏一体と考えてもよいでしょう</p>
-</blockquote>
-<p>稍微总结以下：</p>
-<blockquote>
-<p>对象是在数据的基础上，以方法的形式把函数包含在内。<br>闭包是在函数的基础上，以环境的形式把数据包含在内。</p>
-</blockquote>
-<h2 id="Java-与闭包"><a href="#Java-与闭包" class="headerlink" title="Java 与闭包"></a>Java 与闭包</h2><p>通过 Python 语言的示例，可以比较容易得理解闭包与对象之间的区别，我们再来看一下文章开头提出的问题。</p>
-<p>为什么内部类（inner class）用到的外部变量只能是final类型 ？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> x = args.length;</div><div class="line">    <span class="keyword">new</span> Thread() &#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(x);</div><div class="line">      &#125;</div><div class="line">    &#125;.start();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其实，编译器为 <code>Thread()</code> 匿名类自动添加了一个参数为 <code>int</code> 的构造函数，在新建 <code>Thread</code> 对象时，<code>x</code> 值被传入，成为 <code>Thread</code> 对象的数据。如此以来，编译器则没有必要像 python 那样为 <code>inner class</code> 维护一个 <em>referencing environment</em>。</p>
-<p>我们可以用一段代码把这个构造函数找出来。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> x = args.length;</div><div class="line">    <span class="keyword">new</span> Thread() &#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(x);</div><div class="line">        <span class="keyword">for</span> (Constructor&lt;?&gt; cons : <span class="keyword">this</span>.getClass().getDeclaredConstructors()) &#123;</div><div class="line">          StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">          sb.append(<span class="string">"constructor: "</span>).append(cons.getName()).append(<span class="string">"("</span>);</div><div class="line">          <span class="keyword">for</span> (Class&lt;?&gt; param : cons.getParameterTypes()) &#123;</div><div class="line">            sb.append(param.getSimpleName()).append(<span class="string">", "</span>);</div><div class="line">          &#125;</div><div class="line">          <span class="keyword">if</span> (sb.charAt(sb.length() - <span class="number">1</span>) == <span class="string">' '</span>) &#123;</div><div class="line">            sb.replace(sb.length() - <span class="number">2</span>, sb.length(), <span class="string">")"</span>);</div><div class="line">          &#125; <span class="keyword">else</span> &#123;</div><div class="line">            sb.append(<span class="string">')'</span>);</div><div class="line">          &#125;</div><div class="line">          System.out.println(sb);</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;.start();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>输出结果是</p>
-<pre>
-0
-constructor: Closure$1(int)
-constructor: Closure$1(int) 即为编译器添加的构造方法。
-</pre>
-
-<p>x 就是通过这个构造函数拷贝到内部类 - <code>new Thread()</code> 当中，但是用到 x 的方法 run 并不会按照代码顺心立即被执行，如果在 <code>new Thread()</code> 之后的代码中改变了 x 的值，那么多 run 方法中用到的 x 就是一个过时（out-of-date）的 x。</p>
-<p>同样的，如果run方法改变了 x 的值就破坏了 main 方法的数据流，我们希望内部类对使用者来说是透明，加上了 final 关键字就保证了 x 只在方法的 enclosing scope 是可变的,这样就不必为了追踪 x 的变化而必须搞清楚内部类的逻辑。</p>
-<p>StackOverflow 上Jon Skeet 解释得非常清楚。</p>
-<blockquote>
-<p>When you create an instance of an anonymous inner class, any variables which are used within that class have their values copied in via the autogenerated constructor. This avoids the compiler having to autogenerate various extra types to hold the logical state of the “local variables”, as for example the C# compiler does… (When C# captures a variable in an anonymous function, it really captures the variable - the closure can update the variable in a way which is seen by the main body of the method, and vice versa.)<br>As the value has been copied into the instance of the anonymous inner class, it would look odd if the variable could be modified by the rest of the method - you could have code which appeared to be working with an out-of-date variable (because that’s effectively what would be happening… you’d be working with a copy taken at a different time). Likewise if you could make changes within the anonymous inner class, developers might expect those changes to be visible within the body of the enclosing method.<br>Making the variable final removes all these possibilities - as the value can’t be changed at all, you don’t need to worry about whether such changes will be visible. The only ways to allow the method and the anonymous inner class see each other’s changes is to use a mutable type of some description. This could be the enclosing class itself, an array, a mutable wrapper type… anything like that. Basically it’s a bit like communicating between one method and another: changes made to the parameters of one method aren’t seen by its caller, but changes made to the objects referred to by the parameters are seen.</p>
-</blockquote>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Closure 是 Functional Programming（函数式编程）中一个非常重要的概念，理解了闭包的概念也就知道 lambda 以及 nested function 的用法了。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -579,6 +530,10 @@ constructor: Closure$1(int) 即为编译器添加的构造方法。
   <ul class="entry">
     
       <li>
+        <a href="/2017/03/21/app-force-update-architecture/">Android 强升逻辑和实现</a>
+      </li>
+    
+      <li>
         <a href="/2017/02/15/2016-summary/">2016 年终总结</a>
       </li>
     
@@ -592,10 +547,6 @@ constructor: Closure$1(int) 即为编译器添加的构造方法。
     
       <li>
         <a href="/2017/02/01/note-on-web-security/">架构笔记之安全</a>
-      </li>
-    
-      <li>
-        <a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a>
       </li>
     
   </ul>

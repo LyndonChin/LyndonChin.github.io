@@ -55,6 +55,86 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-09-14T09:40:06.000Z"><a href="/2016/09/14/how-to-write-custom-gradle-plugin/">2016-09-14</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>本着简单易用的原则，参考<a href="https://github.com/KeepSafe/android-resource-remover" target="_blank" rel="external">android-resource-remover</a> 写了一个删除无用资源文件的 Gradle 插件 - <a href="https://github.com/YouzanMobile/clean-unused-resources-gradle-plugin" target="_blank" rel="external">clean-unused-resources-gradle-plugin</a>，结果微博发出来不到10分钟，<a href="http://weibo.com/u/2491729875?topnav=1&amp;wvr=6&amp;topsug=1&amp;is_all=1" target="_blank" rel="external">陈启超</a>就告诉我 AS2.0+ 已经提供了<a href="http://stackoverflow.com/questions/6373482/remove-all-unused-resources-from-an-android-project" target="_blank" rel="external">此功能</a>。天哪，为了纪念这个短命无用的轮子，我只好写篇博客，把造轮子的过程记录下来，也算对别人有点用处。</p>
+<p><a href="https://docs.gradle.org/current/userguide/custom_plugins.html" target="_blank" rel="external">官方文档</a>说了，自定义 Gradle 插件有三种方式：</p>
+<ol>
+<li>Build script</li>
+<li><code>buildSrc</code> project</li>
+<li>Standalone project</li>
+</ol>
+<p>但是，AS 不完美支持第三种方式，我们用 AS 的爸爸 <a href="https://www.google.co.jp/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=1&amp;cad=rja&amp;uact=8&amp;ved=0ahUKEwiD0qrLho7PAhVO4GMKHYqWDd4QFggeMAA&amp;url=https%3A%2F%2Fwww.jetbrains.com%2Fidea%2Fdownload%2F&amp;usg=AFQjCNFTvvWm6f-CgwkzJvE5OINbz0s-Mg" target="_blank" rel="external">IntelliJ IDEA CE</a> 就好了。</p>
+<p>首先 New 一个基于 Gradle 的 Groovy 工程：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-b0fe160f1a0de293.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="new a groovy project"></p>
+<p>修改一下自动生成的 build.gradle 文件，把 <code>repositories</code> 和 <code>dependencies</code> 替换掉，其他保持不变。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">repositories &#123;</div><div class="line">  jcenter()</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">  compile gradleApi()</div><div class="line">  testCompile <span class="string">group:</span> <span class="string">'junit'</span>, <span class="string">name:</span> <span class="string">'junit'</span>, <span class="string">version:</span> <span class="string">'4.11'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后创建 <code>src</code> 和 <code>resources</code> 目录（以 <a href="https://github.com/YouzanMobile/clean-unused-resources-gradle-plugin" target="_blank" rel="external">clean-unused-resources-gradle-plugin</a> 为例）：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-1d195dc7d9796835.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="project structure"></p>
+<p><code>resources/META-INF/gradle-plusings/</code> 是必不可少，否则别人无法使用你的插件，目录下的 <code>*.properties</code> 文件名就是插件的名字，别人<code>apply</code> 的时候会用到：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apply <span class="string">plugin:</span> <span class="string">'com.youzan.mobile.cleaner'</span></div></pre></td></tr></table></figure>
+<p>文件内容是把  <code>implementation-class</code> 指向你插件类的全名。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">implementation-class=com.youzan.mobile.CleanerPlugin</div></pre></td></tr></table></figure>
+<p><code>CleanerPlugin.groovy</code> 实现了接口<code>Plugin&lt;Project&gt;</code>，而 <code>org.gradle.api.Plugin</code> 就是由 <code>compile gradleApi()</code> 提供，我们在 build.gradle 的 <code>dependencies</code> 中已经添加过了。</p>
+<p>准备就绪，开始写插件。</p>
+<p>首先，实现 <code>apply</code> 方法：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CleanerPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="keyword">void</span> apply(Project project) &#123;</div><div class="line">    <span class="comment">// 创建一个 extension</span></div><div class="line">    project.extensions.create(<span class="string">'resourceCleaner'</span>, CleanerExtension);</div><div class="line">    <span class="comment">// 修改 lint report 路径</span></div><div class="line">    project.afterEvaluate &#123;</div><div class="line">      project.android.lintOptions.xmlOutput = <span class="keyword">new</span> File(project.buildDir, <span class="string">"lintResult.xml"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 创建 task</span></div><div class="line">    project.tasks.create(<span class="string">'cleanResource'</span>, CleanTask)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第一步通过 <code>project.extensions.create</code> 创建一个 <code>extension</code>：</p>
+<p><em>CleanerExtension.groovy</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CleanerExtension</span> &#123;</span></div><div class="line">  Iterable&lt;String&gt; excludedFiles</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个 <code>extension</code> 用于别人向你的插件传递参数，例如：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">resourceCleaner &#123;</div><div class="line">  excludedFiles = [</div><div class="line">    <span class="string">'string_pos.xml'</span>,</div><div class="line">    <span class="string">'string_car.xml'</span>,</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>第二步修改 lint report 的路径：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">project.afterEvaluate &#123;</div><div class="line">  project.android.lintOptions.xmlOutput = <span class="keyword">new</span> File(project.buildDir, <span class="string">"lintResult.xml"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里用到了 Android Gradle Plugin 的 DSL，所以 IDEA 无法动态提示，没关系，我们直接去翻<a href="http://google.github.io/android-gradle-dsl/current/" target="_blank" rel="external">文档</a>，里面有详解的解释：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-eabe9b5c18386134.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Android Plugin DSL References"></p>
+<p>配置参数（CleanerExtension）和文件参数（lintOptions.xmlOutput）都准备好了。</p>
+<p>第三步，主角上场，创建一个 <code>task</code>：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CleanTask</span> <span class="keyword">extends</span> <span class="title">DefaultTask</span> &#123;</span></div><div class="line">  CleanTask() &#123;</div><div class="line">    <span class="keyword">super</span>()</div><div class="line">    dependsOn <span class="string">"lint"</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="meta">@TaskAction</span></div><div class="line">  <span class="keyword">def</span> clean() &#123;</div><div class="line">    <span class="keyword">def</span> lintResult = project.android.lintOptions.xmlOutput</div><div class="line">    <span class="keyword">def</span> excludedFiles = project.resourceCleaner.excludedFiles</div><div class="line">    Cleaner.clean(lintResult, excludedFiles)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>CleanTask</code> 继承自 <code>DefaultTask</code>，因为 CleanTask 的输入是 lint report，所以在构造方法中通过调用 <code>dependsOn &quot;lint&quot;</code> 让自己依赖于 lint 这个 <code>task</code>。</p>
+<p><code>CleanTask</code> 就好像 1984 里面的猪，只负责发号施令，安排工作，真正干活的“人”是 <code>Cleaner</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cleaner</span> </span>&#123;</div><div class="line">    <span class="function">def <span class="keyword">static</span> <span class="title">clean</span><span class="params">(File report, Iterable&lt;String&gt; excludedFiles)</span> </span>&#123;</div><div class="line">        def issues = <span class="keyword">new</span> XmlSlurper().parse(report)</div><div class="line">        issues.<span class="string">'*'</span>.findAll &#123;</div><div class="line">            it.name() == <span class="string">'issue'</span> &amp;&amp; it.<span class="meta">@id</span> == <span class="string">'UnusedResources'</span></div><div class="line">        &#125;.each &#123;</div><div class="line">            def file = <span class="keyword">new</span> File(it.location.<span class="meta">@file</span>.text())</div><div class="line">            <span class="keyword">if</span> (file.name in excludedFiles) <span class="keyword">return</span>;</div><div class="line">            def line = it.location.<span class="meta">@line</span></div><div class="line">            def column = it.location.<span class="meta">@column</span></div><div class="line"></div><div class="line">            <span class="keyword">if</span> ((line == <span class="string">''</span> &amp;&amp; column == <span class="string">''</span>) || column == <span class="string">'1'</span>) &#123;</div><div class="line">                println <span class="string">"deleting "</span> + file.path</div><div class="line">                file.delete()</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                def m = it.<span class="meta">@message</span> =~ $/`R.(\w+).([^`]+)`/$</div><div class="line">                <span class="keyword">if</span> (!m) <span class="keyword">return</span>;</div><div class="line"></div><div class="line">                def type = m.group(<span class="number">1</span>)</div><div class="line">                def entryName = m.group(<span class="number">2</span>);</div><div class="line"></div><div class="line">                def parsed = <span class="keyword">new</span> XmlSlurper().parse(file)</div><div class="line">                parsed.<span class="string">'**'</span>.findAll &#123;</div><div class="line">                    it.<span class="meta">@name</span> == entryName &amp;&amp; it.name().contains(type)</div><div class="line">                &#125;*.replaceNode &#123;&#125;</div><div class="line"></div><div class="line">                XmlUtil.serialize(parsed, <span class="keyword">new</span> FileWriter(file))</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>一个简单的独立工程的 Gradle Plugin 就这么写完了，是不是非常简单，先不要高兴，还有最后一步 - 发布到 jCenter。</p>
+<p>继续修改 <code>build.gralde</code>。</p>
+<p>添加 bintray 插件。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">plugins &#123;</div><div class="line">    id <span class="string">"com.jfrog.bintray"</span> version <span class="string">"1.4"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">Properties properties = <span class="keyword">new</span> Properties();</div><div class="line">properties.load(project.rootProject.file(<span class="string">'local.properties'</span>).newDataInputStream())</div><div class="line"></div><div class="line">bintray &#123;</div><div class="line">    user = properties.getProperty(<span class="string">"bintray.user"</span>)</div><div class="line">    key = properties.getProperty(<span class="string">"bintray.apikey"</span>)</div><div class="line">    publications = [<span class="string">'mavenJava'</span>]</div><div class="line">    pkg &#123;</div><div class="line">        repo = <span class="string">'maven'</span></div><div class="line">        name = <span class="string">'cleaner-gradle-plugin'</span></div><div class="line">        desc = <span class="string">'a gradle plugin to clean unused resources detected by Lint'</span></div><div class="line">        websiteUrl = <span class="string">'https://github.com/YouzanMobile/clean-resource-gradle-plugin'</span></div><div class="line">        issueTrackerUrl = <span class="string">'https://github.com/YouzanMobile/clean-resource-gradle-plugin/issues'</span></div><div class="line">        vcsUrl =<span class="string">'https://github.com/YouzanMobile/clean-resource-gradle-plugin'</span></div><div class="line">        publicDownloadNumbers = <span class="literal">true</span></div><div class="line">        licenses = [<span class="string">'MIT'</span>]</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>maven-publish 插件：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">apply <span class="string">plugin:</span> <span class="string">'maven-publish'</span></div><div class="line"></div><div class="line"><span class="comment">// custom tasks for creating source/javadoc jars</span></div><div class="line">task sourcesJar(<span class="string">type:</span> Jar, <span class="string">dependsOn:</span> classes) &#123;</div><div class="line">    classifier = <span class="string">'sources'</span></div><div class="line">    from sourceSets.main.allSource</div><div class="line">&#125;</div><div class="line"></div><div class="line">task javadocJar(<span class="string">type:</span> Jar, <span class="string">dependsOn:</span> javadoc) &#123;</div><div class="line">    classifier = <span class="string">'javadoc'</span></div><div class="line">    from javadoc.destinationDir</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// add javadoc/source jar tasks as artifacts</span></div><div class="line">artifacts &#123;</div><div class="line">    archives sourcesJar, javadocJar</div><div class="line">&#125;</div><div class="line"></div><div class="line">publishing &#123;</div><div class="line">    publications &#123;</div><div class="line">        mavenJava(MavenPublication) &#123;</div><div class="line">            from components.java</div><div class="line">            artifact sourcesJar</div><div class="line">            artifact javadocJar</div><div class="line">            groupId <span class="string">'com.youzan.mobile'</span></div><div class="line">            artifactId <span class="string">'cleaner-gradle-plugin'</span></div><div class="line">            version versionName</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>OK，大功告成，演出结束，下面是致谢：</p>
+<ul>
+<li><a href="https://github.com/jasonross/NuwaGradle" target="_blank" rel="external">NuwaGradle</a></li>
+<li><a href="http://weibo.com/chenqichao2016" target="_blank" rel="external">陈启超_V</a></li>
+<li><a href="https://docs.gradle.org/current/userguide/userguide.html" target="_blank" rel="external">Gradle User Guide</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-08-14T13:19:27.000Z"><a href="/2016/08/14/身心脱落/">2016-08-14</a></time>
       
       
@@ -281,44 +361,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-07-17T15:21:41.000Z"><a href="/2016/07/17/一切唯心造/">2016-07-17</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/07/17/一切唯心造/">一切唯心造</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <blockquote>
-<p>清も濁もすべては心がつくりだすもの</p>
-</blockquote>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/07/17/一切唯心造/#more" class="more-link">更多...</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
 
 <nav id="pagination">
   
@@ -354,6 +396,10 @@
   <ul class="entry">
     
       <li>
+        <a href="/2017/03/21/app-force-update-architecture/">Android 强升逻辑和实现</a>
+      </li>
+    
+      <li>
         <a href="/2017/02/15/2016-summary/">2016 年终总结</a>
       </li>
     
@@ -367,10 +413,6 @@
     
       <li>
         <a href="/2017/02/01/note-on-web-security/">架构笔记之安全</a>
-      </li>
-    
-      <li>
-        <a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a>
       </li>
     
   </ul>
