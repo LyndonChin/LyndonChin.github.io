@@ -55,6 +55,77 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-05-12T08:54:19.000Z"><a href="/2016/05/12/google-io-expectation/">2016-05-12</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/05/12/google-io-expectation/">Google IO 看点</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="Java8"><a href="#Java8" class="headerlink" title="Java8"></a>Java8</h2><p>终于可以用 Java8 写 Android 应用了，想想都有点激动，告别面条代码，拥抱FP！</p>
+<blockquote>
+<p>In order to use the new Java 8 language features, you need to also use the new Jack toolchain</p>
+</blockquote>
+<p>现在，要使用 Java8 必须依赖 Jack，因为为了兼容 old SDK，Jack 会进行字节码转换（例如，把 JDK8 的字节码转成 JDK7 or JDK6）</p>
+<h2 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h2><p>抓紧时间看 <code>Fragment</code> 源码</p>
+<blockquote>
+<p>When should you use a fragment? How? Why? </p>
+<p>In this session we’ll cover effective use of fragments along with new features. </p>
+<p>We’ll also go over improvements that enable new use cases and improve existing ones.</p>
+</blockquote>
+<h2 id="Android-Studio"><a href="#Android-Studio" class="headerlink" title="Android Studio"></a>Android Studio</h2><p>工欲善其事必先利其器，做为一名 Vim 党对快捷键没什么兴趣，但是很期待新的 debug &amp; analysis tool。</p>
+<p><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/" target="_blank" rel="external">Android Studio Tips Of the Day</a></p>
+<h2 id="Doze"><a href="#Doze" class="headerlink" title="Doze"></a>Doze</h2><p>Android battery and memory optimizations</p>
+<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS "></a>HTTPS </h2><p>尽快看完 okHttp 源码。</p>
+<p>HTTPS 到底安不安全？会浪费流量吗？</p>
+<h2 id="Data-Binding"><a href="#Data-Binding" class="headerlink" title="Data Binding"></a>Data Binding</h2><p>Data Binding 的 new features</p>
+<ul>
+<li>two-way data binding</li>
+<li>lambda expressions</li>
+</ul>
+<h2 id="Android-themes-amp-styles-demystified"><a href="#Android-themes-amp-styles-demystified" class="headerlink" title="Android themes &amp; styles demystified"></a>Android themes &amp; styles demystified</h2><p>怎样写好 UI</p>
+<h2 id="APK-瘦身"><a href="#APK-瘦身" class="headerlink" title="APK 瘦身"></a>APK 瘦身</h2><blockquote>
+<p>Lean and fast: Putting your app on a diet</p>
+</blockquote>
+<h2 id="图形图像"><a href="#图形图像" class="headerlink" title="图形图像 "></a>图形图像 </h2><ol>
+<li><strong>Image compression</strong> for Android developers（图像压缩的实践，干货）</li>
+<li>Vulkan (全新的图形框架，OpenGL ES 替代品)</li>
+</ol>
+<h2 id="Material-Design"><a href="#Material-Design" class="headerlink" title="Material Design"></a>Material Design</h2><p>无感，稍微看一下</p>
+<h2 id="播放器"><a href="#播放器" class="headerlink" title="播放器 "></a>播放器 </h2><p>Streaming media with ExoPlayer（取代 MediaPlayer）</p>
+<h2 id="VR"><a href="#VR" class="headerlink" title="VR"></a>VR</h2><ul>
+<li>Introducing Project Tango Area Learning</li>
+<li>Making Android sensors and location work for you</li>
+<li>VR at Google</li>
+<li>VR &amp; Cinema</li>
+</ul>
+<h2 id="用户留存"><a href="#用户留存" class="headerlink" title="用户留存"></a>用户留存</h2><p>Mobile app user acquisition and retention</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-04-10T17:33:07.000Z"><a href="/2016/04/11/too-famous-is-bad-md/">2016-04-11</a></time>
       
       
@@ -265,54 +336,6 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-01-26T06:43:45.000Z"><a href="/2016/01/26/my-git-config/">2016-01-26</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/26/my-git-config/">我的 git 配置</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="alias"><a href="#alias" class="headerlink" title="alias"></a>alias</h2><pre>
-[alias]
-    co = checkout
-    br = branch
-    ci = commit
-    st = status
-    last = log -1 HEAD
-    unstage = reset HEAD --
-    visual = !"gitk"
-    lg1 = log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
-    lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
-    lg = !"git lg2"
-</pre>
-
-<h2 id="editor"><a href="#editor" class="headerlink" title="editor"></a>editor</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git config --global core.editor &quot;vim&quot;</div></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -348,6 +371,10 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
   <ul class="entry">
     
       <li>
+        <a href="/2017/07/04/2017-semi-annual-summary/">2017 年中总结</a>
+      </li>
+    
+      <li>
         <a href="/2017/03/21/app-force-update-architecture/">Android 强升逻辑和实现</a>
       </li>
     
@@ -361,10 +388,6 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
     
       <li>
         <a href="/2017/02/01/note-on-web-data-analysis/">架构笔记之数据分析</a>
-      </li>
-    
-      <li>
-        <a href="/2017/02/01/note-on-web-security/">架构笔记之安全</a>
       </li>
     
   </ul>
