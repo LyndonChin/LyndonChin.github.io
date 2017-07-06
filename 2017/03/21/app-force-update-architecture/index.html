@@ -66,6 +66,7 @@
       
         <p>“强制升级”会中断用户操作，阻碍正常使用，看似是一个不光彩的行为，但是智者千虑必有一失，我们无法保证 App 的正确性，在某些紧急情况下，强制升级还是非常必要的，而且接入的时间越早越好。</p>
 <p>有赞微商城 App 早期版本只提供了一个更新提示的对话框，并不会强制用户去升级。随着后端网关升级，一些老的服务需要下线，但是新版本到达率并不理想，继续维护老接口带来一定成本，而且新功能也无法触及用户。 </p>
+<a id="more"></a>
 <h2 id="产品设计"><a href="#产品设计" class="headerlink" title="产品设计"></a>产品设计</h2><p>为了提升版本到达率，我们重新梳理了强制升级的逻辑。</p>
 <img src="/2017/03/21/app-force-update-architecture/force_update_flow.png" alt="force update flow" title="force update flow">
 <p>升级过程中首先要保证 apk 的<strong>下载成功率</strong>，下载完成之后要及时弹出安装页面，为了防止下载失败，也要提供<strong>市场下载</strong>的选项，这样一定程度上也能保证升级之后渠道的一致性。</p>
@@ -142,7 +143,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12.5px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 17.5px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12.5px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 17.5px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
   </div>
 </div>
 
@@ -151,6 +152,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/07/06/improve-quanlity-with-mockito/">Mockito 用法入门</a>
+      </li>
     
       <li>
         <a href="/2017/07/04/2017-semi-annual-summary/">2017 年中总结</a>
@@ -166,10 +171,6 @@
     
       <li>
         <a href="/2017/02/04/thinking-in-mobile/">关于 App 开发的一些思考</a>
-      </li>
-    
-      <li>
-        <a href="/2017/02/01/note-on-web-data-analysis/">架构笔记之数据分析</a>
       </li>
     
   </ul>

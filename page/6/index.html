@@ -55,6 +55,61 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2015-11-08T16:00:00.000Z"><a href="/2015/11/09/how-to-use-synchronized-in-static-method/">2015-11-09</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/11/09/how-to-use-synchronized-in-static-method/">怎样在静态方法中使用 synchronized</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="synchronized-的实现方式"><a href="#synchronized-的实现方式" class="headerlink" title="synchronized 的实现方式"></a>synchronized 的实现方式</h2><p><code>synchronized</code> 的类型可以分为两种：</p>
+<ol>
+<li>synchronized method</li>
+<li>synchronized block</li>
+</ol>
+<p>两者的实现方式是不一样的，jvm 规范中写道，编译后的 synchronized method 会有一个 <strong>ACC_SYNCHRONIZED</strong> 的 flag，也就是说当 jvm 的方法调用指令（the method invocation instruction）从 the run-time constant pool 中查找到这个 method 的时候，已经知道它是一个synchronized method，所以锁操作是由<strong>方法调用</strong>以及<strong>返回</strong>指令来控制的。</p>
+<p>而 <strong>synchronized block</strong> 的锁是由 <code>monitorenter</code> 和 <code>monitorexit</code> 这两个指令来控制。</p>
+<p>可以通过 javap 命令来“反汇编”一下 class 文件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StaticMethodTest</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">staticMethod</span><span class="params">()</span> </span>&#123; &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">staticMethod1</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (StaticMethodTest.class) &#123;</div><div class="line">        <span class="comment">// ...</span></div><div class="line">    &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">memberMethod</span><span class="params">()</span> </span>&#123; &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>编译成 class 文件后执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">javap -verbose StaticMethodTest</div></pre></td></tr></table></figure></p>
+<p>两个静态方法的输出结果分别为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">public static synchronized void staticMethod();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC, ACC_STATIC, ACC_SYNCHRONIZED</div><div class="line">  Code:</div><div class="line">    stack=0, locals=0, args_size=0</div><div class="line">       0: return</div><div class="line">    LineNumberTable:</div><div class="line">      line 2: 0</div><div class="line">public static void staticMethod1();</div><div class="line">  descriptor: ()V</div><div class="line">  flags: ACC_PUBLIC, ACC_STATIC</div><div class="line">  Code:</div><div class="line">    stack=2, locals=2, args_size=0</div><div class="line">       0: ldc           #2                  // class StaticMethodTest</div><div class="line">       2: dup</div><div class="line">       3: astore_0</div><div class="line">       4: monitorenter</div><div class="line">       5: aload_0</div><div class="line">       6: monitorexit</div><div class="line">       7: goto          15</div><div class="line">      10: astore_1</div><div class="line">      11: aload_0</div><div class="line">      12: monitorexit</div><div class="line">      13: aload_1</div><div class="line">      14: athrow</div><div class="line">      15: return</div><div class="line">    Exception table:</div><div class="line">       from    to  target type</div><div class="line">           5     7    10   any</div><div class="line">          10    13    10   any</div></pre></td></tr></table></figure></p>
+<p>其实不管静态方法还是成员方法，<code>synchronized</code> 的实现方式都是一样的，那么类和对象究竟有什么关系呢？</p>
+<h2 id="类和对象"><a href="#类和对象" class="headerlink" title="类和对象"></a>类和对象</h2><p>首先要了解的就是<strong>类究竟是怎么来的</strong>。 </p>
+<p>JVM 拿到编译器编译好的 class 文件后，首先会把文件载入到内存中，class 文件当然会有自己的格式，所以需要由 ClassLoader 来解析文件的内容，这个解析出来的内容会用一个 <code>Class</code> 类的实例 - Class object 来表示，这个 object 可以通过 Java 的 <code>ClassName.class</code>来获取。</p>
+<p>也就是说，Class object 是一个 <code>Class</code> 类型的实例（instance），而对象是一个 ClassName 的 instance。Class 和 ClassName都是类型，ClassName是由 <code>class</code> 关键字定义的，而Class是内置类型。</p>
+<p>因此成员方法的synchronized method 就等价于 synchronized (this) block，即下面两种方式是等价的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>成员方法是属于 <code>this</code>，而静态方法是属于 Class Object，那么静态方法的 synchronized method 也就等价于下面这种形式的 synchronized block 了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">synchronized</span> (ClassName.class) &#123;</div><div class="line">    <span class="comment">// do something here</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="验证代码"><a href="#验证代码" class="headerlink" title="验证代码"></a>验证代码</h2><p>定义了三个静态方法，分别采用不同的锁机制，并且每个方法都是一个死循环。然后再定义三个线程分别执行调用三个方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.concurrent.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedTest</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Object lock = <span class="keyword">new</span> Object();</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            System.out.println(<span class="string">"in fun"</span>);</div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (SynchronizedTest.class) &#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                System.out.println(<span class="string">"in fun1"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">synchronized</span> (lock) &#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                System.out.println(<span class="string">"in fun2"</span>);</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    TimeUnit.MILLISECONDS.sleep(<span class="number">500</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line">    </div><div class="line">    </div><div class="line">       <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun1();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line"></div><div class="line"></div><div class="line">        <span class="keyword">new</span> Thread() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                fun2();</div><div class="line">            &#125;</div><div class="line">        &#125;.start();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>运行结果就是 in fun 和 in fun2 交替出现，就是没有 in fun1。<br>只要运行 fun 的线程不交出锁，fun1 就无法被调用，因为他们都是共享了 Class object 的锁。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-09-29T16:00:00.000Z"><a href="/2015/09/30/source-analysis-of-explosion-field/">2015-09-30</a></time>
       
       
@@ -376,150 +431,6 @@ feature|  |  |
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-06-19T16:00:00.000Z"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">2015-06-20</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">如何获取 Android 设备的CPU核数、时钟频率以及内存大小</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>因项目需要，分析了一下 Facebook 的开源项目 - <a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">Device Year Class</a>。</p>
-<p><strong>Device Year Class</strong> 的主要功能是根据 <em>CPU核数</em>、<em>时钟频率</em> 以及 <em>内存大小</em> 对设备进行分级。代码很简单，只包含两个类:</p>
-<ul>
-<li><code>DeviceInfo</code> -&gt; 获取设备参数，</li>
-<li><code>YearClass</code> -&gt; 根据参数进行分级。</li>
-</ul>
-<p>下表是 Facebook 公司提供的<a href="https://github.com/facebook/device-year-class/blob/master/README.md" target="_blank" rel="external">分级标准</a>，其中 <code>Year</code> 栏表示分级结果。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:right">Year</th>
-<th style="text-align:right">Cores</th>
-<th style="text-align:right">Clock</th>
-<th style="text-align:right">RAM</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right">2008</td>
-<td style="text-align:right">1</td>
-<td style="text-align:right">528MHz</td>
-<td style="text-align:right">192MB</td>
-</tr>
-<tr>
-<td style="text-align:right">2009</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">600MHz</td>
-<td style="text-align:right">290MB</td>
-</tr>
-<tr>
-<td style="text-align:right">2010</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">1.0GHz</td>
-<td style="text-align:right">512MB</td>
-</tr>
-<tr>
-<td style="text-align:right">2011</td>
-<td style="text-align:right">2</td>
-<td style="text-align:right">1.2GHz</td>
-<td style="text-align:right">1GB</td>
-</tr>
-<tr>
-<td style="text-align:right">2012</td>
-<td style="text-align:right">4</td>
-<td style="text-align:right">1.5GHz</td>
-<td style="text-align:right">1.5GB</td>
-</tr>
-<tr>
-<td style="text-align:right">2013</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">2.0GHz</td>
-<td style="text-align:right">2GB</td>
-</tr>
-<tr>
-<td style="text-align:right">2014</td>
-<td style="text-align:right">n/a</td>
-<td style="text-align:right">&gt;2GHz</td>
-<td style="text-align:right">&gt;2GB</td>
-</tr>
-</tbody>
-</table>
-<p>关于输出年份的计算方法可以参考<a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">源码</a>，本文只把一些比较常用的功能抽取出来做一个简要介绍。</p>
-<h2 id="获取-CPU-核数"><a href="#获取-CPU-核数" class="headerlink" title="获取 CPU 核数"></a>获取 CPU 核数</h2><p>我们都知道，Linux 中的设备都是以文件的形式存在，CPU 也不例外，因此 CPU 的文件个数就等价与<strong>核数</strong>。</p>
-<p>Android 的 CPU 设备文件位于 <code>/sys/devices/system/cpu/</code> 目录，文件名的的格式为 <code>cpu\d+</code>。</p>
-<pre>
-root@generic_x86_64:/sys/devices/system/cpu # ls
-<b>cpu0</b>
-cpufreq
-cpuidle
-kernel_max
-modalias
-offline
-online
-possible
-power
-present
-uevent
-</pre>
-
-<p>统计一下文件个数便可以获得 CPU 核数。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getNumberOfCPUCores</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &lt;= Build.VERSION_CODES.GINGERBREAD_MR1) &#123;</div><div class="line">    <span class="comment">// Gingerbread doesn't support giving a single application access to both cores, but a</span></div><div class="line">    <span class="comment">// handful of devices (Atrix 4G and Droid X2 for example) were released with a dual-core</span></div><div class="line">    <span class="comment">// chipset and Gingerbread; that can let an app in the background run without impacting</span></div><div class="line">    <span class="comment">// the foreground application. But for our purposes, it makes them single core.</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">int</span> cores;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    cores = <span class="keyword">new</span> File(<span class="string">"/sys/devices/system/cpu/"</span>).listFiles(CPU_FILTER).length;</div><div class="line">  &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125; <span class="keyword">catch</span> (NullPointerException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> cores;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FileFilter CPU_FILTER = <span class="keyword">new</span> FileFilter() &#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File pathname)</span> </span>&#123;</div><div class="line">    String path = pathname.getName();</div><div class="line">    <span class="comment">//regex is slow, so checking char by char.</span></div><div class="line">    <span class="keyword">if</span> (path.startsWith(<span class="string">"cpu"</span>)) &#123;</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">3</span>; i &lt; path.length(); i++) &#123;</div><div class="line">        <span class="keyword">if</span> (path.charAt(i) &lt; <span class="string">'0'</span> || path.charAt(i) &gt; <span class="string">'9'</span>) &#123;</div><div class="line">          <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<h2 id="获取时钟频率"><a href="#获取时钟频率" class="headerlink" title="获取时钟频率"></a>获取时钟频率</h2><p>获取<strong>时钟频率</strong>需要读取系统文件 - <code>/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq</code> 或者 <code>/proc/cpuinfo</code>。</p>
-<p>我的 Android 模拟器中并没有 <code>cpuinfo_max_freq</code> 文件，因此只能读取 <code>/proc/cpuinfo</code>。</p>
-<p><code>/proc/cpuinfo</code> 包含了很多 cpu 数据。</p>
-<pre>
-processor    : 0
-vendor_id    : GenuineIntel
-cpu family    : 6
-model        : 70
-model name    : Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
-stepping    : 1
-cpu MHz        : 0.000
-cache size    : 1024 KB
-fdiv_bug    : no
-hlt_bug        : no
-f00f_bug    : no
-coma_bug    : no
-fpu        : yes
-fpu_exception    : yes
-cpuid level    : 4
-wp        : yes
-</pre>
-
-<p>代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getCPUMaxFreqKHz</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> maxFreq = DEVICEINFO_UNKNOWN;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; getNumberOfCPUCores(); i++) &#123;</div><div class="line">      String filename =</div><div class="line">          <span class="string">"/sys/devices/system/cpu/cpu"</span> + i + <span class="string">"/cpufreq/cpuinfo_max_freq"</span>;</div><div class="line">      File cpuInfoMaxFreqFile = <span class="keyword">new</span> File(filename);</div><div class="line">      <span class="keyword">if</span> (cpuInfoMaxFreqFile.exists()) &#123;</div><div class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">128</span>];</div><div class="line">        FileInputStream stream = <span class="keyword">new</span> FileInputStream(cpuInfoMaxFreqFile);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">          stream.read(buffer);</div><div class="line">          <span class="keyword">int</span> endIndex = <span class="number">0</span>;</div><div class="line">          <span class="comment">//Trim the first number out of the byte buffer.</span></div><div class="line">          <span class="keyword">while</span> (buffer[endIndex] &gt;= <span class="string">'0'</span> &amp;&amp; buffer[endIndex] &lt;= <span class="string">'9'</span></div><div class="line">              &amp;&amp; endIndex &lt; buffer.length) endIndex++;</div><div class="line">          String str = <span class="keyword">new</span> String(buffer, <span class="number">0</span>, endIndex);</div><div class="line">          Integer freqBound = Integer.parseInt(str);</div><div class="line">          <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">        &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</div><div class="line">          <span class="comment">//Fall through and use /proc/cpuinfo.</span></div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">          stream.close();</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (maxFreq == DEVICEINFO_UNKNOWN) &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/cpuinfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">int</span> freqBound = parseFileForValue(<span class="string">"cpu MHz"</span>, stream);</div><div class="line">        freqBound *= <span class="number">1000</span>; <span class="comment">//MHz -&gt; kHz</span></div><div class="line">        <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    maxFreq = DEVICEINFO_UNKNOWN; <span class="comment">//Fall through and return unknown.</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> maxFreq;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="获取内存大小"><a href="#获取内存大小" class="headerlink" title="获取内存大小"></a>获取内存大小</h2><p>如果 SDK 版本大于等于 <code>JELLY_BEAN</code> ，可以通过 <code>ActivityManager</code> 来获取内从大小。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">am.getMemoryInfo(memInfo);</div></pre></td></tr></table></figure>
-<p>如果版本低于 <code>JELLY_BEAN</code> ，则只能读取系统文件了。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div></pre></td></tr></table></figure>
-<p>完整代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@TargetApi</span>(Build.VERSION_CODES.JELLY_BEAN)</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getTotalMemory</span><span class="params">(Context c)</span> </span>&#123;</div><div class="line">  <span class="comment">// memInfo.totalMem not supported in pre-Jelly Bean APIs.</span></div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</div><div class="line">    ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">    ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">    am.getMemoryInfo(memInfo);</div><div class="line">    <span class="keyword">if</span> (memInfo != <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="keyword">return</span> memInfo.totalMem;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">return</span> DEVICEINFO_UNKNOWN;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">long</span> totalMem = DEVICEINFO_UNKNOWN;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div><div class="line">        totalMem *= <span class="number">1024</span>;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> totalMem;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -544,7 +455,7 @@ wp        : yes
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12.5px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 17.5px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12.5px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 17.5px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
   </div>
 </div>
 
@@ -553,6 +464,10 @@ wp        : yes
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/07/06/improve-quanlity-with-mockito/">Mockito 用法入门</a>
+      </li>
     
       <li>
         <a href="/2017/07/04/2017-semi-annual-summary/">2017 年中总结</a>
@@ -568,10 +483,6 @@ wp        : yes
     
       <li>
         <a href="/2017/02/04/thinking-in-mobile/">关于 App 开发的一些思考</a>
-      </li>
-    
-      <li>
-        <a href="/2017/02/01/note-on-web-data-analysis/">架构笔记之数据分析</a>
       </li>
     
   </ul>
