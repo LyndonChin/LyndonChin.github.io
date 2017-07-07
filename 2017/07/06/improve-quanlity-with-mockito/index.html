@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Mockito 用法入门 | 梁飞</title>
+  <title>Mockito 用法和原理 | 梁飞</title>
   <meta name="author" content="liangfei">
   
   <meta name="description" content="梁飞的个人博客">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Mockito 用法入门"/>
+  <meta property="og:title" content="Mockito 用法和原理"/>
   <meta property="og:site_name" content="梁飞"/>
 
   
@@ -58,20 +58,24 @@
       
       
   
-    <h1 class="title">Mockito 用法入门</h1>
+    <h1 class="title">Mockito 用法和原理</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>Mockito是一个用于Java单测的Mock框架，它可以帮我们改变类或者对象的行为。<br>Mockito能够让我们可以更专注于去测试“代码单元”的逻辑，而无需花费心思去构造数据。</p>
+        <p>Mockito 是一个用于 Java 单测的 Mock 框架，它可以帮改变一个类或者对象的行为。<br>Mockito 能够让开发者更加专注地去测试代码单元的逻辑，而无需花费心思构造数据。</p>
 <a id="more"></a>
-<p>Mock可分为两种类型，一种是<strong>Class Mock</strong>，另一种是<strong>Object Mock</strong>（Mockito叫<strong>spy</strong>）。<br>改变mock对象方法（method）叫<strong>Stub</strong>（插桩）。<br>一次Mock过程称为Mock Session，基本包含如下三个步骤：</p>
-<pre><code>+-------------+      +------+      +--------+
-| Mock or Spy | ===&gt; | Stub | ===&gt; | Verify |
-+-------------+      +------+      +--------+
-</code></pre><h2 id="Mock"><a href="#Mock" class="headerlink" title="Mock"></a>Mock</h2><h3 id="Class-Mock"><a href="#Class-Mock" class="headerlink" title="Class Mock"></a>Class Mock</h3><p>Class Mock改变了class的行为，所以mock出来的对象就失去了原来的行为如果没有对method进行插桩，那么会返回默认值（<code>null</code>、<code>false</code>、<code>0</code>等）。</p>
-<h3 id="Object-Mock（spy）"><a href="#Object-Mock（spy）" class="headerlink" title="Object Mock（spy）"></a>Object Mock（spy）</h3><h3 id="Stub（插桩）"><a href="#Stub（插桩）" class="headerlink" title="Stub（插桩）"></a>Stub（插桩）</h3><h3 id="Verify（验证）"><a href="#Verify（验证）" class="headerlink" title="Verify（验证）"></a>Verify（验证）</h3>
+<p>Mock 可分为两种类型，一种是 <strong>Class Mock</strong>，另一种是 <strong>Object Mock</strong>（Mockito 叫 <strong>spy</strong>）。<br>改变 mock 对象方法（method）的行为叫 <strong>Stub</strong>（插桩）。<br>一次 Mock 过程称为 Mock Session，基本包含如下三个步骤：</p>
+<pre><code>+----------+      +------+      +--------+
+| Mock/Spy | ===&gt; | Stub | ===&gt; | Verify |
++----------+      +------+      +--------+
+</code></pre><h2 id="Mock"><a href="#Mock" class="headerlink" title="Mock"></a>Mock</h2><h3 id="Class-Mock"><a href="#Class-Mock" class="headerlink" title="Class Mock"></a>Class Mock</h3><p>Class Mock 改变了 class 的行为，所以 mock 出来的对象就失去了原来的行为，如果没有对 method 进行插桩，那么 method 会返回默认值（<code>null</code>、<code>false</code>、<code>0</code>等）。</p>
+<p>最基本的用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.Mockito.*;</div><div class="line"></div><div class="line"><span class="comment">// 利用 List.class 创建一个 mock 对象 --- mockedList</span></div><div class="line">List mockedList = mock(List.class);</div><div class="line"></div><div class="line"><span class="comment">// 操作 mockedList</span></div><div class="line">mockedList.add(<span class="string">"one"</span>);</div><div class="line">mockedList.clear();</div><div class="line"></div><div class="line"><span class="comment">// 验证</span></div><div class="line">verify(mockedList).add(<span class="string">"one"</span>);</div><div class="line">verify(mockedList).clear();</div></pre></td></tr></table></figure>
+<h3 id="Object-Mock（spy）"><a href="#Object-Mock（spy）" class="headerlink" title="Object Mock（spy）"></a>Object Mock（spy）</h3><h3 id="Stub（插桩）"><a href="#Stub（插桩）" class="headerlink" title="Stub（插桩）"></a>Stub（插桩）</h3><p>仅仅 Mock 出来一个对象是不够的，虽然我们可以通过验证<strong>方法的执行情况</strong>来测试代码的逻辑，但是很多情况下我们还需要改变方法的返回值，这时就需要用到“插桩”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">LinkedList mockedList = mock(LinkedList.class);</div><div class="line"></div><div class="line"><span class="comment">// stubbing</span></div><div class="line">when(mockedList.get(<span class="number">0</span>)).thenReturn(<span class="string">"first"</span>);</div><div class="line">when(mockedList.get(<span class="number">1</span>)).thenThrow(<span class="keyword">new</span> RuntimeException());</div><div class="line"></div><div class="line"><span class="comment">// 打印出 "first"</span></div><div class="line">System.out.println(mockedList.get(<span class="number">0</span>));</div><div class="line"><span class="comment">// 抛出异常</span></div><div class="line">System.out.println(mockedList.get(<span class="number">1</span>));</div><div class="line"><span class="comment">// 返回 null，因为 get(999) 没有被 stub</span></div><div class="line">System.out.println(mockedList.get(<span class="number">999</span>));</div></pre></td></tr></table></figure>
+<h3 id="Verify（验证）"><a href="#Verify（验证）" class="headerlink" title="Verify（验证）"></a>Verify（验证）</h3>
       
     </div>
     <footer>
@@ -124,7 +128,7 @@
   <ul class="entry">
     
       <li>
-        <a href="/2017/07/06/improve-quanlity-with-mockito/">Mockito 用法入门</a>
+        <a href="/2017/07/06/improve-quanlity-with-mockito/">Mockito 用法和原理</a>
       </li>
     
       <li>
