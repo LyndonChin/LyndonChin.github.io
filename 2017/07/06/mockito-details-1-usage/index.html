@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Mockito 详解（一）基本用法 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Mockito 详解（一）基本用法"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/">行有不得反求诸己</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-07-05T16:00:00.000Z"><a href="/2017/07/06/mockito-details-1-usage/">2017-07-06</a></time>
+      
+      
+  
+    <h1 class="title">Mockito 详解（一）基本用法</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>Mockito 是一个用于 Java 单测的 Mock 框架，除了 JUnit 之外，它还可以用于其他单测框架（例如：TestNG）。<code>Mockito</code> 可以改变一个类或者对象的行为，能够让我们更加专注地去测试代码逻辑，省去了构造数据所花费的努力。</p>
+<a id="more"></a>
+<h2 id="0x00-基本概念"><a href="#0x00-基本概念" class="headerlink" title="0x00 基本概念"></a>0x00 基本概念</h2><p>Mock 可分为两种类型，一种是 <strong>Class Mock</strong>，另一种是 <strong>Partial Mock</strong>（Mockito 叫 <strong>spy</strong>）。<br>改变 mock 对象方法（method）的行为叫 <strong>Stub</strong>（插桩）。<br>一次 Mock 过程称为 <strong>Mock Session</strong>，它会记录所有的 <strong>Stubbing</strong>，基本包含如下三个步骤：</p>
+<pre><code>+----------+      +------+      +--------+
+| Mock/Spy | ===&gt; | Stub | ===&gt; | Verify |
++----------+      +------+      +--------+
+</code></pre><h2 id="0x01-Class-Mock"><a href="#0x01-Class-Mock" class="headerlink" title="0x01 Class Mock"></a>0x01 Class Mock</h2><p>Class Mock 改变了 class 的行为，所以 mock 出来的对象就完全失去了原来的行为。如果没有对 method 进行插桩，那么 method 会返回默认值（<code>null</code>、<code>false</code>、<code>0</code>等）。</p>
+<p>最基本的用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.Mockito.*;</div><div class="line"></div><div class="line"><span class="comment">// 利用 List.class 创建一个 mock 对象 --- mockedList</span></div><div class="line">List mockedList = mock(List.class);</div><div class="line"></div><div class="line"><span class="comment">// 操作 mockedList</span></div><div class="line">mockedList.add(<span class="string">"one"</span>);</div><div class="line">mockedList.clear();</div><div class="line"></div><div class="line"><span class="comment">// 验证</span></div><div class="line">verify(mockedList).add(<span class="string">"one"</span>);</div><div class="line">verify(mockedList).clear();</div></pre></td></tr></table></figure>
+<h2 id="0x02-Partial-Mock（spy）"><a href="#0x02-Partial-Mock（spy）" class="headerlink" title="0x02 Partial Mock（spy）"></a>0x02 Partial Mock（spy）</h2><p>如果只是想改变一个实例（instance）的行为，我们需要使用 <code>spy</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">List list = <span class="keyword">new</span> LinkedList();</div><div class="line">List spy = spy(list);</div><div class="line"></div><div class="line"><span class="comment">// optionally, you can stub out some methods:</span></div><div class="line">when(spy.size()).thenReturn(<span class="number">100</span>);</div><div class="line"></div><div class="line"><span class="comment">// using the spy calls *real* methods</span></div><div class="line">spy.add(<span class="string">"one"</span>);</div><div class="line">spy.add(<span class="string">"two"</span>);</div><div class="line"></div><div class="line"><span class="comment">// prints "one" - the first element of a list</span></div><div class="line">System.out.println(spy.get(<span class="number">0</span>));</div><div class="line"></div><div class="line"><span class="comment">// size() method was stubbed - 100 is printed</span></div><div class="line">System.out.println(spy.size());</div><div class="line"></div><div class="line"><span class="comment">// optionally, you can verify</span></div><div class="line">verify(spy).add(<span class="string">"one"</span>);</div><div class="line">verify(spy).add(<span class="string">"two"</span>);</div></pre></td></tr></table></figure>
+<p>如果方法没有被插桩，那么它的行为就不会被改变。所以有些情况下，我们不能使用 <code>when(Object)</code> 进行插桩，只能使用 do 系列方法（<code>doReturn|Answer|Throw()</code>）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">List list = <span class="keyword">new</span> LinkedList();</div><div class="line">List spy = spy(list);</div><div class="line"></div><div class="line"><span class="comment">// Impossible: real method is called so spy.get(0) throws IndexOutOfBoundsException </span></div><div class="line"><span class="comment">// (the list is yet empty)</span></div><div class="line">when(spy.get(<span class="number">0</span>)).thenReturn(<span class="string">"foo"</span>);</div><div class="line"></div><div class="line"><span class="comment">// You have to use doReturn() for stubbing</span></div><div class="line">doReturn(<span class="string">"foo"</span>).when(spy).get(<span class="number">0</span>);</div></pre></td></tr></table></figure>
+<p><strong>Mockito 的静态方法 spy 和 mock 的区别</strong></p>
+<p>spy 是 partical mock，所以其本质上也是 mock，我们可以首先分析一下 <code>Mockito#spy</code> 的源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">spy</span><span class="params">(T object)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> MOCKITO_CORE.mock((Class&lt;T&gt;) object.getClass(), withSettings()</div><div class="line">    .spiedInstance(object)</div><div class="line">    .defaultAnswer(CALLS_REAL_METHODS));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>MOCKITO_CORE</code> 是 <code>Mockito</code> 的核心实现类，<code>spy</code> 和 <code>mock</code> 方法一样，都是调用了 <code>MOCKITO_CORE.mock</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">mock</span><span class="params">(Class&lt;T&gt; classToMock)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> mock(classToMock, withSettings());</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">mock</span><span class="params">(Class&lt;T&gt; classToMock, MockSettings mockSettings)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> MOCKITO_CORE.mock(classToMock, mockSettings);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MockSettings <span class="title">withSettings</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> MockSettingsImpl().defaultAnswer(RETURNS_DEFAULTS);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过上面的代码可以看出，对于 <code>spy</code> 和 <code>mock</code> 两者最大区别在于使用了不同的 <code>MockSettings</code>。<code>spy</code> 的 <code>MockSettings</code> 需要一个 <code>spiedInstance</code>，其默认 Answer 是 <code>CALLS_REAL_METHODS</code>，也就是说，如果一个方法没有被 stub，那么会执行它真实的行为。</p>
+<h2 id="0x03-Stub（插桩）"><a href="#0x03-Stub（插桩）" class="headerlink" title="0x03 Stub（插桩）"></a>0x03 Stub（插桩）</h2><p>仅仅 Mock 出来一个对象显然是不够的，虽然我们可以通过验证<strong>方法的执行情况</strong>来测试代码的逻辑，但是多数情况下我们还需要改变方法的返回值，这时就需要用到“插桩”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">LinkedList mockedList = mock(LinkedList.class);</div><div class="line"></div><div class="line"><span class="comment">// stubbing</span></div><div class="line">when(mockedList.get(<span class="number">0</span>)).thenReturn(<span class="string">"first"</span>);</div><div class="line">when(mockedList.get(<span class="number">1</span>)).thenThrow(<span class="keyword">new</span> RuntimeException());</div><div class="line"></div><div class="line"><span class="comment">// 打印出 "first"</span></div><div class="line">System.out.println(mockedList.get(<span class="number">0</span>));</div><div class="line"><span class="comment">// 抛出异常</span></div><div class="line">System.out.println(mockedList.get(<span class="number">1</span>));</div><div class="line"><span class="comment">// 返回 null，因为 get(999) 没有被 stub</span></div><div class="line">System.out.println(mockedList.get(<span class="number">999</span>));</div></pre></td></tr></table></figure>
+<h3 id="Stubbing"><a href="#Stubbing" class="headerlink" title="Stubbing"></a>Stubbing</h3><p>Stubbing 表示一次插桩，它的形式是 <code>when(x).then(y)</code>，用于指定 mock 的行为。</p>
+<p><em>Stubbing 的示例代码</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">when(mock.foo()).thenReturn(<span class="keyword">true</span>);</div></pre></td></tr></table></figure></p>
+<p>可以通过如下代码获取 mock 对象的所有 stubbing：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Mockito.mockingDetails(mock).getStubbings();</div></pre></td></tr></table></figure>
+<p>Stubbing 的接口规范如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Stubbing</span> </span>&#123;</div><div class="line">    <span class="function">Invocation <span class="title">getInvocation</span><span class="params">()</span></span>;</div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">wasUsed</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>getInvocation()</code> 返回被插桩的方法调用，例如，<code>mock.foo()</code> 就是一个 <code>Invocation</code>。</li>
+<li><code>wasUsed()</code> 用于表示 stubbing 是否被使用，如果 <code>mock.foo()</code> 没有被调用，那么 <code>wasUsed()</code> 返回 false，说明存在未被使用的 stubbing，为了保持 <code>clarity of tests</code>，最好删除未被使用的 stubbing 代码。</li>
+</ul>
+<p><strong>Stubbing关系图</strong></p>
+<pre><code>   +-----------------+
+   | OngoingStubbing |
+   +-----------------+
+           /|\
+            |
+        implements
+            |
+            |
+   +-----------------+
+   |   BaseStubbing  |&lt;-----------------+
+   +-----------------+                  | 
+           /|\                          |
+            |                           |
+         extends                     extends 
+            |                           |
+            |                           |
++----------------------+    +---------------------+
+| ConsecutiveStubbing  |    | OngoingStubbingImpl |
++----------------------+    +---------------------+
+</code></pre><h2 id="Stubber"><a href="#Stubber" class="headerlink" title="Stubber"></a>Stubber</h2><p>Stubber 是一个插装器。</p>
+<p>当我们用 <code>doThrow()|doAnswer()|doNothing()|doReturn()</code> 的形式进行插桩时，可以通过 Stubber 来选择 mock 对象的方法：</p>
+<p><em>示例一</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">doThrow(<span class="keyword">new</span> RuntimeException()).when(mockedList).clear();</div></pre></td></tr></table></figure></p>
+<p><em>示例二</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">doThrow(<span class="keyword">new</span> RuntimeException(<span class="string">"one"</span>)).doThrow(<span class="keyword">new</span> RuntimeException(<span class="string">"two"</span>)).when(mock).someVoidMethod();</div></pre></td></tr></table></figure></p>
+<h3 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h3><p>不管是 <code>Stubber</code> 还是 <code>OngoingStubbing</code>，除了标准返回之外，都提供了自定义返回值的方法：</p>
+<ul>
+<li><code>Stubber doAnswer(Answer answer);</code></li>
+<li><code>OngoingStubbing&lt;T&gt; then(Answer&lt;?&gt; answer);</code></li>
+</ul>
+<p>Answer 的接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Answer</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">    <span class="function">T <span class="title">answer</span><span class="params">(InvocationOnMock invocation)</span> <span class="keyword">throws</span> Throwable</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如下代码利用 <code>Answer</code> 改变了 mock 方法的行为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">when(mock.someMethod(anyString())).thenAnswer(</div><div class="line">    <span class="keyword">new</span> Answer() &#123;</div><div class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">answer</span><span class="params">(InvocationOnMock invocation)</span> </span>&#123;</div><div class="line">            Object[] args = invocation.getArguments();</div><div class="line">            Object mock = invocation.getMock();</div><div class="line">            <span class="keyword">return</span> <span class="string">"called with arguments: "</span> + Arrays.toString(args);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>那么 <code>mock.someMethod(&quot;foo&quot;)</code> 的返回值就变成了 <code>called with arguments: [foo]</code>。</p>
+<p><code>Answer</code> 不接受参数，只有返回值，Mockito 还提供了其他 5 个 Answer，分别接受不同个数的参数，然后返回一个值。</p>
+<ul>
+<li>Answer1</li>
+<li>Answer2</li>
+<li>Answer3</li>
+<li>Answer4</li>
+<li>Answer5</li>
+</ul>
+<p>只接受参数，没有返回值的 Answer 包括：</p>
+<ul>
+<li>VoidAnswer1</li>
+<li>VoidAnswer2</li>
+<li>VoidAnswer3</li>
+<li>VoidAnswer4</li>
+<li>VoidAnswer5</li>
+</ul>
+<h2 id="0x04-Verify（验证）"><a href="#0x04-Verify（验证）" class="headerlink" title="0x04 Verify（验证）"></a>0x04 Verify（验证）</h2><p>Verify 用于验证 mock 行为。</p>
+<p>Mockito 提供了两个 <code>verify</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">verify</span><span class="params">(T mock, VerificationMode mode)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> MOCKITO_CORE.verify(mock, mode);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// times(1) 是 VerificationMode 的默认值</span></div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">verify</span><span class="params">(T mock)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> MOCKITO_CORE.verify(mock, times(<span class="number">1</span>));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>验证模式如下所示：</p>
+<h3 id="times"><a href="#times" class="headerlink" title="times"></a>times</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">verify(mock, times(<span class="number">2</span>)).someMethod(<span class="string">"some arg"</span>);</div></pre></td></tr></table></figure>
+<h3 id="never"><a href="#never" class="headerlink" title="never"></a>never</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">verify(mock, never()).someMethod();</div></pre></td></tr></table></figure>
+<h3 id="atLeastOnce"><a href="#atLeastOnce" class="headerlink" title="atLeastOnce"></a>atLeastOnce</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">verify(mock, atLeastOnce()).someMethod(<span class="string">"some arg"</span>);</div></pre></td></tr></table></figure>
+<h3 id="atLeast"><a href="#atLeast" class="headerlink" title="atLeast"></a>atLeast</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">verify(mock, atLeast(<span class="number">3</span>)).someMethod(<span class="string">"some arg"</span>);</div></pre></td></tr></table></figure>
+<h3 id="atMost"><a href="#atMost" class="headerlink" title="atMost"></a>atMost</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">verify(mock, atMost(<span class="number">3</span>)).someMethod(<span class="string">"some arg"</span>);</div></pre></td></tr></table></figure>
+<h3 id="calls"><a href="#calls" class="headerlink" title="calls"></a>calls</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">inOrder.verify(mock, calls(<span class="number">2</span>)).someMethod( <span class="string">"some arg"</span> );</div></pre></td></tr></table></figure>
+<h3 id="only"><a href="#only" class="headerlink" title="only"></a>only</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">verify(mock, only()).someMethod();</div><div class="line"><span class="comment">//above is a shorthand for following 2 lines of code:</span></div><div class="line">verify(mock).someMethod();</div><div class="line">verifyNoMoreInvocations(mock);</div></pre></td></tr></table></figure>
+<h3 id="timeout"><a href="#timeout" class="headerlink" title="timeout"></a>timeout</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//passes when someMethod() is called within given time span</span></div><div class="line">verify(mock, timeout(<span class="number">100</span>)).someMethod();</div><div class="line"><span class="comment">//above is an alias to:</span></div><div class="line">verify(mock, timeout(<span class="number">100</span>).times(<span class="number">1</span>)).someMethod();</div><div class="line"></div><div class="line"><span class="comment">//passes as soon as someMethod() has been called 2 times before the given timeout</span></div><div class="line">verify(mock, timeout(<span class="number">100</span>).times(<span class="number">2</span>)).someMethod();</div><div class="line"></div><div class="line"><span class="comment">//equivalent: this also passes as soon as someMethod() has been called 2 times before the given timeout</span></div><div class="line">verify(mock, timeout(<span class="number">100</span>).atLeast(<span class="number">2</span>)).someMethod();</div><div class="line"></div><div class="line"><span class="comment">//verifies someMethod() within given time span using given verification mode</span></div><div class="line"><span class="comment">//useful only if you have your own custom verification modes.</span></div><div class="line">verify(mock, <span class="keyword">new</span> Timeout(<span class="number">100</span>, yourOwnVerificationMode)).someMethod();</div></pre></td></tr></table></figure>
+<h3 id="after"><a href="#after" class="headerlink" title="after"></a>after</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//passes after 100ms, if someMethod() has only been called once at that time.</span></div><div class="line">verify(mock, after(<span class="number">100</span>)).someMethod();</div><div class="line"><span class="comment">//above is an alias to:</span></div><div class="line">verify(mock, after(<span class="number">100</span>).times(<span class="number">1</span>)).someMethod();</div><div class="line"></div><div class="line"><span class="comment">//passes if someMethod() is called *exactly* 2 times after the given timespan</span></div><div class="line">verify(mock, after(<span class="number">100</span>).times(<span class="number">2</span>)).someMethod();</div><div class="line"></div><div class="line"><span class="comment">//passes if someMethod() has not been called after the given timespan</span></div><div class="line">verify(mock, after(<span class="number">100</span>).never()).someMethod();</div><div class="line"></div><div class="line"><span class="comment">//verifies someMethod() after a given time span using given verification mode</span></div><div class="line"><span class="comment">//useful only if you have your own custom verification modes.</span></div><div class="line">verify(mock, <span class="keyword">new</span> After(<span class="number">100</span>, yourOwnVerificationMode)).someMethod();</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Mockito/">Mockito</a>, <a href="/tags/测试/">测试</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div id="uyan_frame"></div>
+  <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128686"></script>
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mockito/" style="font-size: 10px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12.5px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 17.5px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/07/10/mockito-details-2-plugins/">Mockito 详解（二）插件机制</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/06/mockito-details-1-usage/">Mockito 详解（一）基本用法</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/04/2017-semi-annual-summary/">2017 年中总结</a>
+      </li>
+    
+      <li>
+        <a href="/2017/03/21/app-force-update-architecture/">Android 强升逻辑和实现</a>
+      </li>
+    
+      <li>
+        <a href="/2017/02/15/2016-summary/">2016 年终总结</a>
+      </li>
+    
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
