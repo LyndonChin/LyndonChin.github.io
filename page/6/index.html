@@ -55,6 +55,55 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-01-25T05:54:00.000Z"><a href="/2016/01/25/hexo-summary/">2016-01-25</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/01/25/hexo-summary/">Hexo 踩坑记</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h2><p>除了通过 <code>hexo generate</code> 生成 <strong>github pages</strong> 之外，还需要备份整个博客。</p>
+<p>分支 <code>master</code> 用于发布 <strong>public</strong> 文件夹下的内容，<code>hexo</code> 用于备份整个博客（不包括 <strong>public</strong>）</p>
+<p>用一个简单的脚本实现备份和发布：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">git add --all</div><div class="line">git commit -m<span class="string">'update'</span></div><div class="line">git push</div><div class="line"></div><div class="line">hexo g</div><div class="line">hexo d</div></pre></td></tr></table></figure>
+<h2 id="添加-disquse"><a href="#添加-disquse" class="headerlink" title="添加 disquse"></a>添加 disquse</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">hexo config disqus_shortname liangfeizc</div><div class="line">hexo --config themes/light/_config.yml config comment_provider disqus</div></pre></td></tr></table></figure>
+<h2 id="添加-About"><a href="#添加-About" class="headerlink" title="添加 About"></a>添加 About</h2><ol>
+<li><p>生成一个 page</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hexo new page about</div></pre></td></tr></table></figure>
+</li>
+<li><p>编辑 <code>source/about/index.md</code></p>
+</li>
+<li>修改 <code>themes/light/_config.yml</code>，添加链接 <figure class="highlight yml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">menu:</span></div><div class="line"><span class="attr">  Home:</span> <span class="literal">null</span></div><div class="line"><span class="attr">  Archives:</span> archives</div><div class="line"><span class="attr">  About:</span> about</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="Header-添加链接"><a href="#Header-添加链接" class="headerlink" title="Header 添加链接"></a>Header 添加链接</h2><p>修改 <code>themes/light/layout/_partial/header.ejs</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">nav</span> <span class="attr">id</span>=<span class="string">"main-nav"</span> <span class="attr">class</span>=<span class="string">"alignright"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">ul</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">%</span> <span class="attr">for</span> (<span class="attr">var</span> <span class="attr">i</span> <span class="attr">in</span> <span class="attr">theme.menu</span>)&#123; %&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%- config.root %&gt;&lt;%- theme.menu[i] %&gt;"</span>&gt;</span><span class="tag">&lt;<span class="name">%=</span> <span class="attr">i</span> %&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">%</span> &#125; %&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"https://github.com/lyndonchin"</span>&gt;</span>Github<span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"clearfix"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">nav</span>&gt;</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-01-25T02:57:15.000Z"><a href="/2016/01/25/2015-summary/">2016-01-25</a></time>
       
       
@@ -360,69 +409,6 @@ feature|  |  |
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2015-08-02T16:00:00.000Z"><a href="/2015/08/03/summary-for-ios-development-of-tmall-ipad/">2015-08-03</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2015/08/03/summary-for-ios-development-of-tmall-ipad/">iOS 开发总结</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>一个月之前认为不可能做到的事情，今天做到了，很高兴，深夜来篇总结，梳理一下。<br>作为一名 iOS 新手，过去只在 Android 开发之余看过一些教程，再加上对 OC 的强烈排斥，对这个需求一拖再拖，终于搞定了，长嘘一口气。</p>
-<h2 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h2><p><img src="https://github.com/LyndonChin/UICollectionViewWithMenu/raw/master/art/footprint.gif" alt=""></p>
-<p>其中的难点在于点击一个 Cell 后，会在这个 cell 与下一行之间插入一个菜单。</p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>在 UICollectionView 中插入一个 Cell 作为 Menu，宽度设为 UICollectionView 的宽度，高度为0。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |<br>—————-MENU—————–<br>|     |     |<br>|     |     |</p>
-<h2 id="-1"><a href="#-1" class="headerlink" title="|     |     |"></a>|     |     |</h2><p></p>
-<p>当点击第一行的某个 Cell 之后，让高度大于0，Menu 显示。</p>
-<h2 id="-2"><a href="#-2" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
-<h2 id="-3"><a href="#-3" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>|                                   |<br>|              MENU                 |</p>
-<h2 id="-4"><a href="#-4" class="headerlink" title="|                                   |"></a>|                                   |</h2><p>|     |     |<br>|     |     |</p>
-<h2 id="-5"><a href="#-5" class="headerlink" title="|     |     |"></a>|     |     |</h2><p></p>
-<p>如果有的行 Cell 数小于6，可以填充一些 Dummy Cell。</p>
-<h2 id="-6"><a href="#-6" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
-<h2 id="-7"><a href="#-7" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>|     |     | –  | –  | –  | –  |<br>|     |     |  D  |  U  |  M  |  Y  |<br>|     |     | –  | –  | –  | –  |<br>—————-MENU—————–<br></p>
-<p>当点击第二行的某个 Cell 之后，显示隐藏在第三行的 Menu Cell。</p>
-<h2 id="-8"><a href="#-8" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
-<h2 id="-9"><a href="#-9" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>|     |     | –  | –  | –  | –  |<br>|     |     |  D  |  U  |  M  |  Y  |</p>
-<h2 id="–-–-–-–"><a href="#–-–-–-–" class="headerlink" title="|     |     | –  | –  | –  | –  |"></a>|     |     | –  | –  | –  | –  |</h2><p>|                                   |<br>|                MENU               |</p>
-<h2 id="-10"><a href="#-10" class="headerlink" title="|                                   |"></a>|                                   |</h2><p></p>
-<p>按照以上思路，可以实现基本效果，中间遇到一个问题还是挺有意思的。</p>
-<h2 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h2><p>刚开始的时候，只是把 Menu 的宽度和高度都设置为0，效果如下：</p>
-<h2 id="-11"><a href="#-11" class="headerlink" title=""></a><pre></pre></h2><p>|     |     |     |     |     |     |<br>|     |     |     |     |     |     |</p>
-<h2 id="-12"><a href="#-12" class="headerlink" title="|     |     |     |     |     |     |"></a>|     |     |     |     |     |     |</h2><p>M     |     |<br>E     |     |<br>N     |     |<br>U————<br></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];</div><div class="line">layout.minimumInteritemSpacing = 4.0f;</div><div class="line">layout.minimumLineSpacing = 2.0f;</div><div class="line">[layout setSectionInset:UIEdgeInsetsMake(0, 4, 0, 4)];</div></pre></td></tr></table></figure>
-<p>结果当 Menu 不显示的时候，第二行只能显示5个 Cell，剩下的一个被挤到了第三行。</p>
-<blockquote>
-<p>这是因为虽然 Menu 的宽度为0，但 flow layout 设置的 Margin 对它依然有效，从而导致第二行放不下6个 Cell。</p>
-</blockquote>
-<p>iOS 的 UI 元素居然没有类似 android:visibility=”gone” 的属性。。。。:(</p>
-<p>源码请戳 <a href="https://github.com/LyndonChin/UICollectionViewWithMenu" target="_blank" rel="external">UICollectionViewWithMenu</a></p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -447,7 +433,7 @@ feature|  |  |
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12.5px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mockito/" style="font-size: 12.5px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 12.5px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12.5px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 17.5px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 12.5px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Mockito/" style="font-size: 14px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 14px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
   </div>
 </div>
 
@@ -458,7 +444,11 @@ feature|  |  |
   <ul class="entry">
     
       <li>
-        <a href="/2017/07/10/mockito-details-2-plugins/">Mockito 详解（二）插件机制</a>
+        <a href="/2017/07/08/mockito-details-3-stubbing/">Mockito 详解（三）插桩</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/07/mockito-details-2-plugins/">Mockito 详解（二）插件机制</a>
       </li>
     
       <li>
@@ -471,10 +461,6 @@ feature|  |  |
     
       <li>
         <a href="/2017/03/21/app-force-update-architecture/">Android 强升逻辑和实现</a>
-      </li>
-    
-      <li>
-        <a href="/2017/02/15/2016-summary/">2016 年终总结</a>
       </li>
     
   </ul>
