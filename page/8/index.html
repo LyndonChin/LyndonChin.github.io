@@ -55,6 +55,82 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2015-05-04T16:00:00.000Z"><a href="/2015/05/05/introduction-to-sky/">2015-05-05</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/05/05/introduction-to-sky/">Dart更近一步，Sky会一统江湖吗？</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>从接触编程到现在，除了搞过几天JQuery，几乎没怎么写过Javascript，刚刚看了两篇介绍 ECMAScript6 的文章，突然觉得没写过JS也没什么好遗憾的。</p>
+<ul>
+<li><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-an-introduction/" target="_blank" rel="external">ES6 In Depth: An Introduction</a></li>
+<li><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank" rel="external">ES6 In Depth: Iterators and the for-of loop</a></li>
+</ul>
+<p>ES6 好像从2009年就开始制定了，现在终于支持 <code>forEach</code>、<code>for-in</code>等操作，也支持<code>Map</code>、<code>Set</code>等数据类型，而且为了考虑兼容性问题居然引入了一个 <code>for-of</code>，不过看到 <a href="http://githut.info/" target="_blank" rel="external">Githut</a> 上关于 github 语言的统计数据，不得不佩服JS社区强大的生产力。</p>
+<p>话说回来，Dart 作为一个崭新的语言，自诞生那天起就抛去了向下兼容的历史包袱，而且可以直接转成 Javascript，Chrome 的 V8 团队还专门为 Dart 做了一个虚拟机 - Dartium。</p>
+<p>Dart 目的跟 Node 一样，也是为了统一前后端开发，这一点在上一篇文章 （<a href="http://blog.csdn.net/feelang/article/details/45469151" target="_blank" rel="external">Dart是一个怎样的语言？</a> ）已经说过了，所以用 Dart 做 web 开发也没有额外的学习成本，当然前提是你得会写 Dart。</p>
+<p>官方教程提供的一个简单的 web 开发教程 - <a href="https://www.dartlang.org/codelabs/darrrt/" target="_blank" rel="external">Avast, Ye Pirates: Write a Web App</a>，用<code>DartEditor</code>导入后，工程结构如下图所示：</p>
+<p><img width="50%" src="http://img.blog.csdn.net/20150504224927710"></p>
+<p>有css，有html，一个最简单的web工程（没有后端），在 <code>DartEditor</code> 中可以用两种方式来运行这个工程。</p>
+<p><img width="50%" src="http://img.blog.csdn.net/20150504225320675"></p>
+<p>如果选择了 <code>Dartium</code>，编译成功后会唤起一个使用了 Dartium 引擎的 chrome 浏览器，而过选择了 <code>Run as JavaScript</code> 就会先把 dart 编译成 js 的工程（工程结构图中灰色的部分），然后唤起一个使用了 V8 引擎的 chrome 浏览器。</p>
+<p>其实用 Dart 做开发还是挺方便的，js 都是可以直接拿来用的，但是社区不成熟，不像 node 社区那样有那么多的库。</p>
+<hr>
+<p>我们再来看看下一代 Android 开发框架 - <a href="https://github.com/domokit" target="_blank" rel="external">sky</a>，今天照着 readme 玩了一下官方提供的几个demo，流畅度可以跟 native 媲美，但是需要从网络加载代码，所以启动时间比较慢，毕竟只是一个实验版本，像 react-native 那样做个本地缓存也不会有什么问题。</p>
+<p>整个开发过程与上面的 web 开发非常相似，只不过代码文件的后缀名换了而已。</p>
+<p>首先需要创建一个 <code>pubspec.yaml</code>，类似于 Node 的 <code>package.json</code> 或者 gradle 脚本的 <code>build.gradle</code>，主要是一些包依赖关系和 APP 的基本信息，最后一行表示依赖最新版本的 sky。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">name:</span> your_app_name</div><div class="line"><span class="attr">dependencies:</span></div><div class="line"><span class="attr"> sky:</span> any</div></pre></td></tr></table></figure>
+<p>在当前目录下执行 <code>pub get</code>，会根据 <code>pubspec.yaml</code> 的依赖配置获取 APP 所依赖的包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜  widgets git:(master) ✗ pub get</div><div class="line">Resolving dependencies... (1.7s)</div><div class="line">+ mojo 0.0.5+dart-summit-1</div><div class="line">+ sky 0.0.5+dart-summit-7</div><div class="line">Changed 2 dependencies!</div><div class="line">➜  widgets git:(master) ✗</div></pre></td></tr></table></figure>
+<p>执行完毕后会发现在本地多了一个 <code>package</code> 文件夹，里面有刚刚下载的两个包。</p>
+<p><img src="http://img.blog.csdn.net/20150505003910350" alt="这里写图片描述"></p>
+<p><em>pub会首先把下载来的包缓存到本地，如果有的新的下载可以直接引用之前下载过的包。</em></p>
+<p>sky 我们都知道了，它就是 Android 全新的开发框架，由两部分组成：</p>
+<pre>
+<i>The Sky engine</i>. The engine is the core of the system. Written in C++, the engine provides the muscle of the Sky system. The engine provides several primitives, including a soft real-time scheduler and a hierarchial, retained-mode graphics system, that let you build high-quality apps.
+
+<i>The Sky framework</i>. The framework makes it easy to build apps using Sky by providing familiar user interface widgets, such as buttons, infinite lists, and animations, on top of the engine using Dart. These extensible components follow a functional programming style inspired by React.
+</pre>
+
+<p>简单来说，<em>Sky engine</em> 是一个图形系统，VDOM 的创建和diff应该也是它负责的，而 <em>Sky framework</em> 则是一个UI库，提供了我们创建 VDOM 时所需的节点元素。</p>
+<p>那 mojo 又是什么呢？</p>
+<pre>Mojo is an effort to extract a common platform out of Chrome's renderer and plugin processes that can support multiple types of sandboxed content, such as HTML, Pepper, or NaCl.</pre>
+
+<p>简单来说，mojo 就是 sky 的运行时环境，但是 domokit 下还有一个<a href="https://github.com/domokit/mojo_sdk" target="_blank" rel="external">mojo-sdk</a>，这个 sdk 为我们提供给了基于 mojo 做二次开发所用到的 API。</p>
+<pre>The Mojo Public API is a binary stable API to the Mojo system.</pre>
+
+<p>它支持很多种语言，目前为止包括 <code>C</code>、<code>CPP</code>、<code>Dart</code>、<code>Go</code>、<code>Java</code>、<code>js</code>。</p>
+<p>也就是说，Google 想打造的是这样一个生态系统。</p>
+<img src="/2015/05/05/introduction-to-sky/dart.png" alt="sky framework" title="sky framework">
+<hr>
+<p>如果这个愿景能够实现，120fps的卖点也许会一统江湖，但是 Google IO 2015 根本没有提及这个项目，希望 Google 不是玩票 :(</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-05-03T16:00:00.000Z"><a href="/2015/05/04/introduction-to-dart/">2015-05-04</a></time>
       
       
@@ -395,62 +471,6 @@ constructor: Closure$1(int) 即为编译器添加的构造方法。
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-05-17T16:00:00.000Z"><a href="/2014/05/18/how-to-inheritent-an-inner-class/">2014-05-18</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/05/18/how-to-inheritent-an-inner-class/">怎样继承一个内部类</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>定义一个内部类时，这个内部类会有一个隐式引用 (implicit reference) 指向外部类的实例。例如下面的代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其实，内部类Inner默认会有一个带参数的构造函数，我们通过反射来看一下。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Field;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getConstructors</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">for</span> (Constructor&lt;?&gt; cons : getClass().getDeclaredConstructors()) &#123;</div><div class="line">                StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">                sb.append(<span class="string">"constructor: "</span>).append(cons.getName()).append(<span class="string">"("</span>);</div><div class="line">                <span class="keyword">for</span> (Class&lt;?&gt; param : cons.getParameterTypes()) &#123;</div><div class="line">                    sb.append(param.getSimpleName()).append(<span class="string">", "</span>);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (sb.charAt(sb.length() - <span class="number">1</span>) == <span class="string">' '</span>) &#123;</div><div class="line">                    sb.replace(sb.length() - <span class="number">2</span>, sb.length(), <span class="string">")"</span>);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    sb.append(<span class="string">')'</span>);</div><div class="line">                &#125;</div><div class="line">                System.out.println(sb);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritInner</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        WithInner wi = <span class="keyword">new</span> WithInner();</div><div class="line">        WithInner.Inner i = wi.new Inner();</div><div class="line">        i.getConstructors();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>输出结果为：</p>
-<pre>
-constructor: WithInner$Inner(WithInner)
-</pre>
-
-<p>从结果可以看出参数的类型就是就是外部类 (outer class)，也就是说，构造内部类的时候，必须要给它一个外部类的引用。接下来我们让 <code>InheritInner</code> 继承 <code>WithInner.Inner</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;&#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritInner</span> <span class="keyword">extends</span> <span class="title">WithInner</span>.<span class="title">Inner</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>无法通过编译：</p>
-<pre>
-InheritInner.java:5: an enclosing instance that contains WithInner.Inner is required
-public class InheritInner extends WithInner.Inner {
-       ^
-1 error
-</pre>
-
-<p>报错信息提示我们 <code>InheritInner</code> 需要一个 <code>WithInner</code> 实例。</p>
-<p>那我们给 <code>InheritInner</code> 加上我们反射出的带参数的构造函数。照样编译通不过，而且会报同样的错误。这是因为语法规定：在继承内部类的时候，在构造函数中必须要添加 enclosingClassReference.super()。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritInner</span> <span class="keyword">extends</span> <span class="title">WithInner</span>.<span class="title">Inner</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">InheritInner</span><span class="params">(WithInner wi)</span> </span>&#123;</div><div class="line">        wi.<span class="keyword">super</span>();</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        WithInner wi = <span class="keyword">new</span> WithInner();</div><div class="line">        InheritInner ii = <span class="keyword">new</span> InheritInner(wi);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>OK，编译通过，运行也正常。但是为什么要这么做，我现在也不是很清楚。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -475,7 +495,7 @@ public class InheritInner extends WithInner.Inner {
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18.33px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 14px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
   </div>
 </div>
 
@@ -484,6 +504,10 @@ public class InheritInner extends WithInner.Inner {
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（四）MockitoAnnotation</a>
+      </li>
     
       <li>
         <a href="/2017/07/25/mockito-details-4-session/">Mockito 详解（四）MockitoSession</a>
@@ -499,10 +523,6 @@ public class InheritInner extends WithInner.Inner {
     
       <li>
         <a href="/2017/07/06/mockito-details-1-usage/">Mockito 详解（一）基本用法</a>
-      </li>
-    
-      <li>
-        <a href="/2017/07/04/2017-semi-annual-summary/">2017 年中总结</a>
       </li>
     
   </ul>
