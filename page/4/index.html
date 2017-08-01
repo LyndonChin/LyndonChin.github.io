@@ -55,6 +55,71 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-07-09T16:00:00.000Z"><a href="/2016/07/10/diagram-retrofit-service-method/">2016-07-10</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/10/diagram-retrofit-service-method/">图解 Retrofit 之 ServiceMethod</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>通过 <a href="http://www.liangfei.me/2016/07/06/my-practice-of-retrofit-and-rxandroid/" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a>，我们已经了解到了 Retrofit 的基本用法，为了知其所以然，我们以图解加源码的方式从 Service Method 入手，逐步解析 Retrofit。</p>
+<p>首先以官方网站的示例代码为例，看一下一个 Service Method 的组成部分。</p>
+<img src="/2016/07/10/diagram-retrofit-service-method/service_method.png" alt="service method" title="service method">
+<p><code>ServiceMethod</code> 使用了 Builder 模式，先来看 <code>ServiceMethod.Builder</code> 的构造方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Retrofit retrofit, Method method)</span> </span>&#123;</div><div class="line">  <span class="keyword">this</span>.retrofit = retrofit;</div><div class="line">  <span class="keyword">this</span>.method = method;</div><div class="line">  <span class="keyword">this</span>.methodAnnotations = method.getAnnotations();</div><div class="line">  <span class="keyword">this</span>.parameterTypes = method.getGenericParameterTypes();</div><div class="line">  <span class="keyword">this</span>.parameterAnnotationsArray = method.getParameterAnnotations();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>构造方法接受两个参数 - <code>retrofit</code> 和 <code>method</code>，然后通过调用 <code>Method</code> 类的方法获取以下数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> Annotation[] methodAnnotations;</div><div class="line"><span class="keyword">final</span> Annotation[][] parameterAnnotationsArray;</div><div class="line"><span class="keyword">final</span> Type[] parameterTypes;</div></pre></td></tr></table></figure>
+<p><code>methodAnnotations</code> 就对应着上例中的  <code>@GET(&quot;users/{user}/repos&quot;</code>，由 <code>parseMethodAnnotation</code> 负责解析。</p>
+<p>method parameter 也有对应的 annotation type，由对应的 <code>ParameterHandler</code> 进行处理，例如上例中的 <code>@Path</code> 就对应着 <code>class Path&lt;T&gt; extends ParameterHandler&lt;T&gt;</code>。</p>
+<p>一个 parameter 可以有多个 annotation，所以  <code>parameterAnnotationsArray</code> 是一个二维数组 - <code>Annotation[][]</code>。</p>
+<p><code>ServiceMethod.Builder</code> 最终会 <code>build</code> 出一个 <code>ServiceMethod</code> 实例，我们先来看 method annotations 的解析过程。</p>
+<h2 id="method-annotations"><a href="#method-annotations" class="headerlink" title="method annotations"></a>method annotations</h2><p><em>ServiceMethod.Builder#build</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (Annotation annotation : methodAnnotations) &#123;</div><div class="line">  parseMethodAnnotation(annotation);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如下图所示，<code>parseMethodAnnotation</code> 方法根据 method annotation 的类型（蓝色框内）生成一个 request 所需要的数据（褐色框内）。</p>
+<img src="/2016/07/10/diagram-retrofit-service-method/parse_method_annotation.png" alt="parse method annotation" title="parse method annotation">
+<p>其中 <code>httpMethod</code> 不能为空，如果 <code>hasBody == false</code>，那么 <code>isMultipart</code> 和 <code>isFormEncoded</code> 也必须为 <code>false</code>，而且两者互斥不能同时为 <code>true</code>，否则会抛出异常。</p>
+<p>解析完 method annotations 之后，再来解析  parameters（代码示例中的 <code>@Path(&quot;user&quot;) String user</code>）。</p>
+<h2 id="parameters"><a href="#parameters" class="headerlink" title="parameters"></a>parameters</h2><img src="/2016/07/10/diagram-retrofit-service-method/parse_parameter.png" alt="parse parameters" title="parse parameters">
+<p>每一个 parameter annotation 类型都有对应的 <code>ParameterHandler</code>，method parameters 解析完成之后生成一个数组 - <code>ParameterHandler[] parameterHandlers</code>，这个数组在后面构建 request 的时候会用到。</p>
+<p>解析过程中会验证 <code>@Path</code> value 的合法性，并确保 value 在 <code>relativeUrlParamNames</code>（<em>由 method annotations 生成</em>） 中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Upper and lower characters, digits, underscores, and hyphens, starting with a character.</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> String PARAM = <span class="string">"[a-zA-Z][a-zA-Z0-9_-]*"</span>;</div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_URL_REGEX = Pattern.compile(<span class="string">"\\&#123;("</span> + PARAM + <span class="string">")\\&#125;"</span>);</div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_NAME_REGEX = Pattern.compile(PARAM);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">validatePathName</span><span class="params">(<span class="keyword">int</span> p, String name)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!PARAM_NAME_REGEX.matcher(name).matches()) &#123;</div><div class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"@Path parameter name must match %s. Found: %s"</span>,</div><div class="line">        PARAM_URL_REGEX.pattern(), name);</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// Verify URL replacement name is actually present in the URL path.</span></div><div class="line">  <span class="keyword">if</span> (!relativeUrlParamNames.contains(name)) &#123;</div><div class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"URL \"%s\" does not contain \"&#123;%s&#125;\"."</span>, relativeUrl, name);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>parseParameterAnnotation</code>  方法在解析 <code>Url</code> 类型的 parameter annotation 时会判断 parameter 类型，由于 Retrofit 本身没有依赖 Android SDK，所以无法像 <code>HttpUrl.class</code> 那样获取 <code>Uri.class</code>，但是 Retrofit 的实现很巧妙，学到了：）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (type == HttpUrl.class</div><div class="line">    || type == String.class</div><div class="line">    || type == URI.class</div><div class="line">    || (type <span class="keyword">instanceof</span> Class &amp;&amp; <span class="string">"android.net.Uri"</span>.equals(((Class&lt;?&gt;) type).getName()))) &#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ParameterHandler.RelativeUrl();</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="keyword">throw</span> parameterError(p,</div><div class="line">      <span class="string">"@Url must be okhttp3.HttpUrl, String, java.net.URI, or android.net.Uri type."</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>method annotations 以及 parameters 都解析完成后，我们再回到 service method 的 callAdapter。</p>
+<h2 id="CallAdapter"><a href="#CallAdapter" class="headerlink" title="CallAdapter"></a>CallAdapter</h2><p>想要了解 <code>CallAdapter</code> 的功能，我们需要先从 <code>Retrofit</code> 的 <code>create</code> 方法开始分析。</p>
+<p><code>create</code> 方法使用<strong>动态代理</strong>把 service method 的调用转发给一个 <code>InvocationHandler</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ServiceMethod serviceMethod = loadServiceMethod(method);</div><div class="line">OkHttpCall okHttpCall = <span class="keyword">new</span> OkHttpCall&lt;&gt;(serviceMethod, args);</div><div class="line"><span class="keyword">return</span> serviceMethod.callAdapter.adapt(okHttpCall);</div></pre></td></tr></table></figure>
+<p>由以上代码可以看出，<code>CallAdapter</code> 会把一个 <code>Call</code> 类型适配为用户定义的 service method 的 return type。</p>
+<p>举个例子，如果我们配合 RxAndroid 使用 Retrofit，service method 的返回值类型会由 <code>Call</code> 类型变成 <code>Observable</code> 类型，这个转换其实就由 <code>RxJavaCallAdapterFactory</code> 来实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()      </div><div class="line">    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())</div><div class="line">    .baseUrl(BASE_URL) .build();</div></pre></td></tr></table></figure>
+<p>由以上代码可以看出，<code>RxJavaCallAdapterFactory</code> 是通过 <code>Retrofit.Builder</code> 的<br><code>addCallAdapterFactory</code> 方法传递给 <code>Retrofit</code>，而 <code>create</code> 方法中 <code>adapt</code> 的执行者却是 <code>ServiceMethod</code>，也就是说 <code>ServiceMethod</code> 的 <code>CallAdapter</code> 是由 <code>Retrofit</code> 提供的，两者的交互关系如下图所示：</p>
+<img src="/2016/07/10/diagram-retrofit-service-method/retrofit_and_service_method.png" alt="retrofit vs service method" title="retrofit vs service method">
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>敬请期待下一篇 - <strong>图解 Retrofit - Converter</strong></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-07-05T16:00:00.000Z"><a href="/2016/07/06/my-practice-with-retrofit-and-rxjava/">2016-07-06</a></time>
       
       
@@ -299,55 +364,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-16T02:08:45.000Z"><a href="/2016/05/16/basic-car-knowledge/">2016-05-16</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/16/basic-car-knowledge/">学习汽车基础知识</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>刚毕业那会参加工作，稀里糊涂地选择了所谓的发动机开发，虽然呵呵，但是几个月的发动机原理培训还是不错的（亲手拆过发动机），至少现在也能受益。</p>
-<p>最近又看了两本汽车原理的科普书：</p>
-<ul>
-<li><a href="https://book.douban.com/subject/7054896/" target="_blank" rel="external">《汽车为什么会“跑”》</a></li>
-<li><a href="https://book.douban.com/subject/25761310/" target="_blank" rel="external">《汽车是怎样跑起来的》</a></li>
-</ul>
-<p>顺带还回答了一个问题 - <a href="https://www.zhihu.com/question/25500912/answer/100649900" target="_blank" rel="external">如何系统性学习汽车知识？有哪些经典的书籍可供学习？</a>。</p>
-<p>大概似乎懂了一些。</p>
-<ul>
-<li>理解了马力和扭矩的作用 - <a href="https://www.zhihu.com/question/20224153" target="_blank" rel="external">汽车发动机的两个参数马力和扭矩，哪个更能体现动力性？</a>。</li>
-<li>汽车的“三大件” - 发动机、变速箱、底盘</li>
-<li>动力总成（万向节、差速器）</li>
-<li>发动机的性能参数（直喷、排量、可变气门、稀薄燃烧、机械增压、涡轮增压。。。）</li>
-<li>变速箱的原理（双离合、无级变速CVT、手动变速、手自一体）</li>
-<li>底盘（独立悬架非独立悬架的区别、减震器、减震弹簧等）</li>
-</ul>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -372,7 +388,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 14px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 14px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
   </div>
 </div>
 
@@ -381,6 +397,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/07/28/okhttp-overview/">OkHttp略读</a>
+      </li>
     
       <li>
         <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
@@ -396,10 +416,6 @@
     
       <li>
         <a href="/2017/07/07/mockito-details-2-plugins/">Mockito 详解（二）插件机制</a>
-      </li>
-    
-      <li>
-        <a href="/2017/07/06/mockito-details-1-usage/">Mockito 详解（一）基本用法</a>
       </li>
     
   </ul>
