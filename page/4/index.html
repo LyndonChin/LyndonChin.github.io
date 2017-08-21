@@ -55,6 +55,65 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2016-07-20T13:33:33.000Z"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">2016-07-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>今天又遇到一个比较难搞的问题，记一下流水账。</p>
+<p>APP 中引用了一个二方包，编译成功，结果运行时报错 - <code>NoClassDefFoundError</code>。</p>
+<h2 id="try-1-multiDexKeepProguard"><a href="#try-1-multiDexKeepProguard" class="headerlink" title="try #1 - multiDexKeepProguard"></a>try #1 - multiDexKeepProguard</h2><p>首先确认是不是由于类没有被放到 main dex 中导致了这个问题。打开文件 <code>build/intermediates/multi-dex/debug/maindexlist.txt</code>，查找类名，发现文件中包含了我们要找的类。</p>
+<p>不放心，说不定是 Multidex 的bug，手动把这个“丢失”的类放进 main dex。</p>
+<p><em>build.gralde</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  defaultConfig &#123;</div><div class="line">    multiDexEnabled = <span class="literal">true</span></div><div class="line">    multiDexKeepProguard file(<span class="string">'multidex.pro'</span>)</div><div class="line">  &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><em>multidex.pro</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-keep public the-full-name-of-the-missing-class &#123; *; &#125;</div></pre></td></tr></table></figure></p>
+<p>编译运行，问题依然，并没有什么卵用。</p>
+<p>既然不是 main dex 问题，那我们先来确认一下问题是否由 MultiDex 引起。</p>
+<h2 id="try-2-关掉-Multidex"><a href="#try-2-关掉-Multidex" class="headerlink" title="try #2 - 关掉 Multidex"></a>try #2 - 关掉 Multidex</h2><p>关掉 multidex 然后打一个 release 包。</p>
+<blockquote>
+<p>由于方法数受限，关掉 Multidex 之后打不出 Debug 包，但是混淆过后方法数减少很多，可以顺利打出 Release 包。</p>
+</blockquote>
+<p><em>build.gradle</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">defaultConfig &#123;</div><div class="line">  multiDexEnabled <span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>编译运行，依然出错，可以确定不是 Multidex 的锅。</p>
+<h2 id="try-3-传递依赖"><a href="#try-3-传递依赖" class="headerlink" title="try #3 - 传递依赖"></a>try #3 - 传递依赖</h2><p>把依赖由只依赖 aar 改为传递依赖。</p>
+<p><del><code>compile &#39;me.liangfei.android:weird-1.0.0@aar&#39;</code></del><br><code>compile &#39;me.liangfei.android:weird-1.0.0&#39;</code></p>
+<p>结果却发现 <code>weird.aar</code> 引用了一个<strong>服务端已经删除但是有本地缓存</strong>的包，也就是说 <code>weird.aar</code> 引用了一个并不存在的包，所以改为传递依赖之后，gradle 无法获取这个并不存在的包。</p>
+<p>由此推断出，<code>weird.aar</code> 肯定不是一个“正确”的包，估计上面的问题也是由此引发（待确认）。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><ul>
+<li>本地打包不可信</li>
+<li>必须要通过 CI 发包</li>
+</ul>
+<h3 id="ClassNotFoundException-vs-NoClassDefFoundError"><a href="#ClassNotFoundException-vs-NoClassDefFoundError" class="headerlink" title="ClassNotFoundException vs NoClassDefFoundError"></a>ClassNotFoundException vs NoClassDefFoundError</h3><ul>
+<li><code>ClassNotFoundException</code> 一般是 <code>ClassLoader</code> 无法找到类导致的，例如 <code>Class.forName(&quot;your-class&quot;)</code>。</li>
+<li><code>NoClassDefFoundError</code> 一般是属于 <strong>Link Error</strong>，主要是由于打包之后缺失文件导致的，例如 <code>new</code> 一个对象。</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2016-07-09T16:00:00.000Z"><a href="/2016/07/10/diagram-retrofit-service-method/">2016-07-10</a></time>
       
       
@@ -311,59 +370,6 @@
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-05-18T16:00:00.000Z"><a href="/2016/05/19/why-android-hate-soft-reference/">2016-05-19</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/05/19/why-android-hate-soft-reference/">SoftReference 为什么被 Android “放弃”</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>JDK 中除了默认的 Strong Reference 之外，还有三个其他的 Reference：</p>
-<ul>
-<li>WeakReference</li>
-<li>SoftReference</li>
-<li>PhantomReference</li>
-</ul>
-<p>他们都是为了更高效地利用 Heap。</p>
-<h2 id="WeakReference"><a href="#WeakReference" class="headerlink" title="WeakReference"></a>WeakReference</h2><p>如果一个变量的 Reference 只剩下 <code>WeakReference</code>，那么 GC 会毫不留情地把这个变量回收掉。也就是说，<code>WeakReference</code> 没有能力能够让这个变量可以在内存中再飞一会。</p>
-<p>Android 开发者应该都了解 <code>WeakReference</code> 的用法，一个比较典型的应用场景是 <code>Handler</code> ，为了避免 Memory Leak，我们会定义一个内部静态类，然后以 <code>WeakReference</code> 的形式引用 <code>Activity</code>，这样一来，队列中的 <code>Message</code> （可能会排队很长时间）就不会干扰到 GC 回收 <code>Activity</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MSG_ID = <span class="number">0x00</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSafeHandler</span><span class="params">()</span> </span>&#123;</div><div class="line">        SafeHandler handler = <span class="keyword">new</span> SafeHandler(<span class="keyword">this</span>);</div><div class="line">        handler.sendEmptyMessage(MSG_ID);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SafeHandler</span> <span class="keyword">extends</span> <span class="title">Handler</span> </span>&#123;</div><div class="line">        <span class="keyword">private</span> WeakReference&lt;Activity&gt; mActivityRef;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="title">SafeHandler</span><span class="params">(Activity activity)</span> </span>&#123;</div><div class="line">            mActivityRef = <span class="keyword">new</span> WeakReference&lt;&gt;(activity);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">            <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">                <span class="keyword">case</span> MSG_ID:</div><div class="line">                    Activity activity = mActivityRef.get();</div><div class="line">                    <span class="keyword">if</span> (activity != <span class="keyword">null</span>) &#123;</div><div class="line">                        activity.finish();</div><div class="line">                    &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="SoftReference"><a href="#SoftReference" class="headerlink" title="SoftReference"></a>SoftReference</h2><p>从 <a href="https://docs.oracle.com/javase/7/docs/api/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的官方定义</a> 来看，只有当内存告急（即将 OOM）时，才会对只剩下 Soft Reference 的变量进行回收，因此 SoftReference 比较适合用来做 Cache：</p>
-<blockquote>
-<p>Soft references are most often used to implement memory-sensitive caches.</p>
-</blockquote>
-<p>但是 <a href="https://developer.android.com/reference/java/lang/ref/SoftReference.html" target="_blank" rel="external">SoftReference 的 Android 版本</a> 对此<strong>持不同意见</strong>：</p>
-<blockquote>
-<p>In practice, soft references are inefficient for caching.</p>
-</blockquote>
-<p>因为 SoftReference 无法提供足够的信息可以让 runtime 很轻松地决定 clear 它还是 keep 它。举个例子，如果有 10 个 SoftReference 变量，并且他们所引用的变量都没有了 Strong Reference，那么 runtime 就懵逼了，因为它不知道该 clear 哪几个或者 keep 哪几个。更要命的是，runtime 不知道应该是 clear 掉 SoftReference 还是增大 Heap。</p>
-<p>所以 Android 放弃了 <code>SoftReference</code>，推荐使用 <code>android.util.LruCache</code> 做 Cache 管理，至少 <code>LruCache</code> 可以根据变量的<strong>使用频次</strong>来决定是否应该 clear 掉它，这样就比单纯使用 <code>SoftReference</code> 多了一个决策条件 - 使用频次。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -388,7 +394,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 14px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/前端/" style="font-size: 10px;">前端</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 14px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
   </div>
 </div>
 
@@ -397,6 +403,10 @@
 <div class="widget tag">
   <h3 class="title">最新文章</h3>
   <ul class="entry">
+    
+      <li>
+        <a href="/2017/08/21/summary-of-weapp/">小程序开发总结</a>
+      </li>
     
       <li>
         <a href="/2017/07/28/okhttp-overview/">OkHttp略读</a>
@@ -412,10 +422,6 @@
     
       <li>
         <a href="/2017/07/08/mockito-details-3-stubbing/">Mockito 详解（三）插桩</a>
-      </li>
-    
-      <li>
-        <a href="/2017/07/07/mockito-details-2-plugins/">Mockito 详解（二）插件机制</a>
       </li>
     
   </ul>
