@@ -229,7 +229,7 @@
     <div class="entry">
       
         <p>MockitoAnnotations负责初始化<code>@Mock</code>、<code>@Spy</code>、<code>@Captor</code>、<code>@InjectMocks</code>等注解。</p>
-<p>如果不用<code>@Mock</code>，我们当然可以手动创建一个mock对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">List mockedList = Mockito.mock(List.class);</div></pre></td></tr></table></figure></p>
+<p>如果不用<code>@Mock</code>，我们当然可以手动创建一个mock对象：<br><figure class="highlight java"><table><tr><td class="code"><pre><div class="line">List mockedList = Mockito.mock(List.class);</div></pre></td></tr></table></figure></p>
 <p>但是相比于手动创建，使用注解可带来如下好处：</p>
 <ul>
 <li>代码更简洁</li>
@@ -325,18 +325,6 @@
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
-
-<script type="text/javascript">
-var disqus_shortname = 'liangfeizc';
-
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-</script>
 
 
 

@@ -78,9 +78,9 @@
 <li><em>Multiple overlapping backgrounds on one element</em></li>
 <li><em>Multiple background layers stack top to bottom, in the order declared. The color layer is always at the bottom</em></li>
 </ul>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.multi-bg</span> &#123;</div><div class="line">  <span class="attribute">background-image</span>: <span class="built_in">url</span>(img/spades.png), <span class="built_in">url</span>(img/hearts.png),</div><div class="line">                    <span class="built_in">url</span>(img/diamonds.png), <span class="built_in">url</span>(clubs.png);</div><div class="line">  <span class="attribute">background-position</span>: left top, right top, left bottom, right bottom;</div><div class="line">  <span class="attribute">background-repeat</span>: no-repeat, no-repeat, no-repeat, no-repeat;</div><div class="line">  <span class="attribute">background-color</span>: pink;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>⇩  short<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.multi-bg-shorthand</span> &#123;</div><div class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(img/spades.png) left top no-repeat,</div><div class="line">              <span class="built_in">url</span>(img/hearts.png) right top no-repeat,</div><div class="line">              <span class="built_in">url</span>(img/diamonds.png) left bottom no-repeat,</div><div class="line">              <span class="built_in">url</span>(img/clubs.png) right bottom no-repeat,</div><div class="line">              pink;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>⇩  short<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.multi-bg-shorthand</span> &#123;</div><div class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(img/spades.png) left top,</div><div class="line">              <span class="built_in">url</span>(img/hearts.png) right top,</div><div class="line">              <span class="built_in">url</span>(img/diamonds.png) left bottom,</div><div class="line">              <span class="built_in">url</span>(img/clubs.png) right bottom,</div><div class="line">              pink;</div><div class="line">              <span class="attribute">background-repeat</span>: no-repeat; <span class="comment">/* goes for all four */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="code"><pre><div class="line"><span class="selector-class">.multi-bg</span> &#123;</div><div class="line">  <span class="attribute">background-image</span>: <span class="built_in">url</span>(img/spades.png), <span class="built_in">url</span>(img/hearts.png),</div><div class="line">                    <span class="built_in">url</span>(img/diamonds.png), <span class="built_in">url</span>(clubs.png);</div><div class="line">  <span class="attribute">background-position</span>: left top, right top, left bottom, right bottom;</div><div class="line">  <span class="attribute">background-repeat</span>: no-repeat, no-repeat, no-repeat, no-repeat;</div><div class="line">  <span class="attribute">background-color</span>: pink;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>⇩  short<br><figure class="highlight css"><table><tr><td class="code"><pre><div class="line"><span class="selector-class">.multi-bg-shorthand</span> &#123;</div><div class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(img/spades.png) left top no-repeat,</div><div class="line">              <span class="built_in">url</span>(img/hearts.png) right top no-repeat,</div><div class="line">              <span class="built_in">url</span>(img/diamonds.png) left bottom no-repeat,</div><div class="line">              <span class="built_in">url</span>(img/clubs.png) right bottom no-repeat,</div><div class="line">              pink;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>⇩  short<br><figure class="highlight css"><table><tr><td class="code"><pre><div class="line"><span class="selector-class">.multi-bg-shorthand</span> &#123;</div><div class="line">  <span class="attribute">background</span>: <span class="built_in">url</span>(img/spades.png) left top,</div><div class="line">              <span class="built_in">url</span>(img/hearts.png) right top,</div><div class="line">              <span class="built_in">url</span>(img/diamonds.png) left bottom,</div><div class="line">              <span class="built_in">url</span>(img/clubs.png) right bottom,</div><div class="line">              pink;</div><div class="line">              <span class="attribute">background-repeat</span>: no-repeat; <span class="comment">/* goes for all four */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h2 id="TRANSFORM"><a href="#TRANSFORM" class="headerlink" title="TRANSFORM"></a>TRANSFORM</h2><ul>
 <li>rotate</li>
 <li>scale</li>
@@ -88,7 +88,7 @@
 <li>skew</li>
 <li>etc.</li>
 </ul>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.zan-toast</span> &#123;</div><div class="line">  <span class="attribute">transform</span>: <span class="built_in">translateY</span>(-100%);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="code"><pre><div class="line"><span class="selector-class">.zan-toast</span> &#123;</div><div class="line">  <span class="attribute">transform</span>: <span class="built_in">translateY</span>(-100%);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p><em><code>-100%</code>表示自身宽度的100%。</em></p>
 <h2 id="POSITION"><a href="#POSITION" class="headerlink" title="POSITION"></a>POSITION</h2><ul>
 <li>Elements are initially positioned as <code>static</code>, meaning that block-level elements stack up vertically.</li>
@@ -119,7 +119,7 @@
 <blockquote>
 <p>Items inside a flex container shrink down to this size if no other sizing is in place. </p>
 </blockquote>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="selector-class">.navbar</span> <span class="selector-tag">ul</span> &#123;</div><div class="line">  <span class="attribute">display</span>: flex;</div><div class="line">  <span class="comment">/* this also implies flex-direction: row; unless told otherwise */</span></div><div class="line">  <span class="attribute">flex-direction</span>: row-reverse;</div><div class="line">  <span class="attribute">justify-content</span>: flex-end | justify-content | space-between | space-around</div><div class="line">  align-items: flex-start | center | flex-end</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="code"><pre><div class="line"><span class="selector-class">.navbar</span> <span class="selector-tag">ul</span> &#123;</div><div class="line">  <span class="attribute">display</span>: flex;</div><div class="line">  <span class="comment">/* this also implies flex-direction: row; unless told otherwise */</span></div><div class="line">  <span class="attribute">flex-direction</span>: row-reverse;</div><div class="line">  <span class="attribute">justify-content</span>: flex-end | justify-content | space-between | space-around</div><div class="line">  align-items: flex-start | center | flex-end</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <blockquote>
 <p>Flexbox calls distribution along the main axis justification, while distribution on the cross axis is called alignment.</p>
 </blockquote>
@@ -216,18 +216,6 @@
 <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
-
-<script type="text/javascript">
-var disqus_shortname = 'liangfeizc';
-
-(function(){
-  var dsq = document.createElement('script');
-  dsq.type = 'text/javascript';
-  dsq.async = true;
-  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-}());
-</script>
 
 
 
