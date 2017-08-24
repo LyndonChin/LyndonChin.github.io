@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>CSS Mastery笔记 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="CSS Mastery笔记"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/">行有不得反求诸己</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-08-20T16:00:00.000Z"><a href="/2017/08/21/note-on-css-mastery/">2017-08-21</a></time>
+      
+      
+  
+    <h1 class="title">CSS Mastery笔记</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>我们的宗旨是：<strong>backward compatible and future friendly</strong></p>
+<a id="more"></a>
+<hr>
+<h2 id="SEPARATION-OF-CONCERNS"><a href="#SEPARATION-OF-CONCERNS" class="headerlink" title="SEPARATION OF CONCERNS"></a>SEPARATION OF CONCERNS</h2><blockquote>
+<p> “Small pieces, loosely joined.” </p>
+</blockquote>
+<p>Unix管道的设计哲学吗？</p>
+<blockquote>
+<p>You could think of these small pieces of code as LEGO bricks. Each brick is incredibly simple, but they can be joined together in numerous ways to create objects of immense complexity.</p>
+</blockquote>
+<h2 id="CSS-HISTORY"><a href="#CSS-HISTORY" class="headerlink" title="CSS HISTORY"></a>CSS HISTORY</h2><ul>
+<li>CSS 1 became a W3C recommendation at the end of 1996 and contains very basic properties such as fonts, colors, and margins.</li>
+<li>CSS 2 became a recommendation in 1998 and added advanced concepts such as floating and positioning, as well as new selectors like the child, adjacent sibling, and universal selectors.</li>
+<li>CSS 3 is a slightly different beast. In fact, there is no CSS 3 as such, but a collection of modules each <code>leveled</code> independently. </li>
+</ul>
+<h2 id="WHICH-VERSION"><a href="#WHICH-VERSION" class="headerlink" title="WHICH VERSION"></a>WHICH VERSION</h2><blockquote>
+<p>What is important is knowing what parts of HTML and CSS have been implemented in browsers, and how robust and bug-free those implementations are.</p>
+<ul>
+<li><a href="http://caniuse.com" target="_blank" rel="external">http://caniuse.com</a></li>
+<li><a href="http://webplatform.org" target="_blank" rel="external">http://webplatform.org</a></li>
+<li><a href="http://developer.mozilla.org" target="_blank" rel="external">http://developer.mozilla.org</a><br>The ability to make judgment calls on backward compatibility vs. future-friendly code is part of what defines the true CSS Master.</li>
+</ul>
+</blockquote>
+<h2 id="PROGRESSIVE-ENHANCEMENT"><a href="#PROGRESSIVE-ENHANCEMENT" class="headerlink" title="PROGRESSIVE ENHANCEMENT"></a>PROGRESSIVE ENHANCEMENT</h2><blockquote>
+<p>“start by making it work well for<br>the lowest common denominator, but feel free to take things further where they are supported.”</p>
+</blockquote>
+<ul>
+<li><code>&lt;!DOCTYPE html&gt;</code>: a machine-readable hint</li>
+</ul>
+<h2 id="SEMANTICS"><a href="#SEMANTICS" class="headerlink" title="SEMANTICS"></a>SEMANTICS</h2><p>Semantic markup is the foundation of any good HTML document. <em>Semantics</em> is the scientific study of meaning. In the context of a made-up language with a formal set of symbols, such as HTML and its elements and attributes, semantics refers to what we mean by using a certain symbol. Put simply, <strong>semantic markup is the practice of using the right element in the right place, resulting in meaningful documents.</strong></p>
+<h2 id="CLASS-AND-ID"><a href="#CLASS-AND-ID" class="headerlink" title="CLASS AND ID"></a>CLASS AND ID</h2><blockquote>
+<p>Naming something is one of the most important (and often most difficult) parts of writing code.</p>
+<p>There are only two hard problems in Computer Science: cache invalidation and naming things — Phil Karlton</p>
+</blockquote>
+<ul>
+<li>In CSS we think of <code>class</code> names as a way of defining what a thing is.</li>
+<li>We should choose a name that indicates what type of component it is. <code>product-list</code> is over <code>large-centered-list</code>。</li>
+</ul>
+<h2 id="STRUCTURAL-ELEMENT"><a href="#STRUCTURAL-ELEMENT" class="headerlink" title="STRUCTURAL ELEMENT"></a>STRUCTURAL ELEMENT</h2><p>Creating logical sections of an HTML document.　→ <a href="http://html5doctor.com/" target="_blank" rel="external">http://html5doctor.com/</a></p>
+<ul>
+<li>section</li>
+<li>header</li>
+<li>footer</li>
+<li>nav</li>
+<li>article</li>
+<li>aside</li>
+<li>main</li>
+</ul>
+<p>“shim” vs “polyfill”　→<a href="https://github.com/aFarkas/html5shiv" target="_blank" rel="external">https://github.com/aFarkas/html5shiv</a></p>
+<p><strong>divitis</strong>　→<code>div</code></p>
+<blockquote>
+<p>The practice of <a href="https://en.wiktionary.org/wiki/authoring" target="_blank" rel="external">authoring</a> web-page code with many <code>div</code> elements in place of meaningful semantic HTML elements.</p>
+</blockquote>
+<p><code>span</code> is distinct from <code>div</code> in that it is a text-level element, and is used to provide structure within the flow of a piece of text.</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>At <span class="tag">&lt;<span class="name">time</span> <span class="attr">datetime</span>=<span class="string">"20:07"</span>&gt;</span>7 minutes past eight<span class="tag">&lt;/<span class="name">time</span>&gt;</span> Harry shouted, <span class="tag">&lt;<span class="name">q</span>&gt;</span>Can we just end</div><div class="line">this, now!<span class="tag">&lt;/<span class="name">q</span>&gt;</span> He was <span class="tag">&lt;<span class="name">strong</span>&gt;</span>very<span class="tag">&lt;/<span class="name">strong</span>&gt;</span> angry.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="PRESENTIONAL"><a href="#PRESENTIONAL" class="headerlink" title="PRESENTIONAL"></a>PRESENTIONAL</h2><ul>
+<li><code>&lt;em&gt;</code> means <strong>emphasis</strong></li>
+<li><code>&lt;strong&gt;</code> means <strong>strong emphasis</strong></li>
+</ul>
+<h2 id="ARIA"><a href="#ARIA" class="headerlink" title="ARIA"></a>ARIA</h2><blockquote>
+<p>Accessible Rich Internet Applications</p>
+</blockquote>
+<p><a href="https://www.w3.org/TR/wai-aria/roles#role_definitions" target="_blank" rel="external">https://www.w3.org/TR/wai-aria/roles#role_definitions</a></p>
+<h2 id="VALIDATION"><a href="#VALIDATION" class="headerlink" title="VALIDATION"></a>VALIDATION</h2><p><em>nonconformant</em></p>
+<p>In fact, rules for dealing with invalid HTML are included in the HTML specification to ensure browser makers deal with error handling in a consistent way.</p>
+<p><strong>html validator</strong></p>
+<ul>
+<li><a href="http://validator.w3.org/" target="_blank" rel="external">http://validator.w3.org/</a></li>
+<li><a href="http://chrispederick.com/work/web-developer/" target="_blank" rel="external">http://chrispederick.com/work/web-developer/</a></li>
+</ul>
+<p><strong>css validator</strong></p>
+<ul>
+<li><a href="http://jigsaw.w3.org/css-validator/" target="_blank" rel="external">http://jigsaw.w3.org/css-validator/</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/CSS/">CSS</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div id="uyan_frame"></div>
+  <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128686"></script>
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CSS/" style="font-size: 13.33px;">CSS</a> <a href="/tags/Car/" style="font-size: 10px;">Car</a> <a href="/tags/Dart/" style="font-size: 11.67px;">Dart</a> <a href="/tags/FP/" style="font-size: 10px;">FP</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mobile/" style="font-size: 10px;">Mobile</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Security/" style="font-size: 10px;">Security</a> <a href="/tags/Summary/" style="font-size: 18.33px;">Summary</a> <a href="/tags/UnitTest/" style="font-size: 16.67px;">UnitTest</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/小程序/" style="font-size: 10px;">小程序</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/08/24/css-position/">精通CSS之position</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/22/meeting-css/">Beautiful CSS</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/meeting-weapp/">小程序开发总结</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/note-on-css-mastery/">CSS Mastery笔记</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
+      </li>
+    
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

@@ -55,40 +55,6 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-02-01T14:56:00.000Z"><a href="/2017/02/01/note-on-web-data-analysis/">2017-02-01</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/02/01/note-on-web-data-analysis/">架构笔记之数据分析</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p><a href="http://www.jianshu.com/p/8f46735b2bdd" target="_blank" rel="external">http://www.jianshu.com/p/8f46735b2bdd</a></p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
         <time datetime="2017-02-01T01:39:00.000Z"><a href="/2017/02/01/note-on-web-security/">2017-02-01</a></time>
       
       
@@ -99,7 +65,139 @@
     </header>
     <div class="entry">
       
-        <p><a href="http://www.jianshu.com/p/f2aa311df010" target="_blank" rel="external">http://www.jianshu.com/p/f2aa311df010</a></p>
+        <h2 id="数字摘要"><a href="#数字摘要" class="headerlink" title="数字摘要"></a>数字摘要</h2><ul>
+<li><strong>摘要算法</strong><ul>
+<li><strong>MD5</strong> / 128 bits / Message Digest Algorithm 5</li>
+<li><strong>SHA</strong> / 160 bits / Secure Hash Algorithm</li>
+</ul>
+</li>
+</ul>
+<p>计算出的摘要（byte数组）转换成字符串之后可能会包含一些无法显示或网络传输的<strong>控制字符</strong>，因此需要对生成的摘要字符串进行编码。</p>
+<ul>
+<li><p><strong>编码算法</strong></p>
+<ul>
+<li><strong>十六进制编码</strong></li>
+<li><strong>Base 64 编码</strong>（每 6 位为一个单元，2^6 = 64，因此称为 Base64）</li>
+</ul>
+</li>
+<li><p><strong>彩虹表（Rainbow Table）</strong><br>一张采用各种 Hash 算法生成的一串密文。<br>大型网站数据库的沦陷（用户名+明文密码）继续完善了彩虹表。</p>
+</li>
+</ul>
+<h2 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h2><ul>
+<li><strong>对称加密算法</strong><ul>
+<li><strong>DES</strong> 算法（Data Encryption Standard）</li>
+<li><strong>AES</strong> 算法（Advanced Encryption Standard）</li>
+</ul>
+</li>
+<li><strong>非对称加密算法</strong><br><strong>RSA</strong> 算法以发明者名字命名（Ron Rivest、Adi Shamirh &amp; LenAdleman）。<br><strong>数论原理</strong>：将两个大素数相乘十分容易，但反过来想要对其乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥。</li>
+</ul>
+<h2 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h2><p>利用<strong>非对称加密</strong>对<strong>消息摘要（Message Digest）</strong>进行签名。</p>
+<ul>
+<li><strong>MD5withRSA</strong></li>
+<li><strong>SHA1withRSA</strong></li>
+</ul>
+<h2 id="数字证书（Digital-Certificate）"><a href="#数字证书（Digital-Certificate）" class="headerlink" title="数字证书（Digital Certificate）"></a>数字证书（Digital Certificate）</h2><p>类似身份证，一般采用 Base64 编码后再进行存储。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-0924d8aca33713c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt=""></p>
+<ul>
+<li><strong>格式（X.509）</strong><ol>
+<li>对象名称（人、服务器、组织）</li>
+<li>证书过期时间</li>
+<li>证书颁发机构（担保人）</li>
+<li>证书颁发机构对证书信息的<strong>数字签名</strong></li>
+<li>数字签名算法</li>
+<li>对象的公钥</li>
+</ol>
+</li>
+<li><strong>签发机构 （CA、Certificate Authority）</strong></li>
+<li><strong>证书管理</strong><br>要获得数字证书，首先需要使用数字证书管理工具，如 keytool、OpenSSL 等，然后构建 CSR（Certificate Signing Request，数字证书签发申请），提交给数字证书认证机构进行签名，最终形成数字证书。<ul>
+<li><strong>keytool</strong></li>
+<li><strong>OpenSSL</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="摘要认证实现"><a href="#摘要认证实现" class="headerlink" title="摘要认证实现"></a>摘要认证实现</h2><ul>
+<li>客户端参数摘要生成</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">                ------------</div><div class="line">                 请求参数</div><div class="line">                ------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">                ------------</div><div class="line">                 参数排序</div><div class="line">                ------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">--------------------------------------</div><div class="line">  参数串接（加上 Secret）生成待摘要字符串</div><div class="line">--------------------------------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">         ----------------------</div><div class="line">          生成摘要（MD5 or SHA）</div><div class="line">         ----------------------</div></pre></td></tr></table></figure>
+<ul>
+<li>服务端参数摘要校验</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">                    ------------</div><div class="line">                      请求参数</div><div class="line">                    ------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">                    ------------</div><div class="line">                      参数排序</div><div class="line">                    ------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">       --------------------------------------</div><div class="line">         参数串接（加上 Secret）生成待摘要字符串</div><div class="line">       --------------------------------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">       --------------------------------------</div><div class="line">         生成摘要（MD5 or SHA）</div><div class="line">       --------------------------------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">---------------------------------------------------</div><div class="line">  服务端生成的摘要串与客户端通过header传递过来的摘要串进行比较</div><div class="line">---------------------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">             ----------------------</div><div class="line">               生成摘要（MD5 or SHA）</div><div class="line">             ----------------------</div></pre></td></tr></table></figure>
+<ul>
+<li>服务端响应摘要生成</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">             ------------</div><div class="line">               响应内容</div><div class="line">             ------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">--------------------------------------</div><div class="line">  参数串接（加上 Secret）生成待摘要字符串</div><div class="line">--------------------------------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">--------------------------------------</div><div class="line">  生成摘要（MD5 or SHA）</div><div class="line">--------------------------------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">       ----------------------</div><div class="line">              响应摘要串</div><div class="line">       ----------------------</div></pre></td></tr></table></figure>
+<ul>
+<li>客户端响应摘要校验</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">                  --------------</div><div class="line">                   服务端响应内容</div><div class="line">                  --------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line"> ---------------------------------------------------</div><div class="line">   客户端接收到响应内容后，在后面加上secret，生成待摘要字符串</div><div class="line"> ----------------------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">        --------------------------------------</div><div class="line">              生成摘要（MD5 or SHA）</div><div class="line">        --------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">-----------------------------------------------------</div><div class="line">  客户端生成的摘要串与服务端通过header传递过来的摘要串进行比较</div><div class="line">-----------------------------------------------------</div><div class="line">                       |</div><div class="line">                      \|/</div><div class="line">             ----------------------</div><div class="line">               响应是否被篡改</div><div class="line">             ----------------------</div></pre></td></tr></table></figure>
+<h2 id="签名认证"><a href="#签名认证" class="headerlink" title="签名认证"></a>签名认证</h2><p>摘要认证依赖于服务端与客户端共享的 secret，因此 secret 一旦泄露那么攻击者就可以很轻松的伪造请求，为了提高安全性还是要使用<strong>数字签名</strong>（MD5withRSA / SHA1withRSA），<strong>参数排序拼接生成摘要串后使用私钥进行加密</strong>。</p>
+<blockquote>
+<p>认证（签名认证 or 数字认证）只解决了<strong>数据完整性</strong>和<strong>通信两端合法性</strong>的问题，并没有保证敏感数据的安全性，例如用户密码等。</p>
+</blockquote>
+<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h2><ul>
+<li>HTTPS（Hypertext Transfer Protocol over Secure Socket Layer）依托 SSL 协议，确保整个通信过程都是经过加密的，密钥随机产生，通过<strong>数字证书（HTTPS 证书）</strong>进行身份认证。</li>
+<li>HTTPS 支持<strong>单向认证</strong>（只需要服务端提供证书）和<strong>双向认证</strong>（服务端和客户端都需要提供证书）。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">    HTTP（应用层）</div><div class="line">----------------------------------</div><div class="line">    SSL or TLS（安全层）</div><div class="line">----------------------------------</div><div class="line">    TCP（传输层）</div><div class="line">----------------------------------</div><div class="line">    IP（网络层）</div><div class="line">----------------------------------</div><div class="line">    网络接口层</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>SSL</strong>（Secure Socket Layer）在协议栈中位于应用层之下，主要负责<strong>加密算法</strong>、<strong>通信密钥的协商</strong>以及两端的<strong>身份认证</strong>工作，并且独立于应用层协议（HTTP、SSH、FTP等等），对应用层是透明的，因此可以从 HTTP 无缝迁移到 HTTPS。</li>
+<li><strong>TLS</strong>（Transport Layer Security）是 SSL 的升级版协议。</li>
+<li><p>SSL/TLS 位于 TCP 之上，又分为两层：</p>
+<ul>
+<li><strong>Handshake Protocol</strong>（加密算法协商、通信密钥的交换、通信双方的身份认证）</li>
+<li><strong>Record Protocol</strong>（数据封装、加密解密、数据压缩、数据校验）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">----------------------------------</div><div class="line">    Handshake Protocol</div><div class="line">- - - - - - - - - - - - - - - - - - -</div><div class="line">    Record Protocol </div><div class="line">----------------------------------</div><div class="line">    TCP</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>客户端与服务端真实际上是通过对称加密进行数据交换，而加密密钥则是通过非对称加密进行协商的。</p>
+<h2 id="OAuth"><a href="#OAuth" class="headerlink" title="OAuth"></a>OAuth</h2><p>核心思想是<strong>将资源做权限分级和隔离</strong>。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-e1647fa654a689f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="OAuth 2.0"></p>
+<h2 id="常见-Web-攻击手段"><a href="#常见-Web-攻击手段" class="headerlink" title="常见 Web 攻击手段"></a>常见 Web 攻击手段</h2><ul>
+<li><strong>XSS</strong> (Cross Site Scripting)<br>在HTML页面中嵌入恶意代码。XSS enables attackers to client-side scripts into web pages viewed by other users.</li>
+<li><p><strong>CSRF</strong> (Cross Site Request Forgery)<br>跨站请求伪造。XSS 利用的是站点内的信任用户，而 CSRF 则是通过伪装受信任用户的身份向第三方网站发送恶意请求。</p>
+<p><em>防御手段</em></p>
+<ol>
+<li>将 cookie 设置为 <code>HttpOnly</code>（<em>防止站内 XSS 漏洞盗取 cookie</em>）</li>
+<li>增加 token（<em>身份校验</em>）</li>
+<li>通过 <code>referer</code> 识别（<em>HTTP 头有一个字段叫 referer</em>）</li>
+</ol>
+</li>
+<li><p><strong>SQL 注入</strong><br>举例，如果用户名为 <code>zhangsan</code>，密码为 <code>&#39; or &#39;1&#39;=&#39;1</code>，那么 SQL 语句可能会变成：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> hhuser <span class="keyword">where</span> nick = <span class="string">'zhangsan'</span> <span class="keyword">and</span> passwords = <span class="string">''</span> <span class="keyword">or</span> <span class="string">'1'</span> = <span class="string">'1'</span></div></pre></td></tr></table></figure>
+<p><em>防御手段</em></p>
+<ol>
+<li>使用预编译语句</li>
+<li>使用 ORM 框架</li>
+</ol>
+</li>
+<li><p><strong>文件上传漏洞</strong><br>恶意攻击者利用一些网站没有对文件类型做很好的类型校验，上传了可执行的文件或脚本，并且通过脚本获得服务器上的相应权限，或者是通过有道外部用户访问、下载上传的病毒或者木马文件，打到攻击目的。</p>
+<p><em>防御手段</em></p>
+<ol>
+<li>文件类型白名单校验</li>
+<li>利用魔数（magic number）而不是后缀名来获取文件类型</li>
+</ol>
+</li>
+<li><p><strong>DDos</strong> (Distributed Denial of Service)</p>
+<ul>
+<li><strong>SYN Flood</strong><br>利用 TCP 的三次握手，不响应服务端的 <code>SYN+ACK</code> 报文也就是不进行第三次握手。</li>
+<li><strong>DNS Query Flood</strong><br>向被攻击的服务器发送海量的域名解析请求。</li>
+<li><strong>CC (Challenge Collapsar)</strong><br>基于 HTTP 发起的 DDos 攻击，也称为 HTTP Flood。攻击者利用<strong>肉鸡</strong>或者<strong>匿名 HTTP 代理</strong>，模拟正常用户请求，避开 CDN 和分布式缓存进行多次 DB 查询操作或一次请求返回大量数据。</li>
+</ul>
+</li>
+<li><p>其他攻击手段</p>
+<ul>
+<li>DNS 域名劫持</li>
+<li>CDN 回源攻击</li>
+<li>服务器权限提升</li>
+<li>缓冲区溢出</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>笔记来源：《大型分布式网站架构设计与实践》</p>
+</blockquote>
 
       
     </div>
@@ -123,11 +221,11 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-09-14T09:40:06.000Z"><a href="/2016/09/14/how-to-write-custom-gradle-plugin/">2016-09-14</a></time>
+        <time datetime="2016-09-14T09:40:06.000Z"><a href="/2016/09/14/android-create-custom-gradle-plugin/">2016-09-14</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/09/14/how-to-write-custom-gradle-plugin/">写 Gradle 插件的一点经验</a></h1>
+    <h1 class="title"><a href="/2016/09/14/android-create-custom-gradle-plugin/">写 Gradle 插件的一点经验</a></h1>
   
 
     </header>
@@ -204,11 +302,11 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-07-28T14:40:00.000Z"><a href="/2016/07/28/work-summary-after-half-year-leaving/">2016-07-28</a></time>
+        <time datetime="2016-07-28T14:40:00.000Z"><a href="/2016/07/28/summary-of-leaving-alibaba-for-halp-year/">2016-07-28</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/07/28/work-summary-after-half-year-leaving/">有赞入职半年总结</a></h1>
+    <h1 class="title"><a href="/2016/07/28/summary-of-leaving-alibaba-for-halp-year/">有赞入职半年总结</a></h1>
   
 
     </header>
@@ -303,11 +401,11 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-07-20T13:33:33.000Z"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">2016-07-20</a></time>
+        <time datetime="2016-07-20T13:33:33.000Z"><a href="/2016/07/20/android-the-weird-NoClassDefFoundError/">2016-07-20</a></time>
       
       
   
-    <h1 class="title"><a href="/2016/07/20/the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a></h1>
+    <h1 class="title"><a href="/2016/07/20/android-the-weird-NoClassDefFoundError/">诡异的问题 NoClassDefFoundError</a></h1>
   
 
     </header>
@@ -356,6 +454,71 @@
 
 
 
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-07-09T16:00:00.000Z"><a href="/2016/07/10/android-diagram-retrofit-service-method/">2016-07-10</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2016/07/10/android-diagram-retrofit-service-method/">图解 Retrofit 之 ServiceMethod</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>通过 <a href="http://www.liangfei.me/2016/07/06/my-practice-of-retrofit-and-rxandroid/" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a>，我们已经了解到了 Retrofit 的基本用法，为了知其所以然，我们以图解加源码的方式从 Service Method 入手，逐步解析 Retrofit。</p>
+<p>首先以官方网站的示例代码为例，看一下一个 Service Method 的组成部分。</p>
+<img src="/2016/07/10/android-diagram-retrofit-service-method/service_method.png" alt="service method" title="service method">
+<p><code>ServiceMethod</code> 使用了 Builder 模式，先来看 <code>ServiceMethod.Builder</code> 的构造方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Retrofit retrofit, Method method)</span> </span>&#123;</div><div class="line">  <span class="keyword">this</span>.retrofit = retrofit;</div><div class="line">  <span class="keyword">this</span>.method = method;</div><div class="line">  <span class="keyword">this</span>.methodAnnotations = method.getAnnotations();</div><div class="line">  <span class="keyword">this</span>.parameterTypes = method.getGenericParameterTypes();</div><div class="line">  <span class="keyword">this</span>.parameterAnnotationsArray = method.getParameterAnnotations();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>构造方法接受两个参数 - <code>retrofit</code> 和 <code>method</code>，然后通过调用 <code>Method</code> 类的方法获取以下数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> Annotation[] methodAnnotations;</div><div class="line"><span class="keyword">final</span> Annotation[][] parameterAnnotationsArray;</div><div class="line"><span class="keyword">final</span> Type[] parameterTypes;</div></pre></td></tr></table></figure>
+<p><code>methodAnnotations</code> 就对应着上例中的  <code>@GET(&quot;users/{user}/repos&quot;</code>，由 <code>parseMethodAnnotation</code> 负责解析。</p>
+<p>method parameter 也有对应的 annotation type，由对应的 <code>ParameterHandler</code> 进行处理，例如上例中的 <code>@Path</code> 就对应着 <code>class Path&lt;T&gt; extends ParameterHandler&lt;T&gt;</code>。</p>
+<p>一个 parameter 可以有多个 annotation，所以  <code>parameterAnnotationsArray</code> 是一个二维数组 - <code>Annotation[][]</code>。</p>
+<p><code>ServiceMethod.Builder</code> 最终会 <code>build</code> 出一个 <code>ServiceMethod</code> 实例，我们先来看 method annotations 的解析过程。</p>
+<h2 id="method-annotations"><a href="#method-annotations" class="headerlink" title="method annotations"></a>method annotations</h2><p><em>ServiceMethod.Builder#build</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (Annotation annotation : methodAnnotations) &#123;</div><div class="line">  parseMethodAnnotation(annotation);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如下图所示，<code>parseMethodAnnotation</code> 方法根据 method annotation 的类型（蓝色框内）生成一个 request 所需要的数据（褐色框内）。</p>
+<img src="/2016/07/10/android-diagram-retrofit-service-method/parse_method_annotation.png" alt="parse method annotation" title="parse method annotation">
+<p>其中 <code>httpMethod</code> 不能为空，如果 <code>hasBody == false</code>，那么 <code>isMultipart</code> 和 <code>isFormEncoded</code> 也必须为 <code>false</code>，而且两者互斥不能同时为 <code>true</code>，否则会抛出异常。</p>
+<p>解析完 method annotations 之后，再来解析  parameters（代码示例中的 <code>@Path(&quot;user&quot;) String user</code>）。</p>
+<h2 id="parameters"><a href="#parameters" class="headerlink" title="parameters"></a>parameters</h2><img src="/2016/07/10/android-diagram-retrofit-service-method/parse_parameter.png" alt="parse parameters" title="parse parameters">
+<p>每一个 parameter annotation 类型都有对应的 <code>ParameterHandler</code>，method parameters 解析完成之后生成一个数组 - <code>ParameterHandler[] parameterHandlers</code>，这个数组在后面构建 request 的时候会用到。</p>
+<p>解析过程中会验证 <code>@Path</code> value 的合法性，并确保 value 在 <code>relativeUrlParamNames</code>（<em>由 method annotations 生成</em>） 中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Upper and lower characters, digits, underscores, and hyphens, starting with a character.</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> String PARAM = <span class="string">"[a-zA-Z][a-zA-Z0-9_-]*"</span>;</div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_URL_REGEX = Pattern.compile(<span class="string">"\\&#123;("</span> + PARAM + <span class="string">")\\&#125;"</span>);</div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_NAME_REGEX = Pattern.compile(PARAM);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">validatePathName</span><span class="params">(<span class="keyword">int</span> p, String name)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!PARAM_NAME_REGEX.matcher(name).matches()) &#123;</div><div class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"@Path parameter name must match %s. Found: %s"</span>,</div><div class="line">        PARAM_URL_REGEX.pattern(), name);</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// Verify URL replacement name is actually present in the URL path.</span></div><div class="line">  <span class="keyword">if</span> (!relativeUrlParamNames.contains(name)) &#123;</div><div class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"URL \"%s\" does not contain \"&#123;%s&#125;\"."</span>, relativeUrl, name);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>parseParameterAnnotation</code>  方法在解析 <code>Url</code> 类型的 parameter annotation 时会判断 parameter 类型，由于 Retrofit 本身没有依赖 Android SDK，所以无法像 <code>HttpUrl.class</code> 那样获取 <code>Uri.class</code>，但是 Retrofit 的实现很巧妙，学到了：）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (type == HttpUrl.class</div><div class="line">    || type == String.class</div><div class="line">    || type == URI.class</div><div class="line">    || (type <span class="keyword">instanceof</span> Class &amp;&amp; <span class="string">"android.net.Uri"</span>.equals(((Class&lt;?&gt;) type).getName()))) &#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ParameterHandler.RelativeUrl();</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="keyword">throw</span> parameterError(p,</div><div class="line">      <span class="string">"@Url must be okhttp3.HttpUrl, String, java.net.URI, or android.net.Uri type."</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>method annotations 以及 parameters 都解析完成后，我们再回到 service method 的 callAdapter。</p>
+<h2 id="CallAdapter"><a href="#CallAdapter" class="headerlink" title="CallAdapter"></a>CallAdapter</h2><p>想要了解 <code>CallAdapter</code> 的功能，我们需要先从 <code>Retrofit</code> 的 <code>create</code> 方法开始分析。</p>
+<p><code>create</code> 方法使用<strong>动态代理</strong>把 service method 的调用转发给一个 <code>InvocationHandler</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ServiceMethod serviceMethod = loadServiceMethod(method);</div><div class="line">OkHttpCall okHttpCall = <span class="keyword">new</span> OkHttpCall&lt;&gt;(serviceMethod, args);</div><div class="line"><span class="keyword">return</span> serviceMethod.callAdapter.adapt(okHttpCall);</div></pre></td></tr></table></figure>
+<p>由以上代码可以看出，<code>CallAdapter</code> 会把一个 <code>Call</code> 类型适配为用户定义的 service method 的 return type。</p>
+<p>举个例子，如果我们配合 RxAndroid 使用 Retrofit，service method 的返回值类型会由 <code>Call</code> 类型变成 <code>Observable</code> 类型，这个转换其实就由 <code>RxJavaCallAdapterFactory</code> 来实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()      </div><div class="line">    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())</div><div class="line">    .baseUrl(BASE_URL) .build();</div></pre></td></tr></table></figure>
+<p>由以上代码可以看出，<code>RxJavaCallAdapterFactory</code> 是通过 <code>Retrofit.Builder</code> 的<br><code>addCallAdapterFactory</code> 方法传递给 <code>Retrofit</code>，而 <code>create</code> 方法中 <code>adapt</code> 的执行者却是 <code>ServiceMethod</code>，也就是说 <code>ServiceMethod</code> 的 <code>CallAdapter</code> 是由 <code>Retrofit</code> 提供的，两者的交互关系如下图所示：</p>
+<img src="/2016/07/10/android-diagram-retrofit-service-method/retrofit_and_service_method.png" alt="retrofit vs service method" title="retrofit vs service method">
+<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>敬请期待下一篇 - <strong>图解 Retrofit - Converter</strong></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
 
 <nav id="pagination">
   
@@ -380,7 +543,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16.67px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18.33px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CSS/" style="font-size: 13.33px;">CSS</a> <a href="/tags/Car/" style="font-size: 10px;">Car</a> <a href="/tags/Dart/" style="font-size: 11.67px;">Dart</a> <a href="/tags/FP/" style="font-size: 10px;">FP</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mobile/" style="font-size: 10px;">Mobile</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Security/" style="font-size: 10px;">Security</a> <a href="/tags/Summary/" style="font-size: 18.33px;">Summary</a> <a href="/tags/UnitTest/" style="font-size: 16.67px;">UnitTest</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/小程序/" style="font-size: 10px;">小程序</a>
   </div>
 </div>
 
@@ -391,23 +554,23 @@
   <ul class="entry">
     
       <li>
-        <a href="/2017/08/24/css-position-mastery/">精通CSS之position</a>
+        <a href="/2017/08/24/css-position/">精通CSS之position</a>
       </li>
     
       <li>
-        <a href="/2017/08/22/beautiful-css/">Beautiful CSS</a>
+        <a href="/2017/08/22/meeting-css/">Beautiful CSS</a>
       </li>
     
       <li>
-        <a href="/2017/08/21/summary-of-weapp/">小程序开发总结</a>
+        <a href="/2017/08/21/meeting-weapp/">小程序开发总结</a>
       </li>
     
       <li>
-        <a href="/2017/08/21/note-of-css-mastery/">CSS Mastery笔记</a>
+        <a href="/2017/08/21/note-on-css-mastery/">CSS Mastery笔记</a>
       </li>
     
       <li>
-        <a href="/2017/07/28/okhttp-overview/">OkHttp略读</a>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
       </li>
     
   </ul>

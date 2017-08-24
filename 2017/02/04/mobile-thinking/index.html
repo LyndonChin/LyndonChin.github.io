@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>关于 App 开发的一些思考 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="关于 App 开发的一些思考"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/">行有不得反求诸己</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-02-04T12:18:00.000Z"><a href="/2017/02/04/mobile-thinking/">2017-02-04</a></time>
+      
+      
+  
+    <h1 class="title">关于 App 开发的一些思考</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>春节假期在家看了两本关于 Web 架构方面的书，虽然有很多地方没看懂，有的地方似懂非懂，但是俗话说，他山之石、可以攻玉，知识是相通的，试着总结一下对 APP 开发的一些启示。</p>
+<h2 id="关于工具"><a href="#关于工具" class="headerlink" title="关于工具"></a>关于工具</h2><p>很多时候 Web 开发者通过 ssh 登录到远程服务器，只能利用 terminal 来进行排查日志、更改配置等操作，虽然 GUI 确实能起到事半功倍的效果，但是对于不习惯命令行的同学，面对黑屏上快速滚动的字符估计要懵逼了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-a31dd8d0552c1c88.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt=""></p>
+<p>App 开发可能只依赖 GUI 就能搞定大部分工作，但是熟练的命令行操作也是必不可少的。</p>
+<ol>
+<li>修改文件（hosts、bashrc 等）</li>
+<li>adb logcat 抓日志</li>
+<li>Gradle 的各种 task 操作</li>
+<li>git 各种操作</li>
+<li>…</li>
+</ol>
+<p>但是过度依赖命令行会走入另一个极端 - 排斥 IDE，其实不必执着与此，工具嘛，只要能提高工作效率，怎么用都可以，运用之妙、存乎于心，但是前提是<strong>要熟练</strong>，代码写累了，心情低落时可以学学工具。</p>
+<p>工欲善其事、必先利其器，熟练掌握了 git 命令，就不会担心把代码弄丢了，当然，加班到深夜的时候，不要轻易执行 <code>git reset --hard</code>。</p>
+<h2 id="关于日志"><a href="#关于日志" class="headerlink" title="关于日志"></a>关于日志</h2><p>日志是 Web 开发中很重要的一块数据，很多错误排查和数据回滚都是从日志开始，而且系统的运行状况、用户操作路径也是从日志中获取，所以 Web 端对日志的重视程度要远远超过 App。</p>
+<p>很多初创型公司的 App 会直接集成第三方数据平台（TakingData、umeng、GrowingIO 等），而且随着无痕埋点技术的发展，只要接入了 SDK，就可以很轻松地获取各种数据（Crash Report、DAU、PV、UV） ，除了一些业务埋点，好像忽视了日志的重要性。</p>
+<p>App 开发无法像服务端那样动态打日志，所以我们要想办法弥补这个劣势，其实阿里开源的 AOP 框架 <a href="https://github.com/alibaba/dexposed" target="_blank" rel="external">dexposed</a> 其设计初衷是为了实现远程在线 Debug，只是恰好也满足了 hotpatch 的功能。</p>
+<p>可以设想一个场景，有一个线上 crash，但是以现有的条件无法无法复现（可能没有设备，或者即使有设备 rom 版本也对不起来），比较理想的做法是在 crash 方法的前后打上日志，生成 patch，然后定投到发生 crash 的设备上，这样以来就可以很容易定位到错误位置，有点类似 TalkingData 的灵动事件，当然具体实现起来可没这么简单。</p>
+<h2 id="关于安全"><a href="#关于安全" class="headerlink" title="关于安全"></a>关于安全</h2><p>App 开发貌似习惯了追着服务端的步伐走，特别是在业务量较大的情况下，双方约定好加密算法之后就分头行动，写完代码，联调 OK ，然后皆大欢喜，但这并不代表万事大吉，因为 App 端很可能把敏感数据（摘要认证的盐或者签名认证的私钥）写在了本地，导致恶意攻击者可以很容易拿到这个数据，进而发起 DDos 攻击，而 Web 开发可能根本不关心这个问题，因为用户拿不到他的代码，除非发生泄露。</p>
+<p>再说到 HTTPS，有很多安全性要求不高的 App 可能只需要单向认证就够了，但是我们必须要知道 HTTPS 还有一个双向认证。</p>
+<p>为了防止 DNS 劫持，App 会接入 Http DNS 或者 DNSPod，但是不要忘记 SNI 的问题，当前测试条件下可能会没问题，但是也要考虑到证书认证不通过的情况，这就要求 App 开发者要搞懂证书认证的原理。</p>
+<p>虽然两个端开发人员的安全意识不一样，但是安全问题却是相通的，我们不能简单地以为联调 OK 就没事了，知其然更要知其所以然，不然很可能会被 AI 取代。</p>
+<h2 id="关于缓存"><a href="#关于缓存" class="headerlink" title="关于缓存"></a>关于缓存</h2><p>Web 端有很完善的负载均衡方案，包括扩容、限流，App 开发大部分情况下不需要考虑 qps、rt 等指标，即使做了本地缓存，也可能是从用户体验角度出发，不用每次进入页面都要去请求数据，而且缓存方案可能很粗暴（直接把 response 存储到一个 LruCache 中）。</p>
+<p>我们更多地应该从 HTTP 协议角度来处理缓存，例如要求服务端返回 304、Response Header 带上 ETag 等等。</p>
+<p>如果服务端无法满足要求，也应该尽量利用网络 SDK 的特性去实现缓存功能，而不是仅仅为了完成一个功能。</p>
+<p>这就要求 App 开发者不仅要懂的 HTTP 协议，还要熟读网络 SDK 源码。</p>
+<h2 id="关于数据"><a href="#关于数据" class="headerlink" title="关于数据"></a>关于数据</h2><p>个人觉得 <a href="http://www.jianshu.com/p/8f46735b2bdd" target="_blank" rel="external">Web 开发中数据处理</a>是最有意思的，App 端的数据处理相比较服务端而言简直是太简单了。</p>
+<p>根据不同的业务需求或者数据来源，服务端都有不同的处理方式，例如无穷无尽的流式数据，需要实时或者离线计算的数据，还需要组建数据仓库。</p>
+<p>我们 App 端虽然不需要处理大数据，但是要从性能角度去规划存储方案，例如什么情况下应该用 SharedPreferences，什么样的数据应该存储在 SqlLite，Disk、Memory 应该怎么协调等等可以性能调优的地方。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>等我把现在没看懂的地方搞懂了再继续写吧。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>《大型分布式网站架构设计与实践》</li>
+<li>《大型网站系统与Java中间件开发实践》</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Mobile/">Mobile</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div id="uyan_frame"></div>
+  <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128686"></script>
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CSS/" style="font-size: 13.33px;">CSS</a> <a href="/tags/Car/" style="font-size: 10px;">Car</a> <a href="/tags/Dart/" style="font-size: 11.67px;">Dart</a> <a href="/tags/FP/" style="font-size: 10px;">FP</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mobile/" style="font-size: 10px;">Mobile</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Security/" style="font-size: 10px;">Security</a> <a href="/tags/Summary/" style="font-size: 18.33px;">Summary</a> <a href="/tags/UnitTest/" style="font-size: 16.67px;">UnitTest</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/小程序/" style="font-size: 10px;">小程序</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/08/24/css-position/">精通CSS之position</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/22/meeting-css/">Beautiful CSS</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/meeting-weapp/">小程序开发总结</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/note-on-css-mastery/">CSS Mastery笔记</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
+      </li>
+    
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

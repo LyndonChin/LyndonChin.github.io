@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>为什么要使用内部类 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="为什么要使用内部类"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/">行有不得反求诸己</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-04-09T16:00:00.000Z"><a href="/2014/04/10/java-why-inner-class/">2014-04-10</a></time>
+      
+      
+  
+    <h1 class="title">为什么要使用内部类</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>我们经常会在一个类中定义一个内部类 (inner class)，这个内部类可以继承也可以实现接口，因为有一个隐式的引用 (implicit reference) 指向外部类 (outer class)，所以我们可以直接访问并操作外部类。因此可以认为内部类是外部类的一个窗口。</p>
+<blockquote>
+<p>An inner class provides a kind of window into the outer class.</p>
+</blockquote>
+<p>这样问题就来了：如果我们需要一个实现了某个接口的对象，为什么不直接用一个外部类来实现那个借口呢？如果需求仅仅这么简单，当然可以这么做。</p>
+<blockquote>
+<p>If that’s all you need, then that’s how you should do it.</p>
+</blockquote>
+<p>但是很多时候，问题不会这么简单，因为Java不支持多继承，当我们想继承多个类或者实现多个抽象类的时候，不得不借助于内部类来“继承多个类”。</p>
+<blockquote>
+<p>Each inner class can independently inherit from an implementation. Thus, the inner class is not limited by whether the outer class is already inheriting from an implementation.</p>
+</blockquote>
+<p>所以可以把内部类看成解决(multiple-inheritance)的一个途径。</p>
+<p>首先来看一个实现多个接口的例子。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Two ways that a class can implement multiple interfaces.</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">A</span> </span>&#123;&#125;</div><div class="line"><span class="class"><span class="keyword">interface</span> <span class="title">B</span> </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> <span class="keyword">implements</span> <span class="title">A</span>, <span class="title">B</span> </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Y</span> <span class="keyword">implements</span> <span class="title">A</span> </span>&#123;</div><div class="line">    <span class="function">B <span class="title">makeB</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">// Anonymous inner class:</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> B() &#123;&#125;;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiInterfaces</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">takesA</span><span class="params">(A a)</span> </span>&#123;&#125;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">takesB</span><span class="params">(B b)</span> </span>&#123;&#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        X x = <span class="keyword">new</span> X();</div><div class="line">        Y y = <span class="keyword">new</span> Y();</div><div class="line">        takesA(x);</div><div class="line">        takesA(y);</div><div class="line">        takesB(x);</div><div class="line">        takesB(y.makeB());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>抛开类之间has-a, is-a的关系来看，两种实现方式都可以。但是，当把接口换成抽象类或者具体类之后，就只能使用内部类了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// With concrete or abstract classes, inner</span></div><div class="line"><span class="comment">// classes are the only way to produce the effect</span></div><div class="line"><span class="comment">// of "multiple implementation inheritance."</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">E</span> </span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Z</span> <span class="keyword">extends</span> <span class="title">D</span> </span>&#123;</div><div class="line">    <span class="function">E <span class="title">makeE</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="keyword">new</span> E() &#123;&#125;; &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MultiImplementation</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">takesD</span><span class="params">(D d)</span> </span>&#123;&#125;</div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">takesE</span><span class="params">(E e)</span> </span>&#123;&#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Z z = <span class="keyword">new</span> Z();</div><div class="line">        takesD(z);</div><div class="line">        takesE(z.makeE());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当然，如果不是为了解决多重继承的问题，不一定非要使用内部类。但是内部类可以为我们提供如下便利：<br>内部类可以有多个实例 (instance)，每一个实例有独立的状态信息 (state information)。</p>
+<p>在一个外部类中可以有多个内部类，并且每个内部都可以实现同一个接口或者继承同一个类，但是他们的内部<br>实现不同。</p>
+<p>内部类的可以“按需”创建。</p>
+<p>内部类并不存在 <strong>is-a</strong> 的关系，每一个内部类都是一个独立的实体。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Java/">Java</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div id="uyan_frame"></div>
+  <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128686"></script>
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CSS/" style="font-size: 13.33px;">CSS</a> <a href="/tags/Car/" style="font-size: 10px;">Car</a> <a href="/tags/Dart/" style="font-size: 11.67px;">Dart</a> <a href="/tags/FP/" style="font-size: 10px;">FP</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mobile/" style="font-size: 10px;">Mobile</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Security/" style="font-size: 10px;">Security</a> <a href="/tags/Summary/" style="font-size: 18.33px;">Summary</a> <a href="/tags/UnitTest/" style="font-size: 16.67px;">UnitTest</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/小程序/" style="font-size: 10px;">小程序</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/08/24/css-position/">精通CSS之position</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/22/meeting-css/">Beautiful CSS</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/meeting-weapp/">小程序开发总结</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/note-on-css-mastery/">CSS Mastery笔记</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
+      </li>
+    
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Android 强升逻辑和实现 | 梁飞</title>
+  <meta name="author" content="liangfei">
+  
+  <meta name="description" content="梁飞的个人博客">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Android 强升逻辑和实现"/>
+  <meta property="og:site_name" content="梁飞"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="梁飞" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">梁飞</a></h1>
+  <h2><a href="/">行有不得反求诸己</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+      <li><a href="/about">About</a></li>
+    
+    <li><a href="https://github.com/lyndonchin">Github</a></li>
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-03-20T16:00:00.000Z"><a href="/2017/03/21/android-force-update-architecture/">2017-03-21</a></time>
+      
+      
+  
+    <h1 class="title">Android 强升逻辑和实现</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>“强制升级”会中断用户操作，阻碍正常使用，看似是一个不光彩的行为，但是智者千虑必有一失，我们无法保证 App 的正确性，在某些紧急情况下，强制升级还是非常必要的，而且接入的时间越早越好。</p>
+<p>有赞微商城 App 早期版本只提供了一个更新提示的对话框，并不会强制用户去升级。随着后端网关升级，一些老的服务需要下线，但是新版本到达率并不理想，继续维护老接口带来一定成本，而且新功能也无法触及用户。 </p>
+<a id="more"></a>
+<h2 id="产品设计"><a href="#产品设计" class="headerlink" title="产品设计"></a>产品设计</h2><p>为了提升版本到达率，我们重新梳理了强制升级的逻辑。</p>
+<img src="/2017/03/21/android-force-update-architecture/force_update_flow.png" alt="force update flow" title="force update flow">
+<p>升级过程中首先要保证 apk 的<strong>下载成功率</strong>，下载完成之后要及时弹出安装页面，为了防止下载失败，也要提供<strong>市场下载</strong>的选项，这样一定程度上也能保证升级之后渠道的一致性。</p>
+<ul>
+<li>更新对话框需要展示标题、内容和动作按钮。</li>
+</ul>
+<img src="/2017/03/21/android-force-update-architecture/recommend_update.jpeg" alt="recommend update" title="recommend update">
+<img src="/2017/03/21/android-force-update-architecture/force_update.png" alt="force update" title="force update">
+<ul>
+<li>状态栏下载通知需要展示应用名字和描述。</li>
+</ul>
+<img src="/2017/03/21/android-force-update-architecture/update_notification.png" alt="update notification" title="update notification">
+<h2 id="构造参数"><a href="#构造参数" class="headerlink" title="构造参数"></a>构造参数</h2><p>业务方需要提供的参数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppUpdater</span> </span>&#123;</div><div class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> Context context;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String url;         <span class="comment">// apk 下载链接</span></div><div class="line">    <span class="keyword">private</span> String title;       <span class="comment">// 更新对话框 title</span></div><div class="line">    <span class="keyword">private</span> String content;     <span class="comment">// 更新内容</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> force;      <span class="comment">// 是否强制更新</span></div><div class="line"></div><div class="line">    <span class="keyword">private</span> String app;         <span class="comment">// app 名字</span></div><div class="line">    <span class="keyword">private</span> String description; <span class="comment">// app 描述</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">private</span> <span class="title">AppUpdater</span><span class="params">(<span class="keyword">final</span> Builder builder)</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.builder = builder;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">()</span> </span>&#123;</div><div class="line">    Intent intent = <span class="keyword">new</span> Intent(builder.context, DownloadActivity.class);</div><div class="line">    intent.putExtra(DownloadActivity.EXTRA_STRING_APP_NAME,  builder.app);</div><div class="line">    intent.putExtra(DownloadActivity.EXTRA_STRING_URL, builder.url);</div><div class="line">    intent.putExtra(DownloadActivity.EXTRA_STRING_TITLE, builder.title);</div><div class="line">    intent.putExtra(DownloadActivity.EXTRA_STRING_CONTENT, builder.content);</div><div class="line">    intent.putExtra(DownloadActivity.EXTRA_STRING_DESCRIPTION,  builder.description);</div><div class="line">    intent.putExtra(DownloadActivity.EXTRA_BOOLEAN_FORCE, builder.force);</div><div class="line">    builder.context.startActivity(intent);</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<h2 id="使用-DownloadManager-下载-apk"><a href="#使用-DownloadManager-下载-apk" class="headerlink" title="使用 DownloadManager 下载 apk"></a>使用 DownloadManager 下载 apk</h2><p>为了提高下载成功率，我们使用了系统 Service - <a href="https://developer.android.com/reference/android/app/DownloadManager.html" target="_blank" rel="external">DownloadManager</a>，因为是独立进程，不会增加 App 占用的系统开销，但是某些 ROM 上禁用了此服务，不过没关系，我们可以引导用户去应用市场或者直接跳转到浏览器去下载。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">downloadApk</span><span class="params">()</span> </span>&#123;</div><div class="line"> <span class="keyword">if</span> (TextUtils.isEmpty(downloadUrl)) <span class="keyword">return</span>;</div><div class="line"></div><div class="line"> <span class="comment">// check dir</span></div><div class="line"> File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);</div><div class="line"> <span class="keyword">if</span> (!path.exists() &amp;&amp; !path.mkdirs()) &#123;</div><div class="line">   Toast.makeText(<span class="keyword">this</span>, String.format(getString(R.string.app_updater_dir_not_found),</div><div class="line">           path.getPath()), Toast.LENGTH_SHORT).show();</div><div class="line">   <span class="keyword">return</span>;</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> <span class="comment">/** construct request */</span></div><div class="line"> <span class="keyword">final</span> DownloadManager.Request request = <span class="keyword">new</span> DownloadManager.Request(Uri.parse(downloadUrl));</div><div class="line"> request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE</div><div class="line">         | DownloadManager.Request.NETWORK_WIFI);</div><div class="line"> request.setAllowedOverRoaming(<span class="keyword">false</span>);</div><div class="line"></div><div class="line"> request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,</div><div class="line">         appName + <span class="string">".apk"</span>);</div><div class="line"></div><div class="line"></div><div class="line"> <span class="keyword">if</span> (!TextUtils.isEmpty(appName)) &#123;</div><div class="line">   request.setTitle(appName);</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> <span class="keyword">if</span> (!TextUtils.isEmpty(description)) &#123;</div><div class="line">   request.setDescription(description);</div><div class="line"> &#125; <span class="keyword">else</span> &#123;</div><div class="line">   request.setDescription(downloadUrl);</div><div class="line"> &#125;</div><div class="line"></div><div class="line"> <span class="comment">/** start downloading */</span></div><div class="line"> downloadId = downloadManager.enqueue(request);</div><div class="line"> setStatus(STATUS_DOWNLOADING);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="注册监听下载完成的-Receiver"><a href="#注册监听下载完成的-Receiver" class="headerlink" title="注册监听下载完成的 Receiver"></a>注册监听下载完成的 Receiver</h2><p>我们通过一个全局的 Receiver 来接收下载完成的广播，这样即使 App 进程被杀死，依然可以弹出安装界面。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">receiver</span></span></div><div class="line">    <span class="attr">android:name</span>=<span class="string">".DownloadReceiver"</span></div><div class="line">    <span class="attr">android:enabled</span>=<span class="string">"true"</span></div><div class="line">    <span class="attr">android:exported</span>=<span class="string">"true"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">"android.intent.action.DOWNLOAD_COMPLETE"</span>/&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">receiver</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>接收到广播之后，弹出安装界面。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">installApk</span><span class="params">(<span class="keyword">final</span> Context context, <span class="keyword">final</span> Uri uri)</span> </span>&#123;</div><div class="line">    Intent intent = <span class="keyword">new</span> Intent(Intent.ACTION_VIEW);</div><div class="line">    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);</div><div class="line"></div><div class="line">    Uri apkUri = uri;</div><div class="line">    <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.N) &#123;</div><div class="line">        apkUri = FileProvider.getUriForFile(context, context.getPackageName() + <span class="string">".provider"</span>,</div><div class="line">                <span class="keyword">new</span> File(uri.getPath()));</div><div class="line">        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION</div><div class="line">                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);</div><div class="line">    &#125;</div><div class="line">    intent.setDataAndType(apkUri, <span class="string">"application/vnd.android.package-archive"</span>);</div><div class="line">    context.startActivity(intent);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>注意此处有坑，在 SDK &gt;= 24 的系统中，Intent 不允许携带 <code>file://</code> 格式的数据，只能通过 <code>provider</code> 的形式共享数据。</p>
+</blockquote>
+<p>所以我们还需要注册一个 <code>FileProvider</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">provider</span></span></div><div class="line">    <span class="attr">android:name</span>=<span class="string">"android.support.v4.content.FileProvider"</span></div><div class="line">    <span class="attr">android:authorities</span>=<span class="string">"$&#123;applicationId&#125;.provider"</span></div><div class="line">    <span class="attr">android:exported</span>=<span class="string">"false"</span></div><div class="line">    <span class="attr">android:grantUriPermissions</span>=<span class="string">"true"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">meta-data</span></span></div><div class="line">        <span class="attr">android:name</span>=<span class="string">"android.support.FILE_PROVIDER_PATHS"</span></div><div class="line">        <span class="attr">android:resource</span>=<span class="string">"@xml/provider_paths"</span>/&gt;</div><div class="line"><span class="tag">&lt;/<span class="name">provider</span>&gt;</span></div></pre></td></tr></table></figure>
+<p><code>${applicationId}$</code> 是 <code>AndroidManifest.xml</code> 中的占位符，gradle 会进行替换。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">android:authorities="$&#123;applicationId&#125;.provider"</div></pre></td></tr></table></figure>
+<p>对应 Java 代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">FileProvider.getUriForFile(context, context.getPackageName() + <span class="string">".provider"</span>, <span class="keyword">new</span> File(uri.getPath()))</div></pre></td></tr></table></figure>
+<p>注意：Java 代码中 <code>getPackageName()</code> 的返回值是 <code>ApplicationId</code>。</p>
+<blockquote>
+<p><a href="http://blog.csdn.net/feelang/article/details/51493501" target="_blank" rel="external">package name 和 application id 的区别</a></p>
+</blockquote>
+<ul>
+<li>完整版代码：<a href="https://github.com/LyndonChin/ZanAppUpdater" target="_blank" rel="external">https://github.com/LyndonChin/ZanAppUpdater</a></li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/Android/">Android</a>, <a href="/tags/产品设计/">产品设计</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div id="uyan_frame"></div>
+  <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2128686"></script>
+</section>
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:liangfei.me">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CSS/" style="font-size: 13.33px;">CSS</a> <a href="/tags/Car/" style="font-size: 10px;">Car</a> <a href="/tags/Dart/" style="font-size: 11.67px;">Dart</a> <a href="/tags/FP/" style="font-size: 10px;">FP</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mobile/" style="font-size: 10px;">Mobile</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Security/" style="font-size: 10px;">Security</a> <a href="/tags/Summary/" style="font-size: 18.33px;">Summary</a> <a href="/tags/UnitTest/" style="font-size: 16.67px;">UnitTest</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/小程序/" style="font-size: 10px;">小程序</a>
+  </div>
+</div>
+
+
+  
+<div class="widget tag">
+  <h3 class="title">最新文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2017/08/24/css-position/">精通CSS之position</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/22/meeting-css/">Beautiful CSS</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/meeting-weapp/">小程序开发总结</a>
+      </li>
+    
+      <li>
+        <a href="/2017/08/21/note-on-css-mastery/">CSS Mastery笔记</a>
+      </li>
+    
+      <li>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
+      </li>
+    
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 liangfei
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+var disqus_shortname = 'liangfeizc';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

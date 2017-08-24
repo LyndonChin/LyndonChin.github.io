@@ -55,43 +55,6 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-07-03T16:00:00.000Z"><a href="/2017/07/04/2017-semi-annual-summary/">2017-07-04</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2017/07/04/2017-semi-annual-summary/">2017 年中总结</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>复盘是一个总结过去、发现问题的好方法，借着公司复盘的东风，很有必要进行一次个人复盘。<br>唯有不断地自我反省，才能更深刻地认识自己、找到短板，从而变得更加优秀。 </p>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2017/07/04/2017-semi-annual-summary/#more" class="more-link">更多...</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
         <time datetime="2017-07-02T16:00:00.000Z"><a href="/2017/07/03/http-status-code/">2017-07-03</a></time>
       
       
@@ -129,11 +92,11 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-03-20T16:00:00.000Z"><a href="/2017/03/21/app-force-update-architecture/">2017-03-21</a></time>
+        <time datetime="2017-03-20T16:00:00.000Z"><a href="/2017/03/21/android-force-update-architecture/">2017-03-21</a></time>
       
       
   
-    <h1 class="title"><a href="/2017/03/21/app-force-update-architecture/">Android 强升逻辑和实现</a></h1>
+    <h1 class="title"><a href="/2017/03/21/android-force-update-architecture/">Android 强升逻辑和实现</a></h1>
   
 
     </header>
@@ -147,7 +110,7 @@
       
         
           <div class="alignleft">
-            <a href="/2017/03/21/app-force-update-architecture/#more" class="more-link">更多...</a>
+            <a href="/2017/03/21/android-force-update-architecture/#more" class="more-link">更多...</a>
           </div>
         
         
@@ -167,11 +130,11 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-02-15T14:48:03.000Z"><a href="/2017/02/15/2016-summary/">2017-02-15</a></time>
+        <time datetime="2017-02-15T14:48:03.000Z"><a href="/2017/02/15/summary-of-year-2016/">2017-02-15</a></time>
       
       
   
-    <h1 class="title"><a href="/2017/02/15/2016-summary/">2016 年终总结</a></h1>
+    <h1 class="title"><a href="/2017/02/15/summary-of-year-2016/">2016 年终总结</a></h1>
   
 
     </header>
@@ -184,7 +147,7 @@
       
         
           <div class="alignleft">
-            <a href="/2017/02/15/2016-summary/#more" class="more-link">更多...</a>
+            <a href="/2017/02/15/summary-of-year-2016/#more" class="more-link">更多...</a>
           </div>
         
         
@@ -204,17 +167,174 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-02-04T12:18:00.000Z"><a href="/2017/02/04/thinking-in-mobile/">2017-02-04</a></time>
+        <time datetime="2017-02-04T12:18:00.000Z"><a href="/2017/02/04/mobile-thinking/">2017-02-04</a></time>
       
       
   
-    <h1 class="title"><a href="/2017/02/04/thinking-in-mobile/">关于 App 开发的一些思考</a></h1>
+    <h1 class="title"><a href="/2017/02/04/mobile-thinking/">关于 App 开发的一些思考</a></h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a href="http://www.jianshu.com/p/2e47a60824ee" target="_blank" rel="external">http://www.jianshu.com/p/2e47a60824ee</a></p>
+        <p>春节假期在家看了两本关于 Web 架构方面的书，虽然有很多地方没看懂，有的地方似懂非懂，但是俗话说，他山之石、可以攻玉，知识是相通的，试着总结一下对 APP 开发的一些启示。</p>
+<h2 id="关于工具"><a href="#关于工具" class="headerlink" title="关于工具"></a>关于工具</h2><p>很多时候 Web 开发者通过 ssh 登录到远程服务器，只能利用 terminal 来进行排查日志、更改配置等操作，虽然 GUI 确实能起到事半功倍的效果，但是对于不习惯命令行的同学，面对黑屏上快速滚动的字符估计要懵逼了。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-a31dd8d0552c1c88.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt=""></p>
+<p>App 开发可能只依赖 GUI 就能搞定大部分工作，但是熟练的命令行操作也是必不可少的。</p>
+<ol>
+<li>修改文件（hosts、bashrc 等）</li>
+<li>adb logcat 抓日志</li>
+<li>Gradle 的各种 task 操作</li>
+<li>git 各种操作</li>
+<li>…</li>
+</ol>
+<p>但是过度依赖命令行会走入另一个极端 - 排斥 IDE，其实不必执着与此，工具嘛，只要能提高工作效率，怎么用都可以，运用之妙、存乎于心，但是前提是<strong>要熟练</strong>，代码写累了，心情低落时可以学学工具。</p>
+<p>工欲善其事、必先利其器，熟练掌握了 git 命令，就不会担心把代码弄丢了，当然，加班到深夜的时候，不要轻易执行 <code>git reset --hard</code>。</p>
+<h2 id="关于日志"><a href="#关于日志" class="headerlink" title="关于日志"></a>关于日志</h2><p>日志是 Web 开发中很重要的一块数据，很多错误排查和数据回滚都是从日志开始，而且系统的运行状况、用户操作路径也是从日志中获取，所以 Web 端对日志的重视程度要远远超过 App。</p>
+<p>很多初创型公司的 App 会直接集成第三方数据平台（TakingData、umeng、GrowingIO 等），而且随着无痕埋点技术的发展，只要接入了 SDK，就可以很轻松地获取各种数据（Crash Report、DAU、PV、UV） ，除了一些业务埋点，好像忽视了日志的重要性。</p>
+<p>App 开发无法像服务端那样动态打日志，所以我们要想办法弥补这个劣势，其实阿里开源的 AOP 框架 <a href="https://github.com/alibaba/dexposed" target="_blank" rel="external">dexposed</a> 其设计初衷是为了实现远程在线 Debug，只是恰好也满足了 hotpatch 的功能。</p>
+<p>可以设想一个场景，有一个线上 crash，但是以现有的条件无法无法复现（可能没有设备，或者即使有设备 rom 版本也对不起来），比较理想的做法是在 crash 方法的前后打上日志，生成 patch，然后定投到发生 crash 的设备上，这样以来就可以很容易定位到错误位置，有点类似 TalkingData 的灵动事件，当然具体实现起来可没这么简单。</p>
+<h2 id="关于安全"><a href="#关于安全" class="headerlink" title="关于安全"></a>关于安全</h2><p>App 开发貌似习惯了追着服务端的步伐走，特别是在业务量较大的情况下，双方约定好加密算法之后就分头行动，写完代码，联调 OK ，然后皆大欢喜，但这并不代表万事大吉，因为 App 端很可能把敏感数据（摘要认证的盐或者签名认证的私钥）写在了本地，导致恶意攻击者可以很容易拿到这个数据，进而发起 DDos 攻击，而 Web 开发可能根本不关心这个问题，因为用户拿不到他的代码，除非发生泄露。</p>
+<p>再说到 HTTPS，有很多安全性要求不高的 App 可能只需要单向认证就够了，但是我们必须要知道 HTTPS 还有一个双向认证。</p>
+<p>为了防止 DNS 劫持，App 会接入 Http DNS 或者 DNSPod，但是不要忘记 SNI 的问题，当前测试条件下可能会没问题，但是也要考虑到证书认证不通过的情况，这就要求 App 开发者要搞懂证书认证的原理。</p>
+<p>虽然两个端开发人员的安全意识不一样，但是安全问题却是相通的，我们不能简单地以为联调 OK 就没事了，知其然更要知其所以然，不然很可能会被 AI 取代。</p>
+<h2 id="关于缓存"><a href="#关于缓存" class="headerlink" title="关于缓存"></a>关于缓存</h2><p>Web 端有很完善的负载均衡方案，包括扩容、限流，App 开发大部分情况下不需要考虑 qps、rt 等指标，即使做了本地缓存，也可能是从用户体验角度出发，不用每次进入页面都要去请求数据，而且缓存方案可能很粗暴（直接把 response 存储到一个 LruCache 中）。</p>
+<p>我们更多地应该从 HTTP 协议角度来处理缓存，例如要求服务端返回 304、Response Header 带上 ETag 等等。</p>
+<p>如果服务端无法满足要求，也应该尽量利用网络 SDK 的特性去实现缓存功能，而不是仅仅为了完成一个功能。</p>
+<p>这就要求 App 开发者不仅要懂的 HTTP 协议，还要熟读网络 SDK 源码。</p>
+<h2 id="关于数据"><a href="#关于数据" class="headerlink" title="关于数据"></a>关于数据</h2><p>个人觉得 <a href="http://www.jianshu.com/p/8f46735b2bdd" target="_blank" rel="external">Web 开发中数据处理</a>是最有意思的，App 端的数据处理相比较服务端而言简直是太简单了。</p>
+<p>根据不同的业务需求或者数据来源，服务端都有不同的处理方式，例如无穷无尽的流式数据，需要实时或者离线计算的数据，还需要组建数据仓库。</p>
+<p>我们 App 端虽然不需要处理大数据，但是要从性能角度去规划存储方案，例如什么情况下应该用 SharedPreferences，什么样的数据应该存储在 SqlLite，Disk、Memory 应该怎么协调等等可以性能调优的地方。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>等我把现在没看懂的地方搞懂了再继续写吧。</p>
+<p><strong>参考资料</strong></p>
+<ul>
+<li>《大型分布式网站架构设计与实践》</li>
+<li>《大型网站系统与Java中间件开发实践》</li>
+</ul>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-02-01T14:56:00.000Z"><a href="/2017/02/01/note-on-web-data-analysis/">2017-02-01</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2017/02/01/note-on-web-data-analysis/">架构笔记之数据分析</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>蚂蚁积分是一个数据产品，这个简单的积分体现的是<strong>风控</strong>和<strong>信用</strong>，分数越高表明放贷的风险越小、履约的概率越大，而积分背后的风控体系和信用体系都是来自数据的采集和分析，所以数据是最重要的。</p>
+<h2 id="数据来源"><a href="#数据来源" class="headerlink" title="数据来源"></a>数据来源</h2><ul>
+<li><strong>UGC</strong>（<em>对这些数据的分析和掌握可以提供更好的服务</em>）</li>
+<li><strong>日志</strong>（<em>可以得到系统的情况</em>）</li>
+</ul>
+<h2 id="数据分析类型"><a href="#数据分析类型" class="headerlink" title="数据分析类型"></a>数据分析类型</h2><ul>
+<li>数据分析的<strong>实时与否</strong><ul>
+<li><strong>实时分析任务</strong>（金融、电子商务）</li>
+<li><strong>离线分析任务</strong>（数据挖掘搜、索引擎索引计算、推荐内容计算、机器学习）</li>
+</ul>
+</li>
+<li>分析的<strong>数据类型</strong>不同<ul>
+<li><strong>流式数据处理</strong>（<em>数据整体价值</em>）<ul>
+<li>负载、QPS、网络 Traffic、磁盘 IO</li>
+<li>交易下单笔数、交易总金额、PV、UV</li>
+<li>用户行为分析</li>
+</ul>
+</li>
+<li><strong>批量数据处理</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="日志收集"><a href="#日志收集" class="headerlink" title="日志收集"></a>日志收集</h2><ul>
+<li><p><strong>inofity 机制</strong>（<em>解决了日志收集的效率问题</em>）<br>监控文件系统的变化，及时通知应用程序进行相关事件处理。响应性的处理机制，避免了频繁的文件轮询任务，提高了任务的处理效率。</p>
+</li>
+<li><p><strong>ActiveMQ</strong>（<em>解决了日志数据分发的问题</em>)<br>ActiveMQ-CPP 是 CMS（C++ Messaging Service）的一种实现，是一个能够与 ActiveMQ（支持 JMS 的 Java MOM）进行通信的 C++ 客户端库，能够与 ActiveMQ 高效和便捷地进行通信。</p>
+</li>
+<li><p><strong>架构和存储</strong><br>数据需要经过 inotify 客户端，经由 ActiveMQ 进行转发，通过 Storm 进行实时处理，在存储到 MySQL、HDFS、Hbase 或者 Memcache 这些存储系统当中，最后在进行深度分析或者实时展现。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-119c11e12169cd7e.png" alt="日志收集和分析系统架构"></p>
+<ul>
+<li><strong>Storm</strong> - 实时分布式流处理系统（数据流切割、集群容错、任务调度），类似 Hadoop 提供的大数据解决方案，但是它处理的对象是<strong>没有终点的数据流</strong>，而非 Hadoop 的 MapReduce 那样的<strong>批处理系统</strong>。</li>
+<li><p><strong>Hadoop</strong>（海量数据持久化存储和分析方案）</p>
+<ul>
+<li><strong>HDFS</strong>（Hadoop Distributed File System）保存<strong>非实时海量数据</strong>，然后通过 MapReduce 或者 HiveSQL 进行数据分析与挖掘。</li>
+<li><strong>Hbase</strong>（列存储系统、天生支持数据表的自动分区）保存实时展现内容。</li>
+<li><strong>关系型数据库</strong>（例 MySQL）存储可控量级的数据（PV信息、系统 load 平均值等）。关系型数据库复杂的条件查询与多表关联的能力是 Hbase 这类列存储数据库所不具备的。</li>
+<li><strong>高效缓存系统</strong>（例 Memcache，内存电信号寻址）用于实时性和系统 TPS（Transaction Per Second）能力要求非常高的场景（活动交易量的实时统计）</li>
+</ul>
+</li>
+<li><p><strong>Chukwa</strong><br>基于 Hadoop 开发的数据采集与分析框架。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="离线数据分析"><a href="#离线数据分析" class="headerlink" title="离线数据分析"></a>离线数据分析</h2><ul>
+<li>Hadoop<ul>
+<li><strong>HDFS</strong><br><img src="https://hadoop.apache.org/docs/r1.2.1/images/hdfsarchitecture.gif" alt=""></li>
+<li><strong>MapReduce</strong>（处理海量数据的并行编程模型和计算框架）<br><img src="http://upload-images.jianshu.io/upload_images/620698-862e495ff97953e7.png" alt=""></li>
+<li><strong>Hive</strong><br>Hive 是基于 Hadoop 的一个<strong>数据仓库</strong>工具，可以讲 HDFS 存储的结构化的数据文件映射为一张数据库表，提供完整的 SQL 查询功能，还可以将 SQL 语句转换成 MapReduce 任务进行运行。<br><img src="http://upload-images.jianshu.io/upload_images/620698-f5a1fcc0e1d9f341.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="流式数据分析"><a href="#流式数据分析" class="headerlink" title="流式数据分析"></a>流式数据分析</h2><ul>
+<li><p><strong>Storm</strong></p>
+<ul>
+<li>Topology 原语执行的是实时处理任务，不同于 MapReduce 执行的是批处理任务。</li>
+<li>实习分析、在线机器学习、持续计算、分布式 RPC、ETL 等</li>
+<li>特点<ul>
+<li>编程模型简单（Topology 原语）</li>
+<li>高容错性和高可靠性</li>
+<li>高效（ZeroMQ 作为底层消息队列）</li>
+<li>多语言支持</li>
+<li>可扩展性（方便地支持集群扩展）</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-8ea1b43dc2421b8d.png" alt=""></p>
+</li>
+</ul>
+<h2 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h2><p>数据分析过程：从在线的 OLTP（OnLine Transaction Processing、传统的关系型数据的主要应用）库中，以及日志系统当中，提取和清洗所需要到的数据到 OLAP（OnLine Analytical Processing、数据仓库系统的主要应用） 系统，如构建在 Hadoop 上的 Hive 平台，然后在OLAP 系统上进行多维度复杂的数据分析和汇总操作，利用这些数据构建数据报表，提供前端展现。</p>
+<ul>
+<li><strong>离线数据同步</strong><ul>
+<li>Sqoop</li>
+<li>DataX</li>
+</ul>
+</li>
+<li><strong>实时数据同步</strong><ul>
+<li>ActiveMQ<br><img src="http://upload-images.jianshu.io/upload_images/620698-74b47f6dd1ba3d8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li>MySQL 的 Binary log</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据报表"><a href="#数据报表" class="headerlink" title="数据报表"></a>数据报表</h2><ul>
+<li>数据可视化</li>
+<li>highcharts （js 报表工具）</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>《大型分布式网站架构设计与实践》</li>
+<li><a href="http://tech.youzan.com/you-zan-big-data-practice/" target="_blank" rel="external">http://tech.youzan.com/you-zan-big-data-practice/</a></li>
+<li><a href="https://github.com/alibaba/DataX/wiki/DataX-Introduction" target="_blank" rel="external">https://github.com/alibaba/DataX/wiki/DataX-Introduction</a></li>
+</ol>
 
       
     </div>
@@ -256,7 +376,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16.67px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18.33px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CSS/" style="font-size: 13.33px;">CSS</a> <a href="/tags/Car/" style="font-size: 10px;">Car</a> <a href="/tags/Dart/" style="font-size: 11.67px;">Dart</a> <a href="/tags/FP/" style="font-size: 10px;">FP</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mobile/" style="font-size: 10px;">Mobile</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Security/" style="font-size: 10px;">Security</a> <a href="/tags/Summary/" style="font-size: 18.33px;">Summary</a> <a href="/tags/UnitTest/" style="font-size: 16.67px;">UnitTest</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/小程序/" style="font-size: 10px;">小程序</a>
   </div>
 </div>
 
@@ -267,23 +387,23 @@
   <ul class="entry">
     
       <li>
-        <a href="/2017/08/24/css-position-mastery/">精通CSS之position</a>
+        <a href="/2017/08/24/css-position/">精通CSS之position</a>
       </li>
     
       <li>
-        <a href="/2017/08/22/beautiful-css/">Beautiful CSS</a>
+        <a href="/2017/08/22/meeting-css/">Beautiful CSS</a>
       </li>
     
       <li>
-        <a href="/2017/08/21/summary-of-weapp/">小程序开发总结</a>
+        <a href="/2017/08/21/meeting-weapp/">小程序开发总结</a>
       </li>
     
       <li>
-        <a href="/2017/08/21/note-of-css-mastery/">CSS Mastery笔记</a>
+        <a href="/2017/08/21/note-on-css-mastery/">CSS Mastery笔记</a>
       </li>
     
       <li>
-        <a href="/2017/07/28/okhttp-overview/">OkHttp略读</a>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
       </li>
     
   </ul>

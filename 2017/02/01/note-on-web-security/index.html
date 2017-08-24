@@ -64,7 +64,139 @@
     </header>
     <div class="entry">
       
-        <p><a href="http://www.jianshu.com/p/f2aa311df010" target="_blank" rel="external">http://www.jianshu.com/p/f2aa311df010</a></p>
+        <h2 id="数字摘要"><a href="#数字摘要" class="headerlink" title="数字摘要"></a>数字摘要</h2><ul>
+<li><strong>摘要算法</strong><ul>
+<li><strong>MD5</strong> / 128 bits / Message Digest Algorithm 5</li>
+<li><strong>SHA</strong> / 160 bits / Secure Hash Algorithm</li>
+</ul>
+</li>
+</ul>
+<p>计算出的摘要（byte数组）转换成字符串之后可能会包含一些无法显示或网络传输的<strong>控制字符</strong>，因此需要对生成的摘要字符串进行编码。</p>
+<ul>
+<li><p><strong>编码算法</strong></p>
+<ul>
+<li><strong>十六进制编码</strong></li>
+<li><strong>Base 64 编码</strong>（每 6 位为一个单元，2^6 = 64，因此称为 Base64）</li>
+</ul>
+</li>
+<li><p><strong>彩虹表（Rainbow Table）</strong><br>一张采用各种 Hash 算法生成的一串密文。<br>大型网站数据库的沦陷（用户名+明文密码）继续完善了彩虹表。</p>
+</li>
+</ul>
+<h2 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h2><ul>
+<li><strong>对称加密算法</strong><ul>
+<li><strong>DES</strong> 算法（Data Encryption Standard）</li>
+<li><strong>AES</strong> 算法（Advanced Encryption Standard）</li>
+</ul>
+</li>
+<li><strong>非对称加密算法</strong><br><strong>RSA</strong> 算法以发明者名字命名（Ron Rivest、Adi Shamirh &amp; LenAdleman）。<br><strong>数论原理</strong>：将两个大素数相乘十分容易，但反过来想要对其乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥。</li>
+</ul>
+<h2 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h2><p>利用<strong>非对称加密</strong>对<strong>消息摘要（Message Digest）</strong>进行签名。</p>
+<ul>
+<li><strong>MD5withRSA</strong></li>
+<li><strong>SHA1withRSA</strong></li>
+</ul>
+<h2 id="数字证书（Digital-Certificate）"><a href="#数字证书（Digital-Certificate）" class="headerlink" title="数字证书（Digital Certificate）"></a>数字证书（Digital Certificate）</h2><p>类似身份证，一般采用 Base64 编码后再进行存储。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-0924d8aca33713c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt=""></p>
+<ul>
+<li><strong>格式（X.509）</strong><ol>
+<li>对象名称（人、服务器、组织）</li>
+<li>证书过期时间</li>
+<li>证书颁发机构（担保人）</li>
+<li>证书颁发机构对证书信息的<strong>数字签名</strong></li>
+<li>数字签名算法</li>
+<li>对象的公钥</li>
+</ol>
+</li>
+<li><strong>签发机构 （CA、Certificate Authority）</strong></li>
+<li><strong>证书管理</strong><br>要获得数字证书，首先需要使用数字证书管理工具，如 keytool、OpenSSL 等，然后构建 CSR（Certificate Signing Request，数字证书签发申请），提交给数字证书认证机构进行签名，最终形成数字证书。<ul>
+<li><strong>keytool</strong></li>
+<li><strong>OpenSSL</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="摘要认证实现"><a href="#摘要认证实现" class="headerlink" title="摘要认证实现"></a>摘要认证实现</h2><ul>
+<li>客户端参数摘要生成</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">                ------------</div><div class="line">                 请求参数</div><div class="line">                ------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">                ------------</div><div class="line">                 参数排序</div><div class="line">                ------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">--------------------------------------</div><div class="line">  参数串接（加上 Secret）生成待摘要字符串</div><div class="line">--------------------------------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">         ----------------------</div><div class="line">          生成摘要（MD5 or SHA）</div><div class="line">         ----------------------</div></pre></td></tr></table></figure>
+<ul>
+<li>服务端参数摘要校验</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">                    ------------</div><div class="line">                      请求参数</div><div class="line">                    ------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">                    ------------</div><div class="line">                      参数排序</div><div class="line">                    ------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">       --------------------------------------</div><div class="line">         参数串接（加上 Secret）生成待摘要字符串</div><div class="line">       --------------------------------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">       --------------------------------------</div><div class="line">         生成摘要（MD5 or SHA）</div><div class="line">       --------------------------------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">---------------------------------------------------</div><div class="line">  服务端生成的摘要串与客户端通过header传递过来的摘要串进行比较</div><div class="line">---------------------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">             ----------------------</div><div class="line">               生成摘要（MD5 or SHA）</div><div class="line">             ----------------------</div></pre></td></tr></table></figure>
+<ul>
+<li>服务端响应摘要生成</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">             ------------</div><div class="line">               响应内容</div><div class="line">             ------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">--------------------------------------</div><div class="line">  参数串接（加上 Secret）生成待摘要字符串</div><div class="line">--------------------------------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">--------------------------------------</div><div class="line">  生成摘要（MD5 or SHA）</div><div class="line">--------------------------------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">       ----------------------</div><div class="line">              响应摘要串</div><div class="line">       ----------------------</div></pre></td></tr></table></figure>
+<ul>
+<li>客户端响应摘要校验</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">                  --------------</div><div class="line">                   服务端响应内容</div><div class="line">                  --------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line"> ---------------------------------------------------</div><div class="line">   客户端接收到响应内容后，在后面加上secret，生成待摘要字符串</div><div class="line"> ----------------------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">        --------------------------------------</div><div class="line">              生成摘要（MD5 or SHA）</div><div class="line">        --------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">-----------------------------------------------------</div><div class="line">  客户端生成的摘要串与服务端通过header传递过来的摘要串进行比较</div><div class="line">-----------------------------------------------------</div><div class="line">                       |</div><div class="line">                      \|/</div><div class="line">             ----------------------</div><div class="line">               响应是否被篡改</div><div class="line">             ----------------------</div></pre></td></tr></table></figure>
+<h2 id="签名认证"><a href="#签名认证" class="headerlink" title="签名认证"></a>签名认证</h2><p>摘要认证依赖于服务端与客户端共享的 secret，因此 secret 一旦泄露那么攻击者就可以很轻松的伪造请求，为了提高安全性还是要使用<strong>数字签名</strong>（MD5withRSA / SHA1withRSA），<strong>参数排序拼接生成摘要串后使用私钥进行加密</strong>。</p>
+<blockquote>
+<p>认证（签名认证 or 数字认证）只解决了<strong>数据完整性</strong>和<strong>通信两端合法性</strong>的问题，并没有保证敏感数据的安全性，例如用户密码等。</p>
+</blockquote>
+<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h2><ul>
+<li>HTTPS（Hypertext Transfer Protocol over Secure Socket Layer）依托 SSL 协议，确保整个通信过程都是经过加密的，密钥随机产生，通过<strong>数字证书（HTTPS 证书）</strong>进行身份认证。</li>
+<li>HTTPS 支持<strong>单向认证</strong>（只需要服务端提供证书）和<strong>双向认证</strong>（服务端和客户端都需要提供证书）。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">    HTTP（应用层）</div><div class="line">----------------------------------</div><div class="line">    SSL or TLS（安全层）</div><div class="line">----------------------------------</div><div class="line">    TCP（传输层）</div><div class="line">----------------------------------</div><div class="line">    IP（网络层）</div><div class="line">----------------------------------</div><div class="line">    网络接口层</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>SSL</strong>（Secure Socket Layer）在协议栈中位于应用层之下，主要负责<strong>加密算法</strong>、<strong>通信密钥的协商</strong>以及两端的<strong>身份认证</strong>工作，并且独立于应用层协议（HTTP、SSH、FTP等等），对应用层是透明的，因此可以从 HTTP 无缝迁移到 HTTPS。</li>
+<li><strong>TLS</strong>（Transport Layer Security）是 SSL 的升级版协议。</li>
+<li><p>SSL/TLS 位于 TCP 之上，又分为两层：</p>
+<ul>
+<li><strong>Handshake Protocol</strong>（加密算法协商、通信密钥的交换、通信双方的身份认证）</li>
+<li><strong>Record Protocol</strong>（数据封装、加密解密、数据压缩、数据校验）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">----------------------------------</div><div class="line">    Handshake Protocol</div><div class="line">- - - - - - - - - - - - - - - - - - -</div><div class="line">    Record Protocol </div><div class="line">----------------------------------</div><div class="line">    TCP</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>客户端与服务端真实际上是通过对称加密进行数据交换，而加密密钥则是通过非对称加密进行协商的。</p>
+<h2 id="OAuth"><a href="#OAuth" class="headerlink" title="OAuth"></a>OAuth</h2><p>核心思想是<strong>将资源做权限分级和隔离</strong>。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-e1647fa654a689f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="OAuth 2.0"></p>
+<h2 id="常见-Web-攻击手段"><a href="#常见-Web-攻击手段" class="headerlink" title="常见 Web 攻击手段"></a>常见 Web 攻击手段</h2><ul>
+<li><strong>XSS</strong> (Cross Site Scripting)<br>在HTML页面中嵌入恶意代码。XSS enables attackers to client-side scripts into web pages viewed by other users.</li>
+<li><p><strong>CSRF</strong> (Cross Site Request Forgery)<br>跨站请求伪造。XSS 利用的是站点内的信任用户，而 CSRF 则是通过伪装受信任用户的身份向第三方网站发送恶意请求。</p>
+<p><em>防御手段</em></p>
+<ol>
+<li>将 cookie 设置为 <code>HttpOnly</code>（<em>防止站内 XSS 漏洞盗取 cookie</em>）</li>
+<li>增加 token（<em>身份校验</em>）</li>
+<li>通过 <code>referer</code> 识别（<em>HTTP 头有一个字段叫 referer</em>）</li>
+</ol>
+</li>
+<li><p><strong>SQL 注入</strong><br>举例，如果用户名为 <code>zhangsan</code>，密码为 <code>&#39; or &#39;1&#39;=&#39;1</code>，那么 SQL 语句可能会变成：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> hhuser <span class="keyword">where</span> nick = <span class="string">'zhangsan'</span> <span class="keyword">and</span> passwords = <span class="string">''</span> <span class="keyword">or</span> <span class="string">'1'</span> = <span class="string">'1'</span></div></pre></td></tr></table></figure>
+<p><em>防御手段</em></p>
+<ol>
+<li>使用预编译语句</li>
+<li>使用 ORM 框架</li>
+</ol>
+</li>
+<li><p><strong>文件上传漏洞</strong><br>恶意攻击者利用一些网站没有对文件类型做很好的类型校验，上传了可执行的文件或脚本，并且通过脚本获得服务器上的相应权限，或者是通过有道外部用户访问、下载上传的病毒或者木马文件，打到攻击目的。</p>
+<p><em>防御手段</em></p>
+<ol>
+<li>文件类型白名单校验</li>
+<li>利用魔数（magic number）而不是后缀名来获取文件类型</li>
+</ol>
+</li>
+<li><p><strong>DDos</strong> (Distributed Denial of Service)</p>
+<ul>
+<li><strong>SYN Flood</strong><br>利用 TCP 的三次握手，不响应服务端的 <code>SYN+ACK</code> 报文也就是不进行第三次握手。</li>
+<li><strong>DNS Query Flood</strong><br>向被攻击的服务器发送海量的域名解析请求。</li>
+<li><strong>CC (Challenge Collapsar)</strong><br>基于 HTTP 发起的 DDos 攻击，也称为 HTTP Flood。攻击者利用<strong>肉鸡</strong>或者<strong>匿名 HTTP 代理</strong>，模拟正常用户请求，避开 CDN 和分布式缓存进行多次 DB 查询操作或一次请求返回大量数据。</li>
+</ul>
+</li>
+<li><p>其他攻击手段</p>
+<ul>
+<li>DNS 域名劫持</li>
+<li>CDN 回源攻击</li>
+<li>服务器权限提升</li>
+<li>缓冲区溢出</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>笔记来源：《大型分布式网站架构设计与实践》</p>
+</blockquote>
 
       
     </div>
@@ -74,7 +206,7 @@
         
   
   <div class="tags">
-    <a href="/tags/Web/">Web</a>
+    <a href="/tags/Web/">Web</a>, <a href="/tags/Security/">Security</a>
   </div>
 
         
@@ -107,7 +239,7 @@
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16.67px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18.33px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/CSS/" style="font-size: 13.33px;">CSS</a> <a href="/tags/Car/" style="font-size: 10px;">Car</a> <a href="/tags/Dart/" style="font-size: 11.67px;">Dart</a> <a href="/tags/FP/" style="font-size: 10px;">FP</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Google/" style="font-size: 10px;">Google</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Mobile/" style="font-size: 10px;">Mobile</a> <a href="/tags/Mockito/" style="font-size: 15px;">Mockito</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Security/" style="font-size: 10px;">Security</a> <a href="/tags/Summary/" style="font-size: 18.33px;">Summary</a> <a href="/tags/UnitTest/" style="font-size: 16.67px;">UnitTest</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/小程序/" style="font-size: 10px;">小程序</a>
   </div>
 </div>
 
@@ -118,23 +250,23 @@
   <ul class="entry">
     
       <li>
-        <a href="/2017/08/24/css-position-mastery/">精通CSS之position</a>
+        <a href="/2017/08/24/css-position/">精通CSS之position</a>
       </li>
     
       <li>
-        <a href="/2017/08/22/beautiful-css/">Beautiful CSS</a>
+        <a href="/2017/08/22/meeting-css/">Beautiful CSS</a>
       </li>
     
       <li>
-        <a href="/2017/08/21/summary-of-weapp/">小程序开发总结</a>
+        <a href="/2017/08/21/meeting-weapp/">小程序开发总结</a>
       </li>
     
       <li>
-        <a href="/2017/08/21/note-of-css-mastery/">CSS Mastery笔记</a>
+        <a href="/2017/08/21/note-on-css-mastery/">CSS Mastery笔记</a>
       </li>
     
       <li>
-        <a href="/2017/07/28/okhttp-overview/">OkHttp略读</a>
+        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
       </li>
     
   </ul>
