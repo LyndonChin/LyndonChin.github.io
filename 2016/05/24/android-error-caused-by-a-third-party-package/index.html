@@ -65,6 +65,7 @@
     <div class="entry">
       
         <p>引入一个三方包之后导致 App 主题失效，定位了一个下午，做个记录。</p>
+<a id="more"></a>
 <p><code>AndroidManifest.xml</code> 文件中 <code>application</code> 节点配置如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;application</div><div class="line">    android:allowBackup=<span class="string">"false"</span></div><div class="line">    android:icon=<span class="string">"@mipmap/app_icon"</span></div><div class="line">    android:label=<span class="string">"@string/app_name"</span></div><div class="line">    android:theme=<span class="string">"@style/AppTheme"</span></div><div class="line">    tools:replace=<span class="string">"android:allowBackup"</span>&gt;</div></pre></td></tr></table></figure>
 <p>刚开始觉得应该是 App 的 theme 被覆盖掉了，然后添加了一个 <strong>replace</strong>。</p>

@@ -69,6 +69,7 @@
 <li>synchronized method</li>
 <li>synchronized block</li>
 </ol>
+<a id="more"></a>
 <p>两者的实现方式是不一样的，jvm 规范中写道，编译后的 synchronized method 会有一个 <strong>ACC_SYNCHRONIZED</strong> 的 flag，也就是说当 jvm 的方法调用指令（the method invocation instruction）从 the run-time constant pool 中查找到这个 method 的时候，已经知道它是一个synchronized method，所以锁操作是由<strong>方法调用</strong>以及<strong>返回</strong>指令来控制的。</p>
 <p>而 <strong>synchronized block</strong> 的锁是由 <code>monitorenter</code> 和 <code>monitorexit</code> 这两个指令来控制。</p>
 <p>可以通过 javap 命令来“反汇编”一下 class 文件。</p>

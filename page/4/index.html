@@ -83,126 +83,14 @@
 <li><p><strong>彩虹表（Rainbow Table）</strong><br>一张采用各种 Hash 算法生成的一串密文。<br>大型网站数据库的沦陷（用户名+明文密码）继续完善了彩虹表。</p>
 </li>
 </ul>
-<h2 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h2><ul>
-<li><strong>对称加密算法</strong><ul>
-<li><strong>DES</strong> 算法（Data Encryption Standard）</li>
-<li><strong>AES</strong> 算法（Advanced Encryption Standard）</li>
-</ul>
-</li>
-<li><strong>非对称加密算法</strong><br><strong>RSA</strong> 算法以发明者名字命名（Ron Rivest、Adi Shamirh &amp; LenAdleman）。<br><strong>数论原理</strong>：将两个大素数相乘十分容易，但反过来想要对其乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥。</li>
-</ul>
-<h2 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h2><p>利用<strong>非对称加密</strong>对<strong>消息摘要（Message Digest）</strong>进行签名。</p>
-<ul>
-<li><strong>MD5withRSA</strong></li>
-<li><strong>SHA1withRSA</strong></li>
-</ul>
-<h2 id="数字证书（Digital-Certificate）"><a href="#数字证书（Digital-Certificate）" class="headerlink" title="数字证书（Digital Certificate）"></a>数字证书（Digital Certificate）</h2><p>类似身份证，一般采用 Base64 编码后再进行存储。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/620698-0924d8aca33713c4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/400" alt=""></p>
-<ul>
-<li><strong>格式（X.509）</strong><ol>
-<li>对象名称（人、服务器、组织）</li>
-<li>证书过期时间</li>
-<li>证书颁发机构（担保人）</li>
-<li>证书颁发机构对证书信息的<strong>数字签名</strong></li>
-<li>数字签名算法</li>
-<li>对象的公钥</li>
-</ol>
-</li>
-<li><strong>签发机构 （CA、Certificate Authority）</strong></li>
-<li><strong>证书管理</strong><br>要获得数字证书，首先需要使用数字证书管理工具，如 keytool、OpenSSL 等，然后构建 CSR（Certificate Signing Request，数字证书签发申请），提交给数字证书认证机构进行签名，最终形成数字证书。<ul>
-<li><strong>keytool</strong></li>
-<li><strong>OpenSSL</strong></li>
-</ul>
-</li>
-</ul>
-<h2 id="摘要认证实现"><a href="#摘要认证实现" class="headerlink" title="摘要认证实现"></a>摘要认证实现</h2><ul>
-<li>客户端参数摘要生成</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">                ------------</div><div class="line">                 请求参数</div><div class="line">                ------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">                ------------</div><div class="line">                 参数排序</div><div class="line">                ------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">--------------------------------------</div><div class="line">  参数串接（加上 Secret）生成待摘要字符串</div><div class="line">--------------------------------------</div><div class="line">                     |</div><div class="line">                    \|/</div><div class="line">         ----------------------</div><div class="line">          生成摘要（MD5 or SHA）</div><div class="line">         ----------------------</div></pre></td></tr></table></figure>
-<ul>
-<li>服务端参数摘要校验</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">                    ------------</div><div class="line">                      请求参数</div><div class="line">                    ------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">                    ------------</div><div class="line">                      参数排序</div><div class="line">                    ------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">       --------------------------------------</div><div class="line">         参数串接（加上 Secret）生成待摘要字符串</div><div class="line">       --------------------------------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">       --------------------------------------</div><div class="line">         生成摘要（MD5 or SHA）</div><div class="line">       --------------------------------------</div><div class="line">                         |</div><div class="line">                        \|/</div><div class="line">---------------------------------------------------</div><div class="line">  服务端生成的摘要串与客户端通过header传递过来的摘要串进行比较</div><div class="line">---------------------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">             ----------------------</div><div class="line">               生成摘要（MD5 or SHA）</div><div class="line">             ----------------------</div></pre></td></tr></table></figure>
-<ul>
-<li>服务端响应摘要生成</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">             ------------</div><div class="line">               响应内容</div><div class="line">             ------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">--------------------------------------</div><div class="line">  参数串接（加上 Secret）生成待摘要字符串</div><div class="line">--------------------------------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">--------------------------------------</div><div class="line">  生成摘要（MD5 or SHA）</div><div class="line">--------------------------------------</div><div class="line">                  |</div><div class="line">                 \|/</div><div class="line">       ----------------------</div><div class="line">              响应摘要串</div><div class="line">       ----------------------</div></pre></td></tr></table></figure>
-<ul>
-<li>客户端响应摘要校验</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">                  --------------</div><div class="line">                   服务端响应内容</div><div class="line">                  --------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line"> ---------------------------------------------------</div><div class="line">   客户端接收到响应内容后，在后面加上secret，生成待摘要字符串</div><div class="line"> ----------------------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">        --------------------------------------</div><div class="line">              生成摘要（MD5 or SHA）</div><div class="line">        --------------------------------------</div><div class="line">                        |</div><div class="line">                       \|/</div><div class="line">-----------------------------------------------------</div><div class="line">  客户端生成的摘要串与服务端通过header传递过来的摘要串进行比较</div><div class="line">-----------------------------------------------------</div><div class="line">                       |</div><div class="line">                      \|/</div><div class="line">             ----------------------</div><div class="line">               响应是否被篡改</div><div class="line">             ----------------------</div></pre></td></tr></table></figure>
-<h2 id="签名认证"><a href="#签名认证" class="headerlink" title="签名认证"></a>签名认证</h2><p>摘要认证依赖于服务端与客户端共享的 secret，因此 secret 一旦泄露那么攻击者就可以很轻松的伪造请求，为了提高安全性还是要使用<strong>数字签名</strong>（MD5withRSA / SHA1withRSA），<strong>参数排序拼接生成摘要串后使用私钥进行加密</strong>。</p>
-<blockquote>
-<p>认证（签名认证 or 数字认证）只解决了<strong>数据完整性</strong>和<strong>通信两端合法性</strong>的问题，并没有保证敏感数据的安全性，例如用户密码等。</p>
-</blockquote>
-<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h2><ul>
-<li>HTTPS（Hypertext Transfer Protocol over Secure Socket Layer）依托 SSL 协议，确保整个通信过程都是经过加密的，密钥随机产生，通过<strong>数字证书（HTTPS 证书）</strong>进行身份认证。</li>
-<li>HTTPS 支持<strong>单向认证</strong>（只需要服务端提供证书）和<strong>双向认证</strong>（服务端和客户端都需要提供证书）。</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">    HTTP（应用层）</div><div class="line">----------------------------------</div><div class="line">    SSL or TLS（安全层）</div><div class="line">----------------------------------</div><div class="line">    TCP（传输层）</div><div class="line">----------------------------------</div><div class="line">    IP（网络层）</div><div class="line">----------------------------------</div><div class="line">    网络接口层</div></pre></td></tr></table></figure>
-<ul>
-<li><strong>SSL</strong>（Secure Socket Layer）在协议栈中位于应用层之下，主要负责<strong>加密算法</strong>、<strong>通信密钥的协商</strong>以及两端的<strong>身份认证</strong>工作，并且独立于应用层协议（HTTP、SSH、FTP等等），对应用层是透明的，因此可以从 HTTP 无缝迁移到 HTTPS。</li>
-<li><strong>TLS</strong>（Transport Layer Security）是 SSL 的升级版协议。</li>
-<li><p>SSL/TLS 位于 TCP 之上，又分为两层：</p>
-<ul>
-<li><strong>Handshake Protocol</strong>（加密算法协商、通信密钥的交换、通信双方的身份认证）</li>
-<li><strong>Record Protocol</strong>（数据封装、加密解密、数据压缩、数据校验）</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">----------------------------------</div><div class="line">    Handshake Protocol</div><div class="line">- - - - - - - - - - - - - - - - - - -</div><div class="line">    Record Protocol </div><div class="line">----------------------------------</div><div class="line">    TCP</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>客户端与服务端真实际上是通过对称加密进行数据交换，而加密密钥则是通过非对称加密进行协商的。</p>
-<h2 id="OAuth"><a href="#OAuth" class="headerlink" title="OAuth"></a>OAuth</h2><p>核心思想是<strong>将资源做权限分级和隔离</strong>。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/620698-e1647fa654a689f4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="OAuth 2.0"></p>
-<h2 id="常见-Web-攻击手段"><a href="#常见-Web-攻击手段" class="headerlink" title="常见 Web 攻击手段"></a>常见 Web 攻击手段</h2><ul>
-<li><strong>XSS</strong> (Cross Site Scripting)<br>在HTML页面中嵌入恶意代码。XSS enables attackers to client-side scripts into web pages viewed by other users.</li>
-<li><p><strong>CSRF</strong> (Cross Site Request Forgery)<br>跨站请求伪造。XSS 利用的是站点内的信任用户，而 CSRF 则是通过伪装受信任用户的身份向第三方网站发送恶意请求。</p>
-<p><em>防御手段</em></p>
-<ol>
-<li>将 cookie 设置为 <code>HttpOnly</code>（<em>防止站内 XSS 漏洞盗取 cookie</em>）</li>
-<li>增加 token（<em>身份校验</em>）</li>
-<li>通过 <code>referer</code> 识别（<em>HTTP 头有一个字段叫 referer</em>）</li>
-</ol>
-</li>
-<li><p><strong>SQL 注入</strong><br>举例，如果用户名为 <code>zhangsan</code>，密码为 <code>&#39; or &#39;1&#39;=&#39;1</code>，那么 SQL 语句可能会变成：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> hhuser <span class="keyword">where</span> nick = <span class="string">'zhangsan'</span> <span class="keyword">and</span> passwords = <span class="string">''</span> <span class="keyword">or</span> <span class="string">'1'</span> = <span class="string">'1'</span></div></pre></td></tr></table></figure>
-<p><em>防御手段</em></p>
-<ol>
-<li>使用预编译语句</li>
-<li>使用 ORM 框架</li>
-</ol>
-</li>
-<li><p><strong>文件上传漏洞</strong><br>恶意攻击者利用一些网站没有对文件类型做很好的类型校验，上传了可执行的文件或脚本，并且通过脚本获得服务器上的相应权限，或者是通过有道外部用户访问、下载上传的病毒或者木马文件，打到攻击目的。</p>
-<p><em>防御手段</em></p>
-<ol>
-<li>文件类型白名单校验</li>
-<li>利用魔数（magic number）而不是后缀名来获取文件类型</li>
-</ol>
-</li>
-<li><p><strong>DDos</strong> (Distributed Denial of Service)</p>
-<ul>
-<li><strong>SYN Flood</strong><br>利用 TCP 的三次握手，不响应服务端的 <code>SYN+ACK</code> 报文也就是不进行第三次握手。</li>
-<li><strong>DNS Query Flood</strong><br>向被攻击的服务器发送海量的域名解析请求。</li>
-<li><strong>CC (Challenge Collapsar)</strong><br>基于 HTTP 发起的 DDos 攻击，也称为 HTTP Flood。攻击者利用<strong>肉鸡</strong>或者<strong>匿名 HTTP 代理</strong>，模拟正常用户请求，避开 CDN 和分布式缓存进行多次 DB 查询操作或一次请求返回大量数据。</li>
-</ul>
-</li>
-<li><p>其他攻击手段</p>
-<ul>
-<li>DNS 域名劫持</li>
-<li>CDN 回源攻击</li>
-<li>服务器权限提升</li>
-<li>缓冲区溢出</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>笔记来源：《大型分布式网站架构设计与实践》</p>
-</blockquote>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2017/02/01/note-on-web-security/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -231,59 +119,15 @@
     </header>
     <div class="entry">
       
-        <p>本着简单易用的原则，参考<a href="https://github.com/KeepSafe/android-resource-remover" target="_blank" rel="external">android-resource-remover</a> 写了一个删除无用资源的 Gradle 插件 - <a href="https://github.com/YouzanMobile/clean-unused-resources-gradle-plugin" target="_blank" rel="external">clean-unused-resources-gradle-plugin</a>，结果微博发出来不到10分钟，<a href="http://weibo.com/u/2491729875?topnav=1&amp;wvr=6&amp;topsug=1&amp;is_all=1" target="_blank" rel="external">陈启超</a>就告诉我 AS2.0+ 已经提供了<a href="http://stackoverflow.com/questions/6373482/remove-all-unused-resources-from-an-android-project" target="_blank" rel="external">此功能</a>。天哪，为了纪念这个短命无用的轮子，只好写篇博客，把造轮子的过程记录下来，也算对别人有点用处。</p>
-<p><a href="https://docs.gradle.org/current/userguide/custom_plugins.html" target="_blank" rel="external">官方文档</a>说了，自定义 Gradle 插件有三种方式：</p>
-<ol>
-<li>Build script</li>
-<li><code>buildSrc</code> project</li>
-<li>Standalone project</li>
-</ol>
-<p>但是，AS 不完美支持第三种方式，我们用 AS 的爸爸 <a href="https://www.google.co.jp/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=1&amp;cad=rja&amp;uact=8&amp;ved=0ahUKEwiD0qrLho7PAhVO4GMKHYqWDd4QFggeMAA&amp;url=https%3A%2F%2Fwww.jetbrains.com%2Fidea%2Fdownload%2F&amp;usg=AFQjCNFTvvWm6f-CgwkzJvE5OINbz0s-Mg" target="_blank" rel="external">IntelliJ IDEA CE</a> 就好了。</p>
-<p>首先 New 一个基于 Gradle 的 Groovy 工程：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/620698-b0fe160f1a0de293.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="new a groovy project"></p>
-<p>修改一下自动生成的 build.gradle 文件，把 <code>repositories</code> 和 <code>dependencies</code> 替换掉，其他保持不变。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">repositories &#123;</div><div class="line">  jcenter()</div><div class="line">&#125;</div><div class="line"></div><div class="line">dependencies &#123;</div><div class="line">  compile gradleApi()</div><div class="line">  testCompile <span class="string">group:</span> <span class="string">'junit'</span>, <span class="string">name:</span> <span class="string">'junit'</span>, <span class="string">version:</span> <span class="string">'4.11'</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>然后创建 <code>src</code> 和 <code>resources</code> 目录（以 <a href="https://github.com/YouzanMobile/clean-unused-resources-gradle-plugin" target="_blank" rel="external">clean-unused-resources-gradle-plugin</a> 为例）：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/620698-1d195dc7d9796835.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="project structure"></p>
-<p><code>resources/META-INF/gradle-plusings/</code> 是必不可少，否则别人无法使用你的插件，目录下的 <code>*.properties</code> 文件名就是插件的名字，别人<code>apply</code> 的时候会用到：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">apply <span class="string">plugin:</span> <span class="string">'com.youzan.mobile.cleaner'</span></div></pre></td></tr></table></figure>
-<p>文件内容是把  <code>implementation-class</code> 指向你插件类的全名。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">implementation-class=com.youzan.mobile.CleanerPlugin</div></pre></td></tr></table></figure>
-<p><code>CleanerPlugin.groovy</code> 实现了接口<code>Plugin&lt;Project&gt;</code>，而 <code>org.gradle.api.Plugin</code> 就是由 <code>compile gradleApi()</code> 提供，我们在 build.gradle 的 <code>dependencies</code> 中已经添加过了。</p>
-<p>准备就绪，开始写插件。</p>
-<p>首先，实现 <code>apply</code> 方法：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CleanerPlugin</span> <span class="keyword">implements</span> <span class="title">Plugin</span>&lt;<span class="title">Project</span>&gt; &#123;</span></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="keyword">void</span> apply(Project project) &#123;</div><div class="line">    <span class="comment">// 创建一个 extension</span></div><div class="line">    project.extensions.create(<span class="string">'resourceCleaner'</span>, CleanerExtension);</div><div class="line">    <span class="comment">// 修改 lint report 路径</span></div><div class="line">    project.afterEvaluate &#123;</div><div class="line">      project.android.lintOptions.xmlOutput = <span class="keyword">new</span> File(project.buildDir, <span class="string">"lintResult.xml"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 创建 task</span></div><div class="line">    project.tasks.create(<span class="string">'cleanResource'</span>, CleanTask)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>第一步通过 <code>project.extensions.create</code> 创建一个 <code>extension</code>：</p>
-<p><em>CleanerExtension.groovy</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CleanerExtension</span> &#123;</span></div><div class="line">  Iterable&lt;String&gt; excludedFiles</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这个 <code>extension</code> 用于别人向你的插件传递参数，例如：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">resourceCleaner &#123;</div><div class="line">  excludedFiles = [</div><div class="line">    <span class="string">'string_pos.xml'</span>,</div><div class="line">    <span class="string">'string_car.xml'</span>,</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>第二步修改 lint report 的路径：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">project.afterEvaluate &#123;</div><div class="line">  project.android.lintOptions.xmlOutput = <span class="keyword">new</span> File(project.buildDir, <span class="string">"lintResult.xml"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里用到了 Android Gradle Plugin 的 DSL，所以 IDEA 无法动态提示，没关系，我们直接去翻<a href="http://google.github.io/android-gradle-dsl/current/" target="_blank" rel="external">文档</a>，里面有详解的解释：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/620698-eabe9b5c18386134.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Android Plugin DSL References"></p>
-<p>配置参数（CleanerExtension）和文件参数（lintOptions.xmlOutput）都准备好了。</p>
-<p>第三步，主角上场，创建一个 <code>task</code>：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">CleanTask</span> <span class="keyword">extends</span> <span class="title">DefaultTask</span> &#123;</span></div><div class="line">  CleanTask() &#123;</div><div class="line">    <span class="keyword">super</span>()</div><div class="line">    dependsOn <span class="string">"lint"</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="meta">@TaskAction</span></div><div class="line">  <span class="keyword">def</span> clean() &#123;</div><div class="line">    <span class="keyword">def</span> lintResult = project.android.lintOptions.xmlOutput</div><div class="line">    <span class="keyword">def</span> excludedFiles = project.resourceCleaner.excludedFiles</div><div class="line">    Cleaner.clean(lintResult, excludedFiles)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><code>CleanTask</code> 继承自 <code>DefaultTask</code>，因为 CleanTask 的输入是 lint report，所以在构造方法中通过调用 <code>dependsOn &quot;lint&quot;</code> 让自己依赖于 lint 这个 <code>task</code>。</p>
-<p><code>CleanTask</code> 就好像 1984 里面的猪，只负责发号施令，安排工作，真正干活的“人”是 <code>Cleaner</code>：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cleaner</span> &#123;</span></div><div class="line">    <span class="keyword">def</span> <span class="keyword">static</span> clean(File report, Iterable&lt;String&gt; excludedFiles) &#123;</div><div class="line">        <span class="keyword">def</span> issues = <span class="keyword">new</span> XmlSlurper().parse(report)</div><div class="line">        issues.<span class="string">'*'</span>.findAll &#123;</div><div class="line">            it.name() == <span class="string">'issue'</span> &amp;&amp; it.<span class="meta">@id</span> == <span class="string">'UnusedResources'</span></div><div class="line">        &#125;.each &#123;</div><div class="line">            <span class="keyword">def</span> file = <span class="keyword">new</span> File(it.location.<span class="meta">@file</span>.text())</div><div class="line">            <span class="keyword">if</span> (file.name <span class="keyword">in</span> excludedFiles) <span class="keyword">return</span>;</div><div class="line">            <span class="keyword">def</span> line = it.location.<span class="meta">@line</span></div><div class="line">            <span class="keyword">def</span> column = it.location.<span class="meta">@column</span></div><div class="line"></div><div class="line">            <span class="keyword">if</span> ((line == <span class="string">''</span> &amp;&amp; column == <span class="string">''</span>) || column == <span class="string">'1'</span>) &#123;</div><div class="line">                println <span class="string">"deleting "</span> + file.path</div><div class="line">                file.delete()</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="keyword">def</span> m = it.<span class="meta">@message</span> =~ <span class="string">$/`R.(\w+).([^`]+)`/$</span></div><div class="line">                <span class="keyword">if</span> (!m) <span class="keyword">return</span>;</div><div class="line"></div><div class="line">                <span class="keyword">def</span> type = m.group(<span class="number">1</span>)</div><div class="line">                <span class="keyword">def</span> entryName = m.group(<span class="number">2</span>);</div><div class="line"></div><div class="line">                <span class="keyword">def</span> parsed = <span class="keyword">new</span> XmlSlurper().parse(file)</div><div class="line">                parsed.<span class="string">'**'</span>.findAll &#123;</div><div class="line">                    it.<span class="meta">@name</span> == entryName &amp;&amp; it.name().contains(type)</div><div class="line">                &#125;*.replaceNode &#123;&#125;</div><div class="line"></div><div class="line">                XmlUtil.serialize(parsed, <span class="keyword">new</span> FileWriter(file))</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>一个简单的独立工程的 Gradle Plugin 就这么写完了，是不是非常简单，先不要高兴，还有最后一步 - 发布到 jCenter。</p>
-<p>继续修改 <code>build.gralde</code>。</p>
-<p>添加 bintray 插件。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">plugins &#123;</div><div class="line">    id <span class="string">"com.jfrog.bintray"</span> version <span class="string">"1.4"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">Properties properties = <span class="keyword">new</span> Properties();</div><div class="line">properties.load(project.rootProject.file(<span class="string">'local.properties'</span>).newDataInputStream())</div><div class="line"></div><div class="line">bintray &#123;</div><div class="line">    user = properties.getProperty(<span class="string">"bintray.user"</span>)</div><div class="line">    key = properties.getProperty(<span class="string">"bintray.apikey"</span>)</div><div class="line">    publications = [<span class="string">'mavenJava'</span>]</div><div class="line">    pkg &#123;</div><div class="line">        repo = <span class="string">'maven'</span></div><div class="line">        name = <span class="string">'cleaner-gradle-plugin'</span></div><div class="line">        desc = <span class="string">'a gradle plugin to clean unused resources detected by Lint'</span></div><div class="line">        websiteUrl = <span class="string">'https://github.com/YouzanMobile/clean-resource-gradle-plugin'</span></div><div class="line">        issueTrackerUrl = <span class="string">'https://github.com/YouzanMobile/clean-resource-gradle-plugin/issues'</span></div><div class="line">        vcsUrl =<span class="string">'https://github.com/YouzanMobile/clean-resource-gradle-plugin'</span></div><div class="line">        publicDownloadNumbers = <span class="literal">true</span></div><div class="line">        licenses = [<span class="string">'MIT'</span>]</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>maven-publish 插件：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">apply <span class="string">plugin:</span> <span class="string">'maven-publish'</span></div><div class="line"></div><div class="line"><span class="comment">// custom tasks for creating source/javadoc jars</span></div><div class="line">task sourcesJar(<span class="string">type:</span> Jar, <span class="string">dependsOn:</span> classes) &#123;</div><div class="line">    classifier = <span class="string">'sources'</span></div><div class="line">    from sourceSets.main.allSource</div><div class="line">&#125;</div><div class="line"></div><div class="line">task javadocJar(<span class="string">type:</span> Jar, <span class="string">dependsOn:</span> javadoc) &#123;</div><div class="line">    classifier = <span class="string">'javadoc'</span></div><div class="line">    from javadoc.destinationDir</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// add javadoc/source jar tasks as artifacts</span></div><div class="line">artifacts &#123;</div><div class="line">    archives sourcesJar, javadocJar</div><div class="line">&#125;</div><div class="line"></div><div class="line">publishing &#123;</div><div class="line">    publications &#123;</div><div class="line">        mavenJava(MavenPublication) &#123;</div><div class="line">            from components.java</div><div class="line">            artifact sourcesJar</div><div class="line">            artifact javadocJar</div><div class="line">            groupId <span class="string">'com.youzan.mobile'</span></div><div class="line">            artifactId <span class="string">'cleaner-gradle-plugin'</span></div><div class="line">            version versionName</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>OK，大功告成，演出结束，下面是致谢：</p>
-<ul>
-<li><a href="https://github.com/jasonross/NuwaGradle" target="_blank" rel="external">NuwaGradle</a></li>
-<li><a href="http://weibo.com/chenqichao2016" target="_blank" rel="external">陈启超_V</a></li>
-<li><a href="https://docs.gradle.org/current/userguide/userguide.html" target="_blank" rel="external">Gradle User Guide</a></li>
-</ul>
-
+        <p>本着简单易用的原则，参考<a href="https://github.com/KeepSafe/android-resource-remover">android-resource-remover</a> 写了一个删除无用资源的 Gradle 插件 - <a href="https://github.com/YouzanMobile/clean-unused-resources-gradle-plugin">clean-unused-resources-gradle-plugin</a>，结果微博发出来不到10分钟，<a href="http://weibo.com/u/2491729875?topnav=1&amp;wvr=6&amp;topsug=1&amp;is_all=1">陈启超</a>就告诉我 AS2.0+ 已经提供了<a href="http://stackoverflow.com/questions/6373482/remove-all-unused-resources-from-an-android-project">此功能</a>。天哪，为了纪念这个短命无用的轮子，只好写篇博客，把造轮子的过程记录下来，也算对别人有点用处。</p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/09/14/android-create-custom-gradle-plugin/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -313,76 +157,15 @@
     <div class="entry">
       
         <p>今年 1.11 入职有赞，到现在差不多 7 个多月。</p>
-<h2 id="一点微小的工作"><a href="#一点微小的工作" class="headerlink" title="一点微小的工作"></a>一点微小的工作</h2><hr>
-<h3 id="统一-Maven-仓库"><a href="#统一-Maven-仓库" class="headerlink" title="统一 Maven 仓库"></a>统一 Maven 仓库</h3><p>旧的二方包部署方式非常不专业，统一打包脚本之后，使协作变得高效。</p>
-<ul>
-<li>所有二方包全部部署到公司内部 Maven 仓库，删掉所有跟随源码的私有仓库，节约 git 服务器空间。</li>
-<li>把源码、注释、文档全部打进二方包，方便接入方查看源码。</li>
-<li>坚持代码为中心，文档（README、WIKI）跟着代码走。</li>
-</ul>
-<blockquote>
-<p>这是我在有赞做的第一件事</p>
-</blockquote>
-<hr>
-<h3 id="统一-WebView-框架"><a href="#统一-WebView-框架" class="headerlink" title="统一 WebView 框架"></a>统一 WebView 框架</h3><p>重构旧的 WebView 框架，重构之后的优势：</p>
-<ol>
-<li>只有 4.2 以下版本使用注入 js 的方式实现 hybrid api，&gt;= 4.2 的版本使用 <code>@javascriptinterface</code>，大大降低了旧方式注入失败的概率。</li>
-<li>每个 hybrid api 相互独立，独自定义 Model 类。（旧方式是共享一个 Model，导致 Model 无比臃肿）。</li>
-<li>注入、回调的接口更加合理。</li>
-<li>同时支持新旧协议。</li>
-<li>接入 Web Cache。</li>
-</ol>
-<hr>
-<h3 id="引入-RxJava-Retrofit"><a href="#引入-RxJava-Retrofit" class="headerlink" title="引入 RxJava + Retrofit"></a>引入 RxJava + Retrofit</h3><p>替换旧的网络框架，在<strong>有赞商家版</strong>中接入 Retrofit &amp; RxJava。</p>
-<ul>
-<li>输出一篇 <a href="http://www.liangfei.me/2016/07/06/my-practice-with-retrofit-and-rxjava/" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a>。</li>
-<li>读完了 Retrofit 源码，输出一篇 <a href="http://www.liangfei.me/2016/07/10/diagram-retrofit-service-method/" target="_blank" rel="external">图解 Retrofit 之 ServiceMethod</a>。</li>
-</ul>
-<hr>
-<h3 id="排查-Memory-Leaks"><a href="#排查-Memory-Leaks" class="headerlink" title="排查 Memory Leaks"></a>排查 Memory Leaks</h3><ul>
-<li>接入 <code>LeakCanary</code>，居然有 static 的 view 变量。ありえない！</li>
-<li>读完了源码 - <a href="https://github.com/LyndonChin/wo/tree/master/leakcanary" target="_blank" rel="external">LeakCanary 原理分析</a>。</li>
-</ul>
-<hr>
-<h3 id="开发数据图表库"><a href="#开发数据图表库" class="headerlink" title="开发数据图表库"></a>开发数据图表库</h3><ul>
-<li>基于 <a href="https://github.com/PhilJay/MPAndroidChart" target="_blank" rel="external">MPAndroidChart</a> 二次开发，加了一些特殊交互。</li>
-<li>花了三周时间彻底搞懂了源码 - <a href="https://github.com/LyndonChin/wo/tree/master/mpandroicharts" target="_blank" rel="external">MPAndroidCharts 源码解析</a>。</li>
-</ul>
-<blockquote>
-<p>MPAndroidCharts 的代码质量跟 star 数完全不匹配</p>
-</blockquote>
-<hr>
-<h3 id="使用-product-flavor-适配-pos-机"><a href="#使用-product-flavor-适配-pos-机" class="headerlink" title="使用 product flavor 适配 pos 机"></a>使用 product flavor 适配 pos 机</h3><ul>
-<li>POS 机特有代码互不干扰。</li>
-<li>减小包大小。</li>
-</ul>
-<blockquote>
-<p>只用了一个晚上</p>
-</blockquote>
-<hr>
-<h3 id="读了很多内部源码"><a href="#读了很多内部源码" class="headerlink" title="读了很多内部源码"></a>读了很多内部源码</h3><ul>
-<li>商家版 APP 源码</li>
-<li>基于 okhttp 的网络库</li>
-<li>23 版本后的权限适配库</li>
-<li>基于 AndFix 的热修复库</li>
-<li>一些 UI 库</li>
-</ul>
-<hr>
-<h3 id="做了一些技术分享"><a href="#做了一些技术分享" class="headerlink" title="做了一些技术分享"></a>做了一些技术分享</h3><ol>
-<li>RxJava 入门</li>
-<li>GOOGLE/IO 2016</li>
-<li>30分钟精通 Retrofit</li>
-</ol>
-<hr>
-<p>生活变得更加有序，心态要平和。</p>
-<blockquote>
-<p>性格を優しくしないと！</p>
-</blockquote>
-
+<p>很惭愧，只做了一点微小的工作</p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/07/28/summary-of-leaving-alibaba-for-half-year/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -413,35 +196,14 @@
       
         <p>今天又遇到一个比较难搞的问题，记一下流水账。</p>
 <p>APP 中引用了一个二方包，编译成功，结果运行时报错 - <code>NoClassDefFoundError</code>。</p>
-<h2 id="try-1-multiDexKeepProguard"><a href="#try-1-multiDexKeepProguard" class="headerlink" title="try #1 - multiDexKeepProguard"></a>try #1 - multiDexKeepProguard</h2><p>首先确认是不是由于类没有被放到 main dex 中导致了这个问题。打开文件 <code>build/intermediates/multi-dex/debug/maindexlist.txt</code>，查找类名，发现文件中包含了我们要找的类。</p>
-<p>不放心，说不定是 Multidex 的bug，手动把这个“丢失”的类放进 main dex。</p>
-<p><em>build.gralde</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  defaultConfig &#123;</div><div class="line">    multiDexEnabled = <span class="literal">true</span></div><div class="line">    multiDexKeepProguard file(<span class="string">'multidex.pro'</span>)</div><div class="line">  &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><em>multidex.pro</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-keep public the-full-name-of-the-missing-class &#123; *; &#125;</div></pre></td></tr></table></figure></p>
-<p>编译运行，问题依然，并没有什么卵用。</p>
-<p>既然不是 main dex 问题，那我们先来确认一下问题是否由 MultiDex 引起。</p>
-<h2 id="try-2-关掉-Multidex"><a href="#try-2-关掉-Multidex" class="headerlink" title="try #2 - 关掉 Multidex"></a>try #2 - 关掉 Multidex</h2><p>关掉 multidex 然后打一个 release 包。</p>
-<blockquote>
-<p>由于方法数受限，关掉 Multidex 之后打不出 Debug 包，但是混淆过后方法数减少很多，可以顺利打出 Release 包。</p>
-</blockquote>
-<p><em>build.gradle</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">defaultConfig &#123;</div><div class="line">  multiDexEnabled <span class="literal">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>编译运行，依然出错，可以确定不是 Multidex 的锅。</p>
-<h2 id="try-3-传递依赖"><a href="#try-3-传递依赖" class="headerlink" title="try #3 - 传递依赖"></a>try #3 - 传递依赖</h2><p>把依赖由只依赖 aar 改为传递依赖。</p>
-<p><del><code>compile &#39;me.liangfei.android:weird-1.0.0@aar&#39;</code></del><br><code>compile &#39;me.liangfei.android:weird-1.0.0&#39;</code></p>
-<p>结果却发现 <code>weird.aar</code> 引用了一个<strong>服务端已经删除但是有本地缓存</strong>的包，也就是说 <code>weird.aar</code> 引用了一个并不存在的包，所以改为传递依赖之后，gradle 无法获取这个并不存在的包。</p>
-<p>由此推断出，<code>weird.aar</code> 肯定不是一个“正确”的包，估计上面的问题也是由此引发（待确认）。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h3><ul>
-<li>本地打包不可信</li>
-<li>必须要通过 CI 发包</li>
-</ul>
-<h3 id="ClassNotFoundException-vs-NoClassDefFoundError"><a href="#ClassNotFoundException-vs-NoClassDefFoundError" class="headerlink" title="ClassNotFoundException vs NoClassDefFoundError"></a>ClassNotFoundException vs NoClassDefFoundError</h3><ul>
-<li><code>ClassNotFoundException</code> 一般是 <code>ClassLoader</code> 无法找到类导致的，例如 <code>Class.forName(&quot;your-class&quot;)</code>。</li>
-<li><code>NoClassDefFoundError</code> 一般是属于 <strong>Link Error</strong>，主要是由于打包之后缺失文件导致的，例如 <code>new</code> 一个对象。</li>
-</ul>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/07/20/android-the-weird-NoClassDefFoundError/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -470,42 +232,15 @@
     </header>
     <div class="entry">
       
-        <p>通过 <a href="http://www.liangfei.me/2016/07/06/android-retrofit-and-rxjava" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a>，我们已经了解到了 Retrofit 的基本用法，为了知其所以然，我们以图解加源码的方式从 Service Method 入手，逐步拨开 Retrofit 的神秘面纱。</p>
-<p>首先以官方网站的示例代码为例，看一下一个 Service Method 的组成部分：</p>
-<img src="/2016/07/10/android-diagram-retrofit-service-method/service_method.png" alt="service method" title="service method">
-<p><code>ServiceMethod</code> 使用了 Builder 模式，先来看 <code>ServiceMethod.Builder</code> 的构造方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Retrofit retrofit, Method method)</span> </span>&#123;</div><div class="line">  <span class="keyword">this</span>.retrofit = retrofit;</div><div class="line">  <span class="keyword">this</span>.method = method;</div><div class="line">  <span class="keyword">this</span>.methodAnnotations = method.getAnnotations();</div><div class="line">  <span class="keyword">this</span>.parameterTypes = method.getGenericParameterTypes();</div><div class="line">  <span class="keyword">this</span>.parameterAnnotationsArray = method.getParameterAnnotations();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>构造方法接受两个参数 - <code>retrofit</code> 和 <code>method</code>，然后通过调用 <code>Method</code> 类的方法获取以下数据：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">final</span> Annotation[] methodAnnotations;</div><div class="line"><span class="keyword">final</span> Annotation[][] parameterAnnotationsArray;</div><div class="line"><span class="keyword">final</span> Type[] parameterTypes;</div></pre></td></tr></table></figure>
-<p><code>methodAnnotations</code> 就对应着上例中的  <code>@GET(&quot;users/{user}/repos&quot;</code>，由 <code>parseMethodAnnotation</code> 负责解析。</p>
-<p>method parameter 也有对应的 annotation type，由对应的 <code>ParameterHandler</code> 进行处理，例如上例中的 <code>@Path</code> 就对应着 <code>class Path&lt;T&gt; extends ParameterHandler&lt;T&gt;</code>。</p>
-<p>一个 parameter 可以有多个 annotation，所以  <code>parameterAnnotationsArray</code> 是一个二维数组 - <code>Annotation[][]</code>。</p>
-<p><code>ServiceMethod.Builder</code> 最终会 <code>build</code> 出一个 <code>ServiceMethod</code> 实例，我们先来看 method annotations 的解析过程。</p>
-<h2 id="method-annotations"><a href="#method-annotations" class="headerlink" title="method annotations"></a>method annotations</h2><p><em>ServiceMethod.Builder#build</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (Annotation annotation : methodAnnotations) &#123;</div><div class="line">  parseMethodAnnotation(annotation);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如下图所示，<code>parseMethodAnnotation</code> 方法根据 method annotation 的类型（蓝色框内）生成一个 request 所需要的数据（褐色框内）。</p>
-<img src="/2016/07/10/android-diagram-retrofit-service-method/parse_method_annotation.png" alt="parse method annotation" title="parse method annotation">
-<p>其中 <code>httpMethod</code> 不能为空，如果 <code>hasBody == false</code>，那么 <code>isMultipart</code> 和 <code>isFormEncoded</code> 也必须为 <code>false</code>，而且两者互斥不能同时为 <code>true</code>，否则会抛出异常。</p>
-<p>解析完 method annotations 之后，再来解析  parameters（代码示例中的 <code>@Path(&quot;user&quot;) String user</code>）。</p>
-<h2 id="parameters"><a href="#parameters" class="headerlink" title="parameters"></a>parameters</h2><img src="/2016/07/10/android-diagram-retrofit-service-method/parse_parameter.png" alt="parse parameters" title="parse parameters">
-<p>每一个 parameter annotation 类型都有对应的 <code>ParameterHandler</code>，method parameters 解析完成之后生成一个数组 - <code>ParameterHandler[] parameterHandlers</code>，这个数组在后面构建 request 的时候会用到。</p>
-<p>解析过程中会验证 <code>@Path</code> value 的合法性，并确保 value 在 <code>relativeUrlParamNames</code>（<em>由 method annotations 生成</em>） 中。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Upper and lower characters, digits, underscores, and hyphens, starting with a character.</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> String PARAM = <span class="string">"[a-zA-Z][a-zA-Z0-9_-]*"</span>;</div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_URL_REGEX = Pattern.compile(<span class="string">"\\&#123;("</span> + PARAM + <span class="string">")\\&#125;"</span>);</div><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_NAME_REGEX = Pattern.compile(PARAM);</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">validatePathName</span><span class="params">(<span class="keyword">int</span> p, String name)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!PARAM_NAME_REGEX.matcher(name).matches()) &#123;</div><div class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"@Path parameter name must match %s. Found: %s"</span>,</div><div class="line">        PARAM_URL_REGEX.pattern(), name);</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// Verify URL replacement name is actually present in the URL path.</span></div><div class="line">  <span class="keyword">if</span> (!relativeUrlParamNames.contains(name)) &#123;</div><div class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"URL \"%s\" does not contain \"&#123;%s&#125;\"."</span>, relativeUrl, name);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><code>parseParameterAnnotation</code>  方法在解析 <code>Url</code> 类型的 parameter annotation 时会判断 parameter 类型，由于 Retrofit 本身没有依赖 Android SDK，所以无法像 <code>HttpUrl.class</code> 那样获取 <code>Uri.class</code>，但是 Retrofit 的实现很巧妙，学到了：）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (type == HttpUrl.class</div><div class="line">    || type == String.class</div><div class="line">    || type == URI.class</div><div class="line">    || (type <span class="keyword">instanceof</span> Class &amp;&amp; <span class="string">"android.net.Uri"</span>.equals(((Class&lt;?&gt;) type).getName()))) &#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ParameterHandler.RelativeUrl();</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  <span class="keyword">throw</span> parameterError(p,</div><div class="line">      <span class="string">"@Url must be okhttp3.HttpUrl, String, java.net.URI, or android.net.Uri type."</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>method annotations 以及 parameters 都解析完成后，我们再回到 service method 的 callAdapter。</p>
-<h2 id="CallAdapter"><a href="#CallAdapter" class="headerlink" title="CallAdapter"></a>CallAdapter</h2><p>想要了解 <code>CallAdapter</code> 的功能，我们需要先从 <code>Retrofit</code> 的 <code>create</code> 方法开始分析。</p>
-<p><code>create</code> 方法使用<strong>动态代理</strong>把 service method 的调用转发给一个 <code>InvocationHandler</code>：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ServiceMethod serviceMethod = loadServiceMethod(method);</div><div class="line">OkHttpCall okHttpCall = <span class="keyword">new</span> OkHttpCall&lt;&gt;(serviceMethod, args);</div><div class="line"><span class="keyword">return</span> serviceMethod.callAdapter.adapt(okHttpCall);</div></pre></td></tr></table></figure>
-<p>由以上代码可以看出，<code>CallAdapter</code> 会把一个 <code>Call</code> 类型适配为用户定义的 service method 的 return type。</p>
-<p>举个例子，如果我们配合 RxAndroid 使用 Retrofit，service method 的返回值类型会由 <code>Call</code> 类型变成 <code>Observable</code> 类型，这个转换其实就由 <code>RxJavaCallAdapterFactory</code> 来实现。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()      </div><div class="line">    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())</div><div class="line">    .baseUrl(BASE_URL) .build();</div></pre></td></tr></table></figure>
-<p>由以上代码可以看出，<code>RxJavaCallAdapterFactory</code> 是通过 <code>Retrofit.Builder</code> 的<br><code>addCallAdapterFactory</code> 方法传递给 <code>Retrofit</code>，而 <code>create</code> 方法中 <code>adapt</code> 的执行者却是 <code>ServiceMethod</code>，也就是说 <code>ServiceMethod</code> 的 <code>CallAdapter</code> 是由 <code>Retrofit</code> 提供的，两者的交互关系如下图所示：  </p>
-<hr>
-<img src="/2016/07/10/android-diagram-retrofit-service-method/retrofit_and_service_method.png" alt="retrofit vs service method" title="retrofit vs service method">
+        <p>通过 <a href="http://www.liangfei.me/2016/07/06/android-retrofit-and-rxjava">Retrofit + RxAndroid 实践总结</a>，我们已经了解到了 Retrofit 的基本用法，为了知其所以然，我们以图解加源码的方式从 Service Method 入手，逐步拨开 Retrofit 的神秘面纱。</p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/07/10/android-diagram-retrofit-service-method/#more" class="more-link">更多...</a>
+          </div>
         
         
       

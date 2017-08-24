@@ -66,6 +66,7 @@
       
         <p>今天又遇到一个比较难搞的问题，记一下流水账。</p>
 <p>APP 中引用了一个二方包，编译成功，结果运行时报错 - <code>NoClassDefFoundError</code>。</p>
+<a id="more"></a>
 <h2 id="try-1-multiDexKeepProguard"><a href="#try-1-multiDexKeepProguard" class="headerlink" title="try #1 - multiDexKeepProguard"></a>try #1 - multiDexKeepProguard</h2><p>首先确认是不是由于类没有被放到 main dex 中导致了这个问题。打开文件 <code>build/intermediates/multi-dex/debug/maindexlist.txt</code>，查找类名，发现文件中包含了我们要找的类。</p>
 <p>不放心，说不定是 Multidex 的bug，手动把这个“丢失”的类放进 main dex。</p>
 <p><em>build.gralde</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  defaultConfig &#123;</div><div class="line">    multiDexEnabled = <span class="literal">true</span></div><div class="line">    multiDexKeepProguard file(<span class="string">'multidex.pro'</span>)</div><div class="line">  &#125;  </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>

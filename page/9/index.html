@@ -66,53 +66,14 @@
     <div class="entry">
       
         <p>从接触编程到现在，除了搞过几天JQuery，几乎没怎么写过Javascript，刚刚看了两篇介绍 ECMAScript6 的文章，突然觉得没写过JS也没什么好遗憾的。</p>
-<ul>
-<li><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-an-introduction/" target="_blank" rel="external">ES6 In Depth: An Introduction</a></li>
-<li><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank" rel="external">ES6 In Depth: Iterators and the for-of loop</a></li>
-</ul>
-<p>ES6 好像从2009年就开始制定了，现在终于支持 <code>forEach</code>、<code>for-in</code>等操作，也支持<code>Map</code>、<code>Set</code>等数据类型，而且为了考虑兼容性问题居然引入了一个 <code>for-of</code>，不过看到 <a href="http://githut.info/" target="_blank" rel="external">Githut</a> 上关于 github 语言的统计数据，不得不佩服JS社区强大的生产力。</p>
-<p>话说回来，Dart 作为一个崭新的语言，自诞生那天起就抛去了向下兼容的历史包袱，而且可以直接转成 Javascript，Chrome 的 V8 团队还专门为 Dart 做了一个虚拟机 - Dartium。</p>
-<p>Dart 目的跟 Node 一样，也是为了统一前后端开发，这一点在上一篇文章 （<a href="http://blog.csdn.net/feelang/article/details/45469151" target="_blank" rel="external">Dart是一个怎样的语言？</a> ）已经说过了，所以用 Dart 做 web 开发也没有额外的学习成本，当然前提是你得会写 Dart。</p>
-<p>官方教程提供的一个简单的 web 开发教程 - <a href="https://www.dartlang.org/codelabs/darrrt/" target="_blank" rel="external">Avast, Ye Pirates: Write a Web App</a>，用<code>DartEditor</code>导入后，工程结构如下图所示：</p>
-<p><img width="50%" src="http://img.blog.csdn.net/20150504224927710"></p>
-<p>有css，有html，一个最简单的web工程（没有后端），在 <code>DartEditor</code> 中可以用两种方式来运行这个工程。</p>
-<p><img width="50%" src="http://img.blog.csdn.net/20150504225320675"></p>
-<p>如果选择了 <code>Dartium</code>，编译成功后会唤起一个使用了 Dartium 引擎的 chrome 浏览器，而过选择了 <code>Run as JavaScript</code> 就会先把 dart 编译成 js 的工程（工程结构图中灰色的部分），然后唤起一个使用了 V8 引擎的 chrome 浏览器。</p>
-<p>其实用 Dart 做开发还是挺方便的，js 都是可以直接拿来用的，但是社区不成熟，不像 node 社区那样有那么多的库。</p>
-<hr>
-<p>我们再来看看下一代 Android 开发框架 - <a href="https://github.com/domokit" target="_blank" rel="external">sky</a>，今天照着 readme 玩了一下官方提供的几个demo，流畅度可以跟 native 媲美，但是需要从网络加载代码，所以启动时间比较慢，毕竟只是一个实验版本，像 react-native 那样做个本地缓存也不会有什么问题。</p>
-<p>整个开发过程与上面的 web 开发非常相似，只不过代码文件的后缀名换了而已。</p>
-<p>首先需要创建一个 <code>pubspec.yaml</code>，类似于 Node 的 <code>package.json</code> 或者 gradle 脚本的 <code>build.gradle</code>，主要是一些包依赖关系和 APP 的基本信息，最后一行表示依赖最新版本的 sky。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">name:</span> your_app_name</div><div class="line"><span class="attr">dependencies:</span></div><div class="line"><span class="attr"> sky:</span> any</div></pre></td></tr></table></figure>
-<p>在当前目录下执行 <code>pub get</code>，会根据 <code>pubspec.yaml</code> 的依赖配置获取 APP 所依赖的包。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜  widgets git:(master) ✗ pub get</div><div class="line">Resolving dependencies... (1.7s)</div><div class="line">+ mojo 0.0.5+dart-summit-1</div><div class="line">+ sky 0.0.5+dart-summit-7</div><div class="line">Changed 2 dependencies!</div><div class="line">➜  widgets git:(master) ✗</div></pre></td></tr></table></figure>
-<p>执行完毕后会发现在本地多了一个 <code>package</code> 文件夹，里面有刚刚下载的两个包。</p>
-<p><img src="http://img.blog.csdn.net/20150505003910350" alt="这里写图片描述"></p>
-<p><em>pub会首先把下载来的包缓存到本地，如果有的新的下载可以直接引用之前下载过的包。</em></p>
-<p>sky 我们都知道了，它就是 Android 全新的开发框架，由两部分组成：</p>
-<pre>
-<i>The Sky engine</i>. The engine is the core of the system. Written in C++, the engine provides the muscle of the Sky system. The engine provides several primitives, including a soft real-time scheduler and a hierarchial, retained-mode graphics system, that let you build high-quality apps.
-
-<i>The Sky framework</i>. The framework makes it easy to build apps using Sky by providing familiar user interface widgets, such as buttons, infinite lists, and animations, on top of the engine using Dart. These extensible components follow a functional programming style inspired by React.
-</pre>
-
-<p>简单来说，<em>Sky engine</em> 是一个图形系统，VDOM 的创建和diff应该也是它负责的，而 <em>Sky framework</em> 则是一个UI库，提供了我们创建 VDOM 时所需的节点元素。</p>
-<p>那 mojo 又是什么呢？</p>
-<pre>Mojo is an effort to extract a common platform out of Chrome's renderer and plugin processes that can support multiple types of sandboxed content, such as HTML, Pepper, or NaCl.</pre>
-
-<p>简单来说，mojo 就是 sky 的运行时环境，但是 domokit 下还有一个<a href="https://github.com/domokit/mojo_sdk" target="_blank" rel="external">mojo-sdk</a>，这个 sdk 为我们提供给了基于 mojo 做二次开发所用到的 API。</p>
-<pre>The Mojo Public API is a binary stable API to the Mojo system.</pre>
-
-<p>它支持很多种语言，目前为止包括 <code>C</code>、<code>CPP</code>、<code>Dart</code>、<code>Go</code>、<code>Java</code>、<code>js</code>。</p>
-<p>也就是说，Google 想打造的是这样一个生态系统。</p>
-<img src="/2015/05/05/meeting-android-sky/dart.png" alt="sky framework" title="sky framework">
-<hr>
-<p>如果这个愿景能够实现，120fps的卖点也许会一统江湖，但是 Google IO 2015 根本没有提及这个项目，希望 Google 不是玩票 :(</p>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2015/05/05/meeting-android-sky/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -141,66 +102,15 @@
     </header>
     <div class="entry">
       
-        <p>这几天看到一篇新闻 - <a href="http://36kr.com/p/532461.html" target="_blank" rel="external">白兼容了？Google 正在为 Android 准备一个去 Java 化的 Dart 应用运行框架</a>，对与新闻的标题和内容无力吐槽，不做评论。但是Google推出 <a href="https://github.com/domokit/sky_sdk" target="_blank" rel="external">sky</a> 似乎证明了native的开发方式越来越向web方式靠近的趋势，最近比较火的要数 <a href="https://github.com/facebook/react-native" target="_blank" rel="external">react-native</a> 了，他们的原理是类似的，都是先构造一个 <em>virtual dom tree</em>，然后只更新发生变化的 dom。sky 的 readme 也说自己参考了 <a href="https://github.com/facebook/react" target="_blank" rel="external">react</a>，那两者最大的区别应该是开发语言了，react-native 是 javascript，而 Google 用的是自己的亲儿子 - <a href="https://www.dartlang.org/" target="_blank" rel="external">Dart</a>。</p>
-<p><img src="http://img.blog.csdn.net/20150504004814626" alt="The Sky framework"></p>
-<p>Node.js 推出后统一了前后端，如今 node 开发真可谓炙手可热。Google 当初推出 Dart 也是为了统一前后端开发，但是这两年一直不温不火，好像国内使用 <a href="https://github.com/Polymer/polymer" target="_blank" rel="external">Polymer</a> 的开发者也不多，现在用 突然宣布说用 Dart 替换 Android 的开发语言 java，而且还举办了第一个第一届 <a href="https://www.dartlang.org/events/2015/summit/" target="_blank" rel="external">Dart Developer Summit</a>，看来 Google 准备在 Dart 上发力了，相信 Dart 会是五月底 Google IO 大会上的一个重要议题。<br>趁着今天放假，跟着 <a href="https://www.dartlang.org/codelabs/darrrt/" target="_blank" rel="external">Dart 官网的教程</a>玩了一下 Dart，发现 Dart 这门语言确实不错。</p>
-<hr>
-<h2 id="引用包"><a href="#引用包" class="headerlink" title="引用包"></a>引用包</h2><p>包的引用方式与 Python 和 Go 类似，都是用 <code>import</code>：<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> <span class="string">'dart:html'</span>;</div></pre></td></tr></table></figure></p>
-<p>不过只导入包的某个组件的方式比较特殊：<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> <span class="string">'dart:math'</span> show Random;</div><div class="line"><span class="keyword">import</span> <span class="string">'dart:convert'</span> show JSON;</div><div class="line"><span class="keyword">import</span> <span class="string">'dart:async'</span> show Future;</div></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p><s>Dart 与 Python 一样是一个强类型语言</s>。</p>
-<p>Dart 的变量类型是可选的，叫做 static type annotations。</p>
-<pre>
-Dart’s optional types are static type annotations that act as documentation, clearly expressing your intent.
-</pre>
-
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">final</span> Random indexGen = <span class="keyword">new</span> Random();</div><div class="line"><span class="built_in">String</span> _firstName;</div><div class="line"><span class="built_in">String</span> _appellation;</div></pre></td></tr></table></figure>
-<p>Dart 没有 <code>private</code> 关键字，如果变量或方法是私有类型，需要在名称前面加上下划线。</p>
-<p><strong>私有变量</strong><br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PirateName</span> </span>&#123;</div><div class="line">  # ...</div><div class="line">  <span class="built_in">String</span> _firstName;</div><div class="line">  <span class="built_in">String</span> _appellation;</div><div class="line">  # ...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p><strong>私有方法</strong><br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> _parsePirateNamesFromJSON(<span class="built_in">String</span> jsonString) &#123;</div><div class="line">  <span class="built_in">Map</span> pirateNames = JSON.decode(jsonString);</div><div class="line">  names = pirateNames[<span class="string">'names'</span>];</div><div class="line">  appellations = pirateNames[<span class="string">'appellations'</span>];</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2><p>Dart 用关键字 <code>as</code> 来做类型转换。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> updateBadge(Event e) &#123;</div><div class="line">  <span class="built_in">String</span> inputName = (e.target <span class="keyword">as</span> InputElement).value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>对于某些特定方法，Dart 提供了语法糖，写法很简单。例如，表达式的值即为返回值的情况，可以这么写：</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span> toString() =&gt; pirateName;</div></pre></td></tr></table></figure>
-<p>不用写成这样：<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span> toString() &#123;</div><div class="line">  <span class="keyword">return</span> pirateName;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>如果是 <code>get</code> 方法，可以直接在返回值类型和方法名之间加上一个关键词 <code>get</code>，而且方法名不需要加括号，调用的时候也不需要加括号。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">String</span> <span class="keyword">get</span> jsonString =&gt; JSON.encode(&#123;<span class="string">"f"</span>: _firstName, <span class="string">"a"</span>: _appellation&#125;);</div><div class="line"></div><div class="line"><span class="built_in">String</span> <span class="keyword">get</span> pirateName =&gt;</div><div class="line">    _firstName.isEmpty ? <span class="string">''</span> : <span class="string">'$_firstName the $_appellation'</span>;</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="级联操作符（-）"><a href="#级联操作符（-）" class="headerlink" title="级联操作符（..）"></a>级联操作符（..）</h2><p>级联操作符（<em>The cascade operator (..)</em>）可以允许在一个成员变量上执行多个操作。</p>
-<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">genButton..disabled = <span class="keyword">false</span></div><div class="line">         ..text = <span class="string">'Aye! Gimme a name!'</span>;</div></pre></td></tr></table></figure>
-<p>以上语句就等价于<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">genButton.disabled = <span class="keyword">false</span>;</div><div class="line">genButton.text = <span class="string">'Aye! Gimme a name!'</span>;</div></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="字符串转换"><a href="#字符串转换" class="headerlink" title="字符串转换"></a>字符串转换</h2><p>Dart 中变量转化成字符串比 Java 方便多了，跟 Python 有一拼，直接在变量名前加上$符号就可以了。<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="string">'$_firstName the $_appellation'</span>;</div></pre></td></tr></table></figure></p>
-<hr>
-<h2 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h2><p>Dart 支持有名字的构造方法，这一点比 Java 和 Python 都先进。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">PirateName.fromJSON(String jsonString) &#123;</div><div class="line">  Map storedName = JSON.decode(jsonString);</div><div class="line">  _firstName = storedName[&apos;f&apos;];</div><div class="line">  _appellation = storedName[&apos;a&apos;];</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里 <code>PirateName.fromJSON</code> 是一个整体，用的时候要写全了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">return new PirateName.fromJSON(storedName);</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>跟 Python 一样，Dart 也支持 <em><a href="http://www.diveintopython.net/power_of_introspection/optional_arguments.html" target="_blank" rel="external">Optional and Named Arguments</a></em>，例如参数可以这么写：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">PirateName(&#123;String firstName, String appellation&#125;) &#123;</div><div class="line">  # ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>参数要用一个大括号括起来，应该是需要把参数封装成一个类似于 Python 的 <code>Dictionary</code>。</p>
-<p>但是调用的时候不需要传递所有的参数。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">new PirateName(firstName: inputName)</div></pre></td></tr></table></figure>
-<hr>
-<h2 id="泛型"><a href="#泛型" class="headerlink" title="泛型"></a>泛型</h2><p>Dart 支持泛型，这点跟 Java 很像，例如要定义一个 <code>List</code> 变量可以写成这样：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">static List names = [];</div><div class="line">static List appellations = [];</div></pre></td></tr></table></figure>
-<p>如果要写明类型，就需要在 <code>List</code> 后的简括后内加上类型。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">static List&lt;String&gt; names = [];</div><div class="line">static List&lt;String&gt; appellations = [];</div></pre></td></tr></table></figure></p>
-<p>关于泛型类型是否像 java 那样支持 <code>super</code>、 <code>extend</code>还没看到，暂时不知道。</p>
-<hr>
-<h2 id="异步操作"><a href="#异步操作" class="headerlink" title="异步操作"></a>异步操作</h2><p>Dart 语言原生支持异步操作，主要是用两个关键词 <code>await</code> 和 <code>async</code>。<br>例如，如果我们要定义一个异步方法，不需要像 java 那样去 <strong>new Thread</strong>，直接在方法后面加上 <code>async</code> 关键字就OK了，这样调用时，该方法时会直接返回一个 <code>Future</code>，caller 无需等待。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">static Future readyThePirates() async &#123;</div><div class="line">  String path = &apos;piratenames.json&apos;;</div><div class="line">  String jsonString = await HttpRequest.getString(path);</div><div class="line">  _parsePirateNamesFromJSON(jsonString);    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><code>await</code> 跟 java中的 wait 方法用法一样，表示等待，但是它只能用于 <code>async</code> 的方法中。</p>
-<p>例如上面代码片段中， <code>await HttpRequest.getString(path)</code> 就表示必须要等到 <code>HttpRequest.getString(path)</code> 返回的 <code>Future</code> 有了最终结果才会继续往下执行 <code>_parsePirateNamesFromJSON(jsonString);</code>。</p>
-<hr>
-<p>不知道 Dart 支不支持一些高大上的语言特性，比如 闭包（Closure）、Lambda表达式（Lambda expression）、生成器（Generator）等，期待后续的学习。</p>
-
+        <p>这几天看到一篇新闻 - <a href="http://36kr.com/p/532461.html">白兼容了？Google 正在为 Android 准备一个去 Java 化的 Dart 应用运行框架</a>，对与新闻的标题和内容无力吐槽，不做评论。但是Google推出 <a href="https://github.com/domokit/sky_sdk">sky</a> 似乎证明了native的开发方式越来越向web方式靠近的趋势，最近比较火的要数 <a href="https://github.com/facebook/react-native">react-native</a> 了，他们的原理是类似的，都是先构造一个 <em>virtual dom tree</em>，然后只更新发生变化的 dom。sky 的 readme 也说自己参考了 <a href="https://github.com/facebook/react">react</a>，那两者最大的区别应该是开发语言了，react-native 是 javascript，而 Google 用的是自己的亲儿子 - <a href="https://www.dartlang.org/">Dart</a>。</p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2015/05/04/meeting-dart/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -230,54 +140,14 @@ Dart’s optional types are static type annotations that act as documentation, c
     <div class="entry">
       
         <p>最近一直在看Java虚拟机规范，发现直接分析bytecode更能加深对Java语言的理解。<br>之前看过一篇关于 <code>return</code> 和 <code>finally</code> 执行顺序的文章，仅在 Java 的语言层面做了分析，其实我倒觉得直接看 bytecode 可能来的更清晰一点。</p>
-<p>先看一个只有 <code>try-finally</code>，没有 <code>catch</code> 的例子。</p>
-<p><strong>try - finally</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExceptionTest</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryFinally</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      tryItOut();</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">      wrapItUp();</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line"></div><div class="line">  <span class="comment">// auxiliary methods</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryItOut</span><span class="params">()</span> </span>&#123; &#125;</div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">wrapItUp</span><span class="params">()</span> </span>&#123;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>通过 <code>javap -c ExceptionTest</code> 来查看它的字节码。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">public void tryFinally();</div><div class="line">  Code:</div><div class="line">     0: aload_0</div><div class="line">     1: invokevirtual #2  // Method tryItOut:()V</div><div class="line">     4: aload_0</div><div class="line">     5: invokevirtual #3  // Method wrapItUp:()V</div><div class="line">     8: goto          18</div><div class="line">    11: astore_1</div><div class="line">    12: aload_0</div><div class="line">    13: invokevirtual #3  // Method wrapItUp:()V</div><div class="line">    16: aload_1</div><div class="line">    17: athrow</div><div class="line">    18: return</div><div class="line">  Exception table:</div><div class="line">     from    to  target type</div><div class="line">         0     4    11   any</div></pre></td></tr></table></figure>
-<p>如果没有抛出异常，那么它的执行顺序为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">0: aload_0</div><div class="line">1: invokevirtual #2  // Method tryItOut:()V</div><div class="line">4: aload_0</div><div class="line">5: invokevirtual #3  // Method wrapItUp:()V</div><div class="line">18: return</div></pre></td></tr></table></figure>
-<p>如果抛出了异常，JVM 会在</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Exception table:</div><div class="line">   from    to  target type</div><div class="line">       0     4    11   any</div></pre></td></tr></table></figure>
-<p>中进行控制跳转。如果是位于0到4字节之间的命令抛出了任何类型（any type）的异常，会跳转到11字节处继续运行。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">11: astore_1</div><div class="line">12: aload_0</div><div class="line">13: invokevirtual #3</div><div class="line">16: aload_1</div><div class="line">17: athrow</div></pre></td></tr></table></figure>
-<p>astore_1会把抛出的异常对象保存到local variable数组的第二个元素。下面两行指令用来调用成员方法wrapItUp。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">12: aload_0</div><div class="line">13: invokevirtual #3</div></pre></td></tr></table></figure>
-<p>最后通过</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">16: aload_1</div><div class="line">17: athrow</div></pre></td></tr></table></figure>
-<p>重新抛出异常。</p>
-<p>通过以上分析可以得出结论：</p>
-<blockquote>
-<p>在try-finally中，try块中抛出的异常会首先保存在local variable中，然后执行finally块，执行完毕后重新抛出异常。</p>
-</blockquote>
-<p>如果我们把代码修改一下，在try块中直接return。</p>
-<p><strong>try - return - finally</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryFinally</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    tryItOut();</div><div class="line">    <span class="keyword">return</span>;</div><div class="line">  &#125; <span class="keyword">finally</span> &#123;</div><div class="line">    wrapItUp();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>”反汇编“一下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"> 0: aload_0</div><div class="line"> 1: invokevirtual #2 // Method tryItOut:()V</div><div class="line"> 4: aload_0</div><div class="line"> 5: invokevirtual #3 // Method wrapItUp:()V</div><div class="line"> 8: return</div><div class="line"> 9: astore_1</div><div class="line">10: aload_0</div><div class="line">11: invokevirtual #3 // Method wrapItUp:()V</div><div class="line">14: aload_1</div><div class="line">15: athrow</div></pre></td></tr></table></figure>
-<p>可以看出finally块的代码仍然被放到了return之前。</p>
-<blockquote>
-<p>如果try块中有return statement，一定是finally中的代码先执行，然后return。</p>
-</blockquote>
-<p>JVM规范是这么说的：</p>
-<blockquote>
-<p>Compilation of a try-finally statement is similar to that of try-catch. Pior to transferring control outside thetry statement, whether that transfer is normal or abrupt, because an exception has been thrown, thefinally clause must first be execute.<br>try - catch - finally</p>
-</blockquote>
-<p>给上面的代码加一个catch块</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tryCatchFinally</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    tryItOut();</div><div class="line">  &#125; <span class="keyword">catch</span> (TestExc e) &#123;</div><div class="line">    handleExc(e);</div><div class="line">  &#125; <span class="keyword">finally</span> &#123;</div><div class="line">    wrapItUp();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>javap一下</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public void tryCatchFinally();</div><div class="line">  Code:</div><div class="line">     0: aload_0</div><div class="line">     1: invokevirtual #2</div><div class="line">     4: aload_0</div><div class="line">     5: invokevirtual #3</div><div class="line">     8: goto          31</div><div class="line">    11: astore_1</div><div class="line">    12: aload_0</div><div class="line">    13: aload_1</div><div class="line">    14: invokevirtual #5                  </div><div class="line">    17: aload_0</div><div class="line">    18: invokevirtual #3</div><div class="line">    21: goto          31</div><div class="line">    24: astore_2</div><div class="line">    25: aload_0</div><div class="line">    26: invokevirtual #3</div><div class="line">    29: aload_2</div><div class="line">    30: athrow</div><div class="line">    31: return</div><div class="line">Exception table:</div><div class="line">   from    to  target type</div><div class="line">       0     4    11   Class TestExc</div><div class="line">       0     4    24   any</div><div class="line">      11    17    24   any</div></pre></td></tr></table></figure>
-<p>通过Exception table可以看出：</p>
-<ul>
-<li>catch监听 0 ~ 4 字节类型为TextExc的异常。</li>
-<li>finally为 0 ~ 4 以及 11 ~ 17 字节任何类型的异常。</li>
-</ul>
-<p>也就说 catch block 本身也在 finally block 的管辖范围之内。如果catch block 中有 return statement，那么也一定是在 finally block 之后执行。</p>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2014/10/19/java-byte-code-on-try-catch/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -310,89 +180,14 @@ Dart’s optional types are static type annotations that act as documentation, c
 <blockquote>
 <p>为什么内部类（inner class）用到的外部变量只能是final类型？</p>
 </blockquote>
-<p>例如以下代码中变量 x 为什么必须声明为 <code>final</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> x = args.length;</div><div class="line">    <span class="keyword">new</span> Thread() &#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(x);</div><div class="line">      &#125;</div><div class="line">    &#125;.start();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如果去掉 final 关键字，编译阶段就会报错：</p>
-<pre>
-Closure.java:6: local variable x is accessed from within inner class; needs to be declared final
-        System.out.println(x);
-                           ^
-1 error
-</pre>
-
-<p>Java编程思想 中虽然提到了这个规则，但也没有说明为什么。</p>
-<blockquote>
-<p>If you’re defining an anonymous inner class and want to use an object that’s defined outside the anonymous inner class, the compiler requires that the argument reference be final.</p>
-</blockquote>
-<p>JLS 8.1.3 中对此的说明：</p>
-<blockquote>
-<p>Any local variable, formal method parameter or exception handler parameter used but not declared in an inner class must be declared final. Any local variable, used but not declared in an inner class must be definitely assigned before the body of the inner class.*</p>
-</blockquote>
-<p>但是为什么会有这样的语法规则呢？</p>
-<p>其中这就是 Java 中的闭包（Closure），虽然它不是严格意义上的闭包。</p>
-<h2 id="什么是闭包"><a href="#什么是闭包" class="headerlink" title="什么是闭包"></a>什么是闭包</h2><p>引用 wikipedia 的定义：</p>
-<blockquote>
-<p>In programming languages, a closure (also lexical closure or function closure) is a function or reference to a function together with a referencing environment—a table storing a reference to each of the non-local variables (also called free variables or upvalues) of that function.A closure—unlike a plain function pointer—allows a function to access those non-local variables even when invoked outside its immediate lexical scope.*</p>
-</blockquote>
-<p>简而言之</p>
-<blockquote>
-<p>闭包就是一个带数据的函数，这个函数有一个函数环境，环境内包含了函数所用到的非本地变量。</p>
-</blockquote>
-<p>下面以python代码为例，演示闭包的用法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">maker</span><span class="params">(N)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">action</span><span class="params">(X)</span>:</span></div><div class="line">        <span class="keyword">return</span> X \*\* N</div><div class="line">    <span class="keyword">return</span> action</div></pre></td></tr></table></figure>
-<p><code>maker</code> 函数返回了一个嵌套函数（Nested Function）<code>action</code>，其中 <code>action</code> 用到了 <code>maker</code> 的变量 <code>N</code>。</p>
-<p>执行一下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">f = maker(<span class="number">2</span>)</div><div class="line">print(f)</div></pre></td></tr></table></figure>
-<p>结果为</p>
-<pre>
-<function maker.<locals="">;.action at x7ff257b62950>*
-</function></pre>
-
-<p>可以看出 <code>f</code> 是函数 <code>maker</code> 的一个 local 函数 —- <code>action</code><br><code>f = maker(2)</code> 返回之后，<code>maker</code> 的生命周期也结束了，按道理它的 local 变量N，也应该会被释放掉，但是当我们执行如下语句时</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">print(f(<span class="number">3</span>))</div><div class="line">print(f(<span class="number">4</span>))</div></pre></td></tr></table></figure>
-<p>返回值为</p>
-<pre>
-9
-16
-</pre>
-
-<p>也就是说，即使maker函数的生命周期已经结束，但是action仍然记住了它所用到的maker的局部变量N。<br>在这里，f就是一个闭包，它包含的不仅是action函数，还有action用到的数据 —- a table storing a reference to each of the non-local variables (also called free variables or upvalues) of that function</p>
-<p>如果使用 lambda 表达式，上面的 maker 可以修改为</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">maker</span><span class="params">(N)</span>:</span></div><div class="line">	<span class="keyword">return</span> <span class="keyword">lambda</span> x: x ** N</div></pre></td></tr></table></figure>
-<p>以上就是 Python 中闭包的用法，但是以上用法在 Java 根本无法实现，因为 Java 是一个面向对象的语言，不可能返回一个函数，那么 Java 语言中对闭包又是如何处理的呢？</p>
-<h2 id="闭包跟对象的区别"><a href="#闭包跟对象的区别" class="headerlink" title="闭包跟对象的区别"></a>闭包跟对象的区别</h2><p>《こーどの未来》中解释了两者的区别。</p>
-<blockquote>
-<p>「手続き（関数）とデータの一体化」というのは、オブジェクト指向のオブジェクトを形容するときによく用いられる表現です。オブジェクトはデータにメソッドという形で手続きが内包されているものですが、クロージャーは手続きに環境という形でデータが内包されています。つまり、オブジェクトとクロージャーは表裏一体と考えてもよいでしょう</p>
-</blockquote>
-<p>稍微总结以下：</p>
-<blockquote>
-<p>对象是在数据的基础上，以方法的形式把函数包含在内。<br>闭包是在函数的基础上，以环境的形式把数据包含在内。</p>
-</blockquote>
-<h2 id="Java-与闭包"><a href="#Java-与闭包" class="headerlink" title="Java 与闭包"></a>Java 与闭包</h2><p>通过 Python 语言的示例，可以比较容易得理解闭包与对象之间的区别，我们再来看一下文章开头提出的问题。</p>
-<p>为什么内部类（inner class）用到的外部变量只能是final类型 ？</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> x = args.length;</div><div class="line">    <span class="keyword">new</span> Thread() &#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(x);</div><div class="line">      &#125;</div><div class="line">    &#125;.start();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其实，编译器为 <code>Thread()</code> 匿名类自动添加了一个参数为 <code>int</code> 的构造函数，在新建 <code>Thread</code> 对象时，<code>x</code> 值被传入，成为 <code>Thread</code> 对象的数据。如此以来，编译器则没有必要像 python 那样为 <code>inner class</code> 维护一个 <em>referencing environment</em>。</p>
-<p>我们可以用一段代码把这个构造函数找出来。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Closure</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String... args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">    <span class="keyword">final</span> <span class="keyword">int</span> x = args.length;</div><div class="line">    <span class="keyword">new</span> Thread() &#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(x);</div><div class="line">        <span class="keyword">for</span> (Constructor&lt;?&gt; cons : <span class="keyword">this</span>.getClass().getDeclaredConstructors()) &#123;</div><div class="line">          StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">          sb.append(<span class="string">"constructor: "</span>).append(cons.getName()).append(<span class="string">"("</span>);</div><div class="line">          <span class="keyword">for</span> (Class&lt;?&gt; param : cons.getParameterTypes()) &#123;</div><div class="line">            sb.append(param.getSimpleName()).append(<span class="string">", "</span>);</div><div class="line">          &#125;</div><div class="line">          <span class="keyword">if</span> (sb.charAt(sb.length() - <span class="number">1</span>) == <span class="string">' '</span>) &#123;</div><div class="line">            sb.replace(sb.length() - <span class="number">2</span>, sb.length(), <span class="string">")"</span>);</div><div class="line">          &#125; <span class="keyword">else</span> &#123;</div><div class="line">            sb.append(<span class="string">')'</span>);</div><div class="line">          &#125;</div><div class="line">          System.out.println(sb);</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;.start();</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>输出结果是</p>
-<pre>
-0
-constructor: Closure$1(int)
-constructor: Closure$1(int) 即为编译器添加的构造方法。
-</pre>
-
-<p>x 就是通过这个构造函数拷贝到内部类 - <code>new Thread()</code> 当中，但是用到 x 的方法 run 并不会按照代码顺心立即被执行，如果在 <code>new Thread()</code> 之后的代码中改变了 x 的值，那么多 run 方法中用到的 x 就是一个过时（out-of-date）的 x。</p>
-<p>同样的，如果run方法改变了 x 的值就破坏了 main 方法的数据流，我们希望内部类对使用者来说是透明，加上了 final 关键字就保证了 x 只在方法的 enclosing scope 是可变的,这样就不必为了追踪 x 的变化而必须搞清楚内部类的逻辑。</p>
-<p>StackOverflow 上Jon Skeet 解释得非常清楚。</p>
-<blockquote>
-<p>When you create an instance of an anonymous inner class, any variables which are used within that class have their values copied in via the autogenerated constructor. This avoids the compiler having to autogenerate various extra types to hold the logical state of the “local variables”, as for example the C# compiler does… (When C# captures a variable in an anonymous function, it really captures the variable - the closure can update the variable in a way which is seen by the main body of the method, and vice versa.)<br>As the value has been copied into the instance of the anonymous inner class, it would look odd if the variable could be modified by the rest of the method - you could have code which appeared to be working with an out-of-date variable (because that’s effectively what would be happening… you’d be working with a copy taken at a different time). Likewise if you could make changes within the anonymous inner class, developers might expect those changes to be visible within the body of the enclosing method.<br>Making the variable final removes all these possibilities - as the value can’t be changed at all, you don’t need to worry about whether such changes will be visible. The only ways to allow the method and the anonymous inner class see each other’s changes is to use a mutable type of some description. This could be the enclosing class itself, an array, a mutable wrapper type… anything like that. Basically it’s a bit like communicating between one method and another: changes made to the parameters of one method aren’t seen by its caller, but changes made to the objects referred to by the parameters are seen.</p>
-</blockquote>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Closure 是 Functional Programming（函数式编程）中一个非常重要的概念，理解了闭包的概念也就知道 lambda 以及 nested function 的用法了。</p>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2014/08/20/meeting-closure/#more" class="more-link">更多...</a>
+          </div>
         
         
       

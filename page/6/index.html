@@ -65,49 +65,15 @@
     </header>
     <div class="entry">
       
-        <h2 id="Java8"><a href="#Java8" class="headerlink" title="Java8"></a>Java8</h2><p>终于可以用 Java8 写 Android 应用了，想想都有点激动，告别面条代码，拥抱FP！</p>
-<blockquote>
-<p>In order to use the new Java 8 language features, you need to also use the new Jack toolchain</p>
-</blockquote>
-<p>现在，要使用 Java8 必须依赖 Jack，因为为了兼容 old SDK，Jack 会进行字节码转换（例如，把 JDK8 的字节码转成 JDK7 or JDK6）</p>
-<h2 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h2><p>抓紧时间看 <code>Fragment</code> 源码</p>
-<blockquote>
-<p>When should you use a fragment? How? Why? </p>
-<p>In this session we’ll cover effective use of fragments along with new features. </p>
-<p>We’ll also go over improvements that enable new use cases and improve existing ones.</p>
-</blockquote>
-<h2 id="Android-Studio"><a href="#Android-Studio" class="headerlink" title="Android Studio"></a>Android Studio</h2><p>工欲善其事必先利其器，做为一名 Vim 党对快捷键没什么兴趣，但是很期待新的 debug &amp; analysis tool。</p>
-<p><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/" target="_blank" rel="external">Android Studio Tips Of the Day</a></p>
-<h2 id="Doze"><a href="#Doze" class="headerlink" title="Doze"></a>Doze</h2><p>Android battery and memory optimizations</p>
-<h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS "></a>HTTPS </h2><p>尽快看完 okHttp 源码。</p>
-<p>HTTPS 到底安不安全？会浪费流量吗？</p>
-<h2 id="Data-Binding"><a href="#Data-Binding" class="headerlink" title="Data Binding"></a>Data Binding</h2><p>Data Binding 的 new features</p>
-<ul>
-<li>two-way data binding</li>
-<li>lambda expressions</li>
-</ul>
-<h2 id="Android-themes-amp-styles-demystified"><a href="#Android-themes-amp-styles-demystified" class="headerlink" title="Android themes &amp; styles demystified"></a>Android themes &amp; styles demystified</h2><p>怎样写好 UI</p>
-<h2 id="APK-瘦身"><a href="#APK-瘦身" class="headerlink" title="APK 瘦身"></a>APK 瘦身</h2><blockquote>
-<p>Lean and fast: Putting your app on a diet</p>
-</blockquote>
-<h2 id="图形图像"><a href="#图形图像" class="headerlink" title="图形图像 "></a>图形图像 </h2><ol>
-<li><strong>Image compression</strong> for Android developers（图像压缩的实践，干货）</li>
-<li>Vulkan (全新的图形框架，OpenGL ES 替代品)</li>
-</ol>
-<h2 id="Material-Design"><a href="#Material-Design" class="headerlink" title="Material Design"></a>Material Design</h2><p>无感，稍微看一下</p>
-<h2 id="播放器"><a href="#播放器" class="headerlink" title="播放器 "></a>播放器 </h2><p>Streaming media with ExoPlayer（取代 MediaPlayer）</p>
-<h2 id="VR"><a href="#VR" class="headerlink" title="VR"></a>VR</h2><ul>
-<li>Introducing Project Tango Area Learning</li>
-<li>Making Android sensors and location work for you</li>
-<li>VR at Google</li>
-<li>VR &amp; Cinema</li>
-</ul>
-<h2 id="用户留存"><a href="#用户留存" class="headerlink" title="用户留存"></a>用户留存</h2><p>Mobile app user acquisition and retention</p>
-
+        <p>预测一下 Google IO 2016</p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/05/12/expectation-of-google-io-2016/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -137,19 +103,14 @@
     <div class="entry">
       
         <p>最近开源社区出现了两件比较好玩的事情。</p>
-<p>第一件事是有些 Android 开发者，把 github 上大神（例如 Jake）添加到自己的 repo 中，然后这个 repo 就会出现在大神 follower 的时间线上，以此来刷 star。然后大神就火了，直接把 repo 给推平了，并附加了一个 SHAME 的 commit message。</p>
-<p>小事一件，估计过几天话题性也就消失了，但是第二件事就比较好玩了，已经上了知乎 - <a href="https://www.zhihu.com/question/42256682" target="_blank" rel="external">如何评价 GitHub 中国区粉丝数前 100 名的用户？</a></p>
-<p>话题源自某社区网站的一篇文章 - Github 中国区前 100 名到第是什么样的人？，文中根据 follower 数对中国区的程序员进行了一个排序，然后扒出了这些人的照片和一些介绍信息，其中有一个妹子用非常 low 的手段刷了不少粉，引起了大家的热议。</p>
-<p>一开始参与开源时，也老想着去刷 star，写一个简单的 UI 库，微博上 at 一圈，让大V帮忙转发，star 数就上来了，然后把 Group 改成 Alibaba（现在我仍然舍不得改回去，因为我还想着有一天。。。），csdn博客、简书、知乎上再营销一把，follower 也上来了，刚开始有点沾沾自喜，微博上与大V互粉，组织线下活动，以为自己终于牛逼了，后来发现有人玩得更溜，各种“粉丝群”，俨然就是一个 super star，小弟自愧不如。</p>
-<p>后来觉得这样做没什么意思，刷粉刷到最后又能怎么样？会带给你内心的安定吗？ 最近我也一直在思考，如何在这个比较浮躁的环境下安心做技术。 </p>
-<p>我希望技术带给我的是【自信 + 安全感】，如果能够在某个方面做到非常深入，然后成为自己技术小世界的国王，其中的一切在自己的运筹帷幄之中，非常美好。</p>
-<p>从阿里出来之后，就一直在想这个问题，最后得出来一个结论：<strong>技术需要真爱</strong>。</p>
-<p>不要名利，不要报酬，认真地写下每一行代码，不会你就学，不懂你就问，就是如此简单。</p>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/04/11/summary-famous-is-bad/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -179,20 +140,14 @@
     <div class="entry">
       
         <p>毕业这几年，大学时代的很多知识早已过时，少数不过时的技术好像也没学好，毕业之后体会也不大。 工作之后学过的技术也更新迭代了很多次，写代码的人最不缺乏的就是学习能力。</p>
-<h2 id="日语"><a href="#日语" class="headerlink" title="日语"></a>日语</h2><p>先是学日语，毫无功利性，就是喜欢，羡慕操着一口流利外语的人，想成为那样的人，然后学成了。后来发现，语言这东西就得靠环境，很多明星大腕英语溜得不要不要的，林志玲的日语也肯定比我好，想登峰造极你得放得下，舍得花钱，去国外待个几年自然就会说了。<br>然而单纯会说并没什么卵用，还得与自身已有技能相结合。日本经济不景气，日元持续贬值，对日外包不赚钱，好像除了看看片，去日本玩玩也没什么用途，短时间内好像没有用武之地，まあ、写几个 <a href="https://github.com/HelloJapan" target="_blank" rel="external">APP</a> 锻炼一下产品思维吧，<strong>拼的无非就是谁点子多，谁会玩</strong>。<br>然后，尝试写点东西吧，玩玩自媒体，游记、翻译、日语学习，<strong>写多了自然会有心得</strong>。</p>
-<h2 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h2><p>兜兜转转这几年，靠 Android 开发能吃上饭了，但是距离真正的专家还差得好远，围观大牛聊天的唯一感触：城会玩，有真爱。<br>技术也是江湖，有的人浑然天成，毫不做作，接触之后感觉非常舒服，会玩也有想象力。<br>技术同时也是一门硬功，没有捷径，吹牛只能吹一时，打铁还需自身硬，不需要浮夸，用最自然的方式去 appeal 自己，不需要瞻前顾后，吸引力法则同样适用。<br><strong>我喜欢，所以我去做。开源、博客都要以最自然的方式产出，哗众取宠没啥鸟用，谁都不喜欢华而不实的人。</strong></p>
-<h2 id="生活"><a href="#生活" class="headerlink" title="生活"></a>生活</h2><p>很多事情要靠缘分，着急也没什么用。人之初性本恶，锻炼与人性做斗争的能力，千锤百炼才能打造一件绝世精品，如何才能把自己雕琢成精品，找到自己的理想很重要，<strong>周游世界，发现美、创造美</strong>。<br>身体是灵魂的载体，灵魂映射成自然，必须要照顾好身体才能与自然对话，符合规律，不违背 Convention，<strong>游泳、跑步、健身、饮食</strong>。<br>接受一切事情，然后尽力让不好的事情朝好的方向扭转。</p>
-<h2 id="兴趣"><a href="#兴趣" class="headerlink" title="兴趣"></a>兴趣</h2><ul>
-<li><strong>摄影</strong> 发现美</li>
-<li><strong>溜冰</strong> 锻炼和谐</li>
-<li><strong>陶笛</strong> 与声音对话</li>
-<li><strong>驾驶</strong> 体验操控的快感 </li>
-</ul>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/02/01/summary-passion-drives/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -225,41 +180,14 @@
 <blockquote>
 <p>Unit tests run on a local JVM on your development machine</p>
 </blockquote>
-<p>Gradle 插件会编译 <code>src/test/java</code> 的代码，运行时会用到一个修改过的 <code>android.jar</code>（去掉了所有的 <code>final</code> 修饰符），这样就可以利用多态引入 <strong>mocking libraries</strong>。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dependencies &#123;</div><div class="line">  testCompile <span class="string">'junit:junit:4.12'</span></div><div class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew test --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
-<p>等价于</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></div></pre></td></tr></table></figure>
-<p>其中 <code>--continue</code> 表示即使某个 case 失败了，也会继续执行剩下的 case。</p>
-<h2 id="Flavors-amp-Build-type"><a href="#Flavors-amp-Build-type" class="headerlink" title="Flavors &amp; Build type"></a>Flavors &amp; Build type</h2><p>遵守规范</p>
-<ul>
-<li>src/main/java/Foo.java -&gt; src/test/java/FooTest.java</li>
-<li>src/debug/java/Foo.java -&gt; src/testDebug/java/FooTest.java</li>
-<li>src/myFlavor/java/Foo.java -&gt; src/testMyFlavor/java/FooTest.java</li>
-</ul>
-<h2 id="“Method-…-not-mocked-”"><a href="#“Method-…-not-mocked-”" class="headerlink" title="“Method … not mocked.”"></a>“Method … not mocked.”</h2><p>今天遇到的就是这个问题：</p>
-<pre>
-java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
-</pre>
-
-<p>加了 mock 依赖后还是搞不定：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">testCompile <span class="string">"org.mockito:mockito-core:1.9.5</span></div></pre></td></tr></table></figure>
-<p>修改配置，让 mock 方法返回默认值还是不行：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">android &#123;</div><div class="line">  testOptions &#123; </div><div class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></div><div class="line">  &#125; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>结果却是：</p>
-<blockquote>
-<p>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</p>
-</blockquote>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li><code>android.jar</code> 是被 mock 过的，所以有些 Android API 返回值可能会不是预期值。</li>
-<li>JUnit 本身是针对 java 代码的单测，所以尽量不要用于使用了 Android API 的方法。</li>
-<li>Android Gradle 插件提供的 mocked android.jar 跟我刚开始工作时做过的测试框架原理类似。</li>
-</ul>
-
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/01/28/android-unit-test/#more" class="more-link">更多...</a>
+          </div>
         
         
       
@@ -288,44 +216,15 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
     </header>
     <div class="entry">
       
-        <h2 id="基本功能"><a href="#基本功能" class="headerlink" title="基本功能"></a>基本功能</h2><p><code>RichEditor</code> 是一个继承自 <code>WebView</code> 的自定义 view，枚举类型 <code>Type</code> 定了它所支持的排版格式：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Type &#123;</div><div class="line">  BOLD,</div><div class="line">  ITALIC,</div><div class="line">  SUBSCRIPT,</div><div class="line">  SUPERSCRIPT,</div><div class="line">  STRIKETHROUGH,</div><div class="line">  UNDERLINE,</div><div class="line">  H1,</div><div class="line">  H2,</div><div class="line">  H3,</div><div class="line">  H4,</div><div class="line">  H5,</div><div class="line">  H6</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>首先在构造函数中加载一个 html 文件。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SETUP_HTML = <span class="string">"file:///android_asset/editor.html"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">RichEditor</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">  <span class="keyword">super</span>(context, attrs, defStyleAttr);</div><div class="line">  setVerticalScrollBarEnabled(<span class="keyword">false</span>);</div><div class="line">  setHorizontalScrollBarEnabled(<span class="keyword">false</span>);</div><div class="line">  getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);</div><div class="line">  setWebChromeClient(<span class="keyword">new</span> WebChromeClient());</div><div class="line">  setWebViewClient(createWebviewClient());</div><div class="line"></div><div class="line">  <span class="comment">// 加载 html 文件</span></div><div class="line">  loadUrl(SETUP_HTML);</div><div class="line"></div><div class="line">  applyAttributes(context, attrs);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其中 html 文件 - <code>editor.html</code> 加载了两个 css 文件 - <code>normalize.css</code> &amp; <code>style.css</code>，一个 js 文件 - <code>rich_editor.js</code>。</p>
-<p><code>body</code> 中插入了一个 <code>contentEditable=&quot;true&quot;</code> 的 <code>div</code>。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&lt;!DOCTYPE html&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"user-scalable=no"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"normalize.css"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">type</span>=<span class="string">"text/css"</span> <span class="attr">href</span>=<span class="string">"style.css"</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"editor"</span> <span class="attr">contentEditable</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"rich_editor.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
-<p><code>rich_editor.js</code> 中定义了很多排版功能的 API，<code>RichEditor</code> 类似 proxy，对外提供了 Java API。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEditorFontColor</span><span class="params">(<span class="keyword">int</span> color)</span> </span>&#123;</div><div class="line">  String hex = convertHexColorString(color);</div><div class="line">  exec(<span class="string">"javascript:RE.setBaseTextColor('"</span> + hex + <span class="string">"');"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其中 <code>exec</code> 用于执行 js 代码。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">exec</span><span class="params">(<span class="keyword">final</span> String trigger)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (isReady) &#123;</div><div class="line">    load(trigger);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    postDelayed(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">      <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        exec(trigger);</div><div class="line">      &#125;, <span class="number">100</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>只有当 <code>rich_editor.html</code> 加载完成后 <code>isReady</code> 才会被置为 <code>true</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">protected</span> <span class="class"><span class="keyword">class</span> <span class="title">EditorWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>&#123;</div><div class="line">  <span class="meta">@Override</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    isReady = url.equalsIgnoreCase(SETUP_HTML);</div><div class="line">    <span class="keyword">if</span> (mLoadListener != <span class="keyword">null</span>) &#123;</div><div class="line">      mLoadListener.onAfterInitialLoad(isReady);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="comment">// other methods</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>构造函数在加载 <code>editor.html</code> 之前已经设置了一个 <code>EditorWebViewClient</code> 的实例。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">RichEditor</span><span class="params">(Context context, AttributeSet attrs, <span class="keyword">int</span> defStyleAttr)</span> </span>&#123;</div><div class="line">  <span class="comment">// other statements</span></div><div class="line">  setWebViewClient(createWebviewClient());</div><div class="line">  loadUrl(SETUP_HTML)</div><div class="line">  <span class="comment">// other statements</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">protected</span> EditorWebViewClient <span class="title">createWebviewClient</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> EditorWebViewClient();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>当 <code>editor.html</code> 加载完成，<code>isReady</code> 被设为 <code>true</code> 之后，<code>exec</code> 方法就可以调用 <code>load(trigger)</code> 执行 js 了。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">load</span><span class="params">(String trigger)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.KITKAT) &#123;</div><div class="line">    evaluateJavascript(trigger, <span class="keyword">null</span>);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    loadUrl(trigger);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><code>evaluateJavascript</code> 以及 <code>loadUrl</code> 都是 <code>Webview</code> 提供的方法。</p>
-<p><code>evaluateJavascript</code> 是从 API 19 开始引入的，可以异步执行 js 代码。<em>Asynchronously evaluates JavaScript in the context of the currently displayed page.</em></p>
-<h2 id="SCHEME"><a href="#SCHEME" class="headerlink" title="SCHEME"></a>SCHEME</h2><p>RichEditor 提供了两个 Scheme 负责回调 java 代码。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String CALLBACK_SCHEME = <span class="string">"re-callback://"</span>;</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String STATE_SCHEME = <span class="string">"re-state://"</span>;</div></pre></td></tr></table></figure>
-<p>然后在 <code>EditorWebViewClient</code> 中重写了 <code>shouldOverrideUrlLoading</code> 方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">protected</span> <span class="class"><span class="keyword">class</span> <span class="title">EditorWebViewClient</span> <span class="keyword">extends</span> <span class="title">WebViewClient</span> </span>&#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onPageFinished</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    isReady = url.equalsIgnoreCase(SETUP_HTML);</div><div class="line">    <span class="keyword">if</span> (mLoadListener != <span class="keyword">null</span>) &#123;</div><div class="line">      mLoadListener.onAfterInitialLoad(isReady);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldOverrideUrlLoading</span><span class="params">(WebView view, String url)</span> </span>&#123;</div><div class="line">    String decode;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      decode = URLDecoder.decode(url, <span class="string">"UTF-8"</span>);</div><div class="line">    &#125; <span class="keyword">catch</span> (UnsupportedEncodingException e) &#123;</div><div class="line">      <span class="comment">// No handling</span></div><div class="line">      <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (TextUtils.indexOf(url, CALLBACK_SCHEME) == <span class="number">0</span>) &#123;</div><div class="line">      callback(decode);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (TextUtils.indexOf(url, STATE_SCHEME) == <span class="number">0</span>) &#123;</div><div class="line">      stateCheck(decode);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="keyword">super</span>.shouldOverrideUrlLoading(view, url);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如果 url 符合 CALLBACK 的 scheme，就会执行 <code>callback</code> 方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">callback</span><span class="params">(String text)</span> </span>&#123;</div><div class="line">  mContents = text.replaceFirst(CALLBACK_SCHEME, <span class="string">""</span>);</div><div class="line">  <span class="keyword">if</span> (mTextChangeListener != <span class="keyword">null</span>) &#123;</div><div class="line">    mTextChangeListener.onTextChange(mContents);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>如果 url 符合 STATE 的 scheme，就会执行 <code>stateCheck</code> 方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">stateCheck</span><span class="params">(String text)</span> </span>&#123;</div><div class="line">  String state = text.replaceFirst(STATE_SCHEME, <span class="string">""</span>).toUpperCase(Locale.ENGLISH);</div><div class="line">  List&lt;Type&gt; types = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">  <span class="keyword">for</span> (Type type : Type.values()) &#123;</div><div class="line">    <span class="keyword">if</span> (TextUtils.indexOf(state, type.name()) != -<span class="number">1</span>) &#123;</div><div class="line">      types.add(type);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">if</span> (mDecorationStateListener != <span class="keyword">null</span>) &#123;</div><div class="line">    mDecorationStateListener.onStateChangeListener(state, types);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>通过以下两个 set 方法可以设置回调。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnDecorationChangeListener</span><span class="params">(OnDecorationStateListener listener)</span> </span>&#123;</div><div class="line">  mDecorationStateListener = listener;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnInitialLoadListener</span><span class="params">(AfterInitialLoadListener listener)</span> </span>&#123;</div><div class="line">  mLoadListener = listener;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>编辑器的核心功能由 js 实现，RichEditor 封装了 js 的功能，为上层提供了 java 接口。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
-<li><a href="https://github.com/wasabeef/richeditor-android" target="_blank" rel="external">https://github.com/wasabeef/richeditor-android</a></li>
-</ul>
-
+        <p><code>RichEditor</code> 是一个继承自 <code>WebView</code> 的自定义 view。</p>
       
     </div>
     <footer>
       
+        
+          <div class="alignleft">
+            <a href="/2016/01/27/android-source-reading-of-rich-editor/#more" class="more-link">更多...</a>
+          </div>
         
         
       
