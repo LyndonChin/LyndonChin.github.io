@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>架构笔记之数据分析 | 梁飞</title>
+  <title>精通 HTTP 之 STATUS CODE | 梁飞</title>
   <meta name="author" content="liangfei">
   
   <meta name="description" content="梁飞的个人博客">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="架构笔记之数据分析"/>
+  <meta property="og:title" content="精通 HTTP 之 STATUS CODE"/>
   <meta property="og:site_name" content="梁飞"/>
 
   
@@ -54,17 +54,86 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2017-02-01T14:56:00.000Z"><a href="/2017/02/01/note-on-web-data-analysis/">2017-02-01</a></time>
+        <time datetime="2017-07-02T16:00:00.000Z"><a href="/2017/07/03/http-status-code/">2017-07-03</a></time>
       
       
   
-    <h1 class="title">架构笔记之数据分析</h1>
+    <h1 class="title">精通 HTTP 之 STATUS CODE</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><a href="http://www.jianshu.com/p/8f46735b2bdd" target="_blank" rel="external">http://www.jianshu.com/p/8f46735b2bdd</a></p>
+        <p>HTTP 的 status code 分为 5 个类别（1XX、2XX、3XX、4XX、5XX），每个 code 都有对应的 reason phrase，这些 reason phrases 并没有规范，都是约定俗成的。</p>
+<a id="more"></a>
+<p><a href="https://www.npmjs.com/package/statuses" target="_blank" rel="external">statuses@npm</a> 是一个 HTTP 状态码的工具类：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> status = <span class="built_in">require</span>(<span class="string">'statuses'</span>)</div></pre></td></tr></table></figure></p>
+<h2 id="101-199-Informational-Status-Codes"><a href="#101-199-Informational-Status-Codes" class="headerlink" title="101-199: Informational Status Codes"></a>101-199: Informational Status Codes</h2><ul>
+<li>100 “continue”</li>
+<li>101 “switching protocols”</li>
+<li>102 “processing”</li>
+</ul>
+<h2 id="200-299-Success-Status-Codes"><a href="#200-299-Success-Status-Codes" class="headerlink" title="200-299: Success Status Codes"></a>200-299: Success Status Codes</h2><ul>
+<li>200 “ok”</li>
+<li>201 “created”</li>
+<li>202 “accepted”</li>
+<li>203 “non-authoritative information”</li>
+<li>204 “no content”</li>
+<li>205 “reset content”</li>
+<li>206 “partial content”</li>
+<li>207 “multi-status”</li>
+<li>208 “already reported”</li>
+<li>226 “im used”</li>
+</ul>
+<h2 id="300-399-Redirection-Status-Codes"><a href="#300-399-Redirection-Status-Codes" class="headerlink" title="300-399: Redirection Status Codes"></a>300-399: Redirection Status Codes</h2><ul>
+<li>300 “multiple choices”</li>
+<li>301 “moved permanently”</li>
+<li>302 “found”</li>
+<li>303 “see other”</li>
+<li>304 “not modified”</li>
+<li>305 “use proxy”</li>
+<li>307 “temporary redirect”</li>
+<li>308 “permanent redirect”</li>
+</ul>
+<h2 id="400-499-Client-Error-Status-Codes"><a href="#400-499-Client-Error-Status-Codes" class="headerlink" title="400-499: Client Error Status Codes"></a>400-499: Client Error Status Codes</h2><ul>
+<li>400 “bad request”</li>
+<li>401 “unauthorized”</li>
+<li>402 “payment required”</li>
+<li>403 “forbidden”</li>
+<li>404 “not found”</li>
+<li>405 “method not allowed”</li>
+<li>406 “not acceptable”</li>
+<li>407 “proxy authentication required”</li>
+<li>408 “request timeout”</li>
+<li>409 “conflict”</li>
+<li>410 “gone”</li>
+<li>411 “length required”</li>
+<li>412 “precondition failed”</li>
+<li>413 “payload too large”</li>
+<li>414 “uri too long”</li>
+<li>415 “unsupported media type”</li>
+<li>416 “range not satisfiable”</li>
+<li>417 “expectation failed”</li>
+<li>422 “unprocessable entity”</li>
+<li>423 “locked”</li>
+<li>424 “failed dependency”</li>
+<li>426 “upgrade required”</li>
+<li>428 “precondition required”</li>
+<li>429 “too many requests”</li>
+<li>431 “request header fields too large”</li>
+</ul>
+<h2 id="500-599-Server-Error-Status-Codes"><a href="#500-599-Server-Error-Status-Codes" class="headerlink" title="500-599: Server Error Status Codes"></a>500-599: Server Error Status Codes</h2><ul>
+<li>500 “internal server error”</li>
+<li>501 “not implemented”</li>
+<li>502 “bad gateway”</li>
+<li>503 “service unavailable”</li>
+<li>504 “gateway timeout”</li>
+<li>505 “http version not supported”</li>
+<li>506 “variant also negotiates”</li>
+<li>507 “insufficient storage”</li>
+<li>508 “loop detected”</li>
+<li>510 “not extended”</li>
+<li>511 “network authentication required”</li>
+</ul>
 
       
     </div>
@@ -74,7 +143,7 @@
         
   
   <div class="tags">
-    <a href="/tags/Web/">Web</a>
+    <a href="/tags/HTTP2/">HTTP2</a>
   </div>
 
         

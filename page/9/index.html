@@ -55,6 +55,226 @@
     <header>
       
         <div class="icon"></div>
+        <time datetime="2015-06-19T16:00:00.000Z"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">2015-06-20</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/06/20/how-to-get-the-hardware-data-of-android-device/">如何获取 Android 设备的CPU核数、时钟频率以及内存大小</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>因项目需要，分析了一下 Facebook 的开源项目 - <a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">Device Year Class</a>。</p>
+<p><strong>Device Year Class</strong> 的主要功能是根据 <em>CPU核数</em>、<em>时钟频率</em> 以及 <em>内存大小</em> 对设备进行分级。代码很简单，只包含两个类:</p>
+<ul>
+<li><code>DeviceInfo</code> -&gt; 获取设备参数，</li>
+<li><code>YearClass</code> -&gt; 根据参数进行分级。</li>
+</ul>
+<p>下表是 Facebook 公司提供的<a href="https://github.com/facebook/device-year-class/blob/master/README.md" target="_blank" rel="external">分级标准</a>，其中 <code>Year</code> 栏表示分级结果。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Year</th>
+<th style="text-align:right">Cores</th>
+<th style="text-align:right">Clock</th>
+<th style="text-align:right">RAM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">2008</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">528MHz</td>
+<td style="text-align:right">192MB</td>
+</tr>
+<tr>
+<td style="text-align:right">2009</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">600MHz</td>
+<td style="text-align:right">290MB</td>
+</tr>
+<tr>
+<td style="text-align:right">2010</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">1.0GHz</td>
+<td style="text-align:right">512MB</td>
+</tr>
+<tr>
+<td style="text-align:right">2011</td>
+<td style="text-align:right">2</td>
+<td style="text-align:right">1.2GHz</td>
+<td style="text-align:right">1GB</td>
+</tr>
+<tr>
+<td style="text-align:right">2012</td>
+<td style="text-align:right">4</td>
+<td style="text-align:right">1.5GHz</td>
+<td style="text-align:right">1.5GB</td>
+</tr>
+<tr>
+<td style="text-align:right">2013</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">2.0GHz</td>
+<td style="text-align:right">2GB</td>
+</tr>
+<tr>
+<td style="text-align:right">2014</td>
+<td style="text-align:right">n/a</td>
+<td style="text-align:right">&gt;2GHz</td>
+<td style="text-align:right">&gt;2GB</td>
+</tr>
+</tbody>
+</table>
+<p>关于输出年份的计算方法可以参考<a href="https://github.com/facebook/device-year-class" target="_blank" rel="external">源码</a>，本文只把一些比较常用的功能抽取出来做一个简要介绍。</p>
+<h2 id="获取-CPU-核数"><a href="#获取-CPU-核数" class="headerlink" title="获取 CPU 核数"></a>获取 CPU 核数</h2><p>我们都知道，Linux 中的设备都是以文件的形式存在，CPU 也不例外，因此 CPU 的文件个数就等价与<strong>核数</strong>。</p>
+<p>Android 的 CPU 设备文件位于 <code>/sys/devices/system/cpu/</code> 目录，文件名的的格式为 <code>cpu\d+</code>。</p>
+<pre>
+root@generic_x86_64:/sys/devices/system/cpu # ls
+<b>cpu0</b>
+cpufreq
+cpuidle
+kernel_max
+modalias
+offline
+online
+possible
+power
+present
+uevent
+</pre>
+
+<p>统计一下文件个数便可以获得 CPU 核数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getNumberOfCPUCores</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &lt;= Build.VERSION_CODES.GINGERBREAD_MR1) &#123;</div><div class="line">    <span class="comment">// Gingerbread doesn't support giving a single application access to both cores, but a</span></div><div class="line">    <span class="comment">// handful of devices (Atrix 4G and Droid X2 for example) were released with a dual-core</span></div><div class="line">    <span class="comment">// chipset and Gingerbread; that can let an app in the background run without impacting</span></div><div class="line">    <span class="comment">// the foreground application. But for our purposes, it makes them single core.</span></div><div class="line">    <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">int</span> cores;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    cores = <span class="keyword">new</span> File(<span class="string">"/sys/devices/system/cpu/"</span>).listFiles(CPU_FILTER).length;</div><div class="line">  &#125; <span class="keyword">catch</span> (SecurityException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125; <span class="keyword">catch</span> (NullPointerException e) &#123;</div><div class="line">    cores = DEVICEINFO_UNKNOWN;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> cores;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> FileFilter CPU_FILTER = <span class="keyword">new</span> FileFilter() &#123;</div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File pathname)</span> </span>&#123;</div><div class="line">    String path = pathname.getName();</div><div class="line">    <span class="comment">//regex is slow, so checking char by char.</span></div><div class="line">    <span class="keyword">if</span> (path.startsWith(<span class="string">"cpu"</span>)) &#123;</div><div class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">3</span>; i &lt; path.length(); i++) &#123;</div><div class="line">        <span class="keyword">if</span> (path.charAt(i) &lt; <span class="string">'0'</span> || path.charAt(i) &gt; <span class="string">'9'</span>) &#123;</div><div class="line">          <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">      <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h2 id="获取时钟频率"><a href="#获取时钟频率" class="headerlink" title="获取时钟频率"></a>获取时钟频率</h2><p>获取<strong>时钟频率</strong>需要读取系统文件 - <code>/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq</code> 或者 <code>/proc/cpuinfo</code>。</p>
+<p>我的 Android 模拟器中并没有 <code>cpuinfo_max_freq</code> 文件，因此只能读取 <code>/proc/cpuinfo</code>。</p>
+<p><code>/proc/cpuinfo</code> 包含了很多 cpu 数据。</p>
+<pre>
+processor    : 0
+vendor_id    : GenuineIntel
+cpu family    : 6
+model        : 70
+model name    : Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz
+stepping    : 1
+cpu MHz        : 0.000
+cache size    : 1024 KB
+fdiv_bug    : no
+hlt_bug        : no
+f00f_bug    : no
+coma_bug    : no
+fpu        : yes
+fpu_exception    : yes
+cpuid level    : 4
+wp        : yes
+</pre>
+
+<p>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getCPUMaxFreqKHz</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">int</span> maxFreq = DEVICEINFO_UNKNOWN;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; getNumberOfCPUCores(); i++) &#123;</div><div class="line">      String filename =</div><div class="line">          <span class="string">"/sys/devices/system/cpu/cpu"</span> + i + <span class="string">"/cpufreq/cpuinfo_max_freq"</span>;</div><div class="line">      File cpuInfoMaxFreqFile = <span class="keyword">new</span> File(filename);</div><div class="line">      <span class="keyword">if</span> (cpuInfoMaxFreqFile.exists()) &#123;</div><div class="line">        <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">128</span>];</div><div class="line">        FileInputStream stream = <span class="keyword">new</span> FileInputStream(cpuInfoMaxFreqFile);</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">          stream.read(buffer);</div><div class="line">          <span class="keyword">int</span> endIndex = <span class="number">0</span>;</div><div class="line">          <span class="comment">//Trim the first number out of the byte buffer.</span></div><div class="line">          <span class="keyword">while</span> (buffer[endIndex] &gt;= <span class="string">'0'</span> &amp;&amp; buffer[endIndex] &lt;= <span class="string">'9'</span></div><div class="line">              &amp;&amp; endIndex &lt; buffer.length) endIndex++;</div><div class="line">          String str = <span class="keyword">new</span> String(buffer, <span class="number">0</span>, endIndex);</div><div class="line">          Integer freqBound = Integer.parseInt(str);</div><div class="line">          <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">        &#125; <span class="keyword">catch</span> (NumberFormatException e) &#123;</div><div class="line">          <span class="comment">//Fall through and use /proc/cpuinfo.</span></div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">          stream.close();</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (maxFreq == DEVICEINFO_UNKNOWN) &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/cpuinfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        <span class="keyword">int</span> freqBound = parseFileForValue(<span class="string">"cpu MHz"</span>, stream);</div><div class="line">        freqBound *= <span class="number">1000</span>; <span class="comment">//MHz -&gt; kHz</span></div><div class="line">        <span class="keyword">if</span> (freqBound &gt; maxFreq) maxFreq = freqBound;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    maxFreq = DEVICEINFO_UNKNOWN; <span class="comment">//Fall through and return unknown.</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> maxFreq;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="获取内存大小"><a href="#获取内存大小" class="headerlink" title="获取内存大小"></a>获取内存大小</h2><p>如果 SDK 版本大于等于 <code>JELLY_BEAN</code> ，可以通过 <code>ActivityManager</code> 来获取内从大小。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">am.getMemoryInfo(memInfo);</div></pre></td></tr></table></figure>
+<p>如果版本低于 <code>JELLY_BEAN</code> ，则只能读取系统文件了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div></pre></td></tr></table></figure>
+<p>完整代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@TargetApi</span>(Build.VERSION_CODES.JELLY_BEAN)</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">getTotalMemory</span><span class="params">(Context c)</span> </span>&#123;</div><div class="line">  <span class="comment">// memInfo.totalMem not supported in pre-Jelly Bean APIs.</span></div><div class="line">  <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.JELLY_BEAN) &#123;</div><div class="line">    ActivityManager.MemoryInfo memInfo = <span class="keyword">new</span> ActivityManager.MemoryInfo();</div><div class="line">    ActivityManager am = (ActivityManager) c.getSystemService(Context.ACTIVITY_SERVICE);</div><div class="line">    am.getMemoryInfo(memInfo);</div><div class="line">    <span class="keyword">if</span> (memInfo != <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="keyword">return</span> memInfo.totalMem;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">      <span class="keyword">return</span> DEVICEINFO_UNKNOWN;</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">long</span> totalMem = DEVICEINFO_UNKNOWN;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      FileInputStream stream = <span class="keyword">new</span> FileInputStream(<span class="string">"/proc/meminfo"</span>);</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        totalMem = parseFileForValue(<span class="string">"MemTotal"</span>, stream);</div><div class="line">        totalMem *= <span class="number">1024</span>;</div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        stream.close();</div><div class="line">      &#125;</div><div class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> totalMem;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2015-05-04T16:00:00.000Z"><a href="/2015/05/05/introduction-to-sky/">2015-05-05</a></time>
+      
+      
+  
+    <h1 class="title"><a href="/2015/05/05/introduction-to-sky/">Dart更近一步，Sky会一统江湖吗？</a></h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>从接触编程到现在，除了搞过几天JQuery，几乎没怎么写过Javascript，刚刚看了两篇介绍 ECMAScript6 的文章，突然觉得没写过JS也没什么好遗憾的。</p>
+<ul>
+<li><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-an-introduction/" target="_blank" rel="external">ES6 In Depth: An Introduction</a></li>
+<li><a href="https://hacks.mozilla.org/2015/04/es6-in-depth-iterators-and-the-for-of-loop/" target="_blank" rel="external">ES6 In Depth: Iterators and the for-of loop</a></li>
+</ul>
+<p>ES6 好像从2009年就开始制定了，现在终于支持 <code>forEach</code>、<code>for-in</code>等操作，也支持<code>Map</code>、<code>Set</code>等数据类型，而且为了考虑兼容性问题居然引入了一个 <code>for-of</code>，不过看到 <a href="http://githut.info/" target="_blank" rel="external">Githut</a> 上关于 github 语言的统计数据，不得不佩服JS社区强大的生产力。</p>
+<p>话说回来，Dart 作为一个崭新的语言，自诞生那天起就抛去了向下兼容的历史包袱，而且可以直接转成 Javascript，Chrome 的 V8 团队还专门为 Dart 做了一个虚拟机 - Dartium。</p>
+<p>Dart 目的跟 Node 一样，也是为了统一前后端开发，这一点在上一篇文章 （<a href="http://blog.csdn.net/feelang/article/details/45469151" target="_blank" rel="external">Dart是一个怎样的语言？</a> ）已经说过了，所以用 Dart 做 web 开发也没有额外的学习成本，当然前提是你得会写 Dart。</p>
+<p>官方教程提供的一个简单的 web 开发教程 - <a href="https://www.dartlang.org/codelabs/darrrt/" target="_blank" rel="external">Avast, Ye Pirates: Write a Web App</a>，用<code>DartEditor</code>导入后，工程结构如下图所示：</p>
+<p><img width="50%" src="http://img.blog.csdn.net/20150504224927710"></p>
+<p>有css，有html，一个最简单的web工程（没有后端），在 <code>DartEditor</code> 中可以用两种方式来运行这个工程。</p>
+<p><img width="50%" src="http://img.blog.csdn.net/20150504225320675"></p>
+<p>如果选择了 <code>Dartium</code>，编译成功后会唤起一个使用了 Dartium 引擎的 chrome 浏览器，而过选择了 <code>Run as JavaScript</code> 就会先把 dart 编译成 js 的工程（工程结构图中灰色的部分），然后唤起一个使用了 V8 引擎的 chrome 浏览器。</p>
+<p>其实用 Dart 做开发还是挺方便的，js 都是可以直接拿来用的，但是社区不成熟，不像 node 社区那样有那么多的库。</p>
+<hr>
+<p>我们再来看看下一代 Android 开发框架 - <a href="https://github.com/domokit" target="_blank" rel="external">sky</a>，今天照着 readme 玩了一下官方提供的几个demo，流畅度可以跟 native 媲美，但是需要从网络加载代码，所以启动时间比较慢，毕竟只是一个实验版本，像 react-native 那样做个本地缓存也不会有什么问题。</p>
+<p>整个开发过程与上面的 web 开发非常相似，只不过代码文件的后缀名换了而已。</p>
+<p>首先需要创建一个 <code>pubspec.yaml</code>，类似于 Node 的 <code>package.json</code> 或者 gradle 脚本的 <code>build.gradle</code>，主要是一些包依赖关系和 APP 的基本信息，最后一行表示依赖最新版本的 sky。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">name:</span> your_app_name</div><div class="line"><span class="attr">dependencies:</span></div><div class="line"><span class="attr"> sky:</span> any</div></pre></td></tr></table></figure>
+<p>在当前目录下执行 <code>pub get</code>，会根据 <code>pubspec.yaml</code> 的依赖配置获取 APP 所依赖的包。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">➜  widgets git:(master) ✗ pub get</div><div class="line">Resolving dependencies... (1.7s)</div><div class="line">+ mojo 0.0.5+dart-summit-1</div><div class="line">+ sky 0.0.5+dart-summit-7</div><div class="line">Changed 2 dependencies!</div><div class="line">➜  widgets git:(master) ✗</div></pre></td></tr></table></figure>
+<p>执行完毕后会发现在本地多了一个 <code>package</code> 文件夹，里面有刚刚下载的两个包。</p>
+<p><img src="http://img.blog.csdn.net/20150505003910350" alt="这里写图片描述"></p>
+<p><em>pub会首先把下载来的包缓存到本地，如果有的新的下载可以直接引用之前下载过的包。</em></p>
+<p>sky 我们都知道了，它就是 Android 全新的开发框架，由两部分组成：</p>
+<pre>
+<i>The Sky engine</i>. The engine is the core of the system. Written in C++, the engine provides the muscle of the Sky system. The engine provides several primitives, including a soft real-time scheduler and a hierarchial, retained-mode graphics system, that let you build high-quality apps.
+
+<i>The Sky framework</i>. The framework makes it easy to build apps using Sky by providing familiar user interface widgets, such as buttons, infinite lists, and animations, on top of the engine using Dart. These extensible components follow a functional programming style inspired by React.
+</pre>
+
+<p>简单来说，<em>Sky engine</em> 是一个图形系统，VDOM 的创建和diff应该也是它负责的，而 <em>Sky framework</em> 则是一个UI库，提供了我们创建 VDOM 时所需的节点元素。</p>
+<p>那 mojo 又是什么呢？</p>
+<pre>Mojo is an effort to extract a common platform out of Chrome's renderer and plugin processes that can support multiple types of sandboxed content, such as HTML, Pepper, or NaCl.</pre>
+
+<p>简单来说，mojo 就是 sky 的运行时环境，但是 domokit 下还有一个<a href="https://github.com/domokit/mojo_sdk" target="_blank" rel="external">mojo-sdk</a>，这个 sdk 为我们提供给了基于 mojo 做二次开发所用到的 API。</p>
+<pre>The Mojo Public API is a binary stable API to the Mojo system.</pre>
+
+<p>它支持很多种语言，目前为止包括 <code>C</code>、<code>CPP</code>、<code>Dart</code>、<code>Go</code>、<code>Java</code>、<code>js</code>。</p>
+<p>也就是说，Google 想打造的是这样一个生态系统。</p>
+<img src="/2015/05/05/introduction-to-sky/dart.png" alt="sky framework" title="sky framework">
+<hr>
+<p>如果这个愿景能够实现，120fps的卖点也许会一统江湖，但是 Google IO 2015 根本没有提及这个项目，希望 Google 不是玩票 :(</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+
+
+
+  <article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
         <time datetime="2015-05-03T16:00:00.000Z"><a href="/2015/05/04/introduction-to-dart/">2015-05-04</a></time>
       
       
@@ -329,128 +549,6 @@ constructor: Closure$1(int) 即为编译器添加的构造方法。
 
 
 
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-07-09T16:00:00.000Z"><a href="/2014/07/10/four-anniversary-after-graduation/">2014-07-10</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/07/10/four-anniversary-after-graduation/">毕业四年了</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>2010年6月底，终于本科毕业进入职场，那时的我“很傻很天真”，不畏惧将来，不惧怕权贵，如假包换的“愣头青”一枚。顽固、无知、浮躁，是现在的我给4年前的我贴上的标签。</p>
-<p>2014年7月，本科毕业四周年，职场混迹三年，海外生活一年，站在今天回首过去，发现走了很多弯路，究其原因，个人占7成，环境占3成。</p>
-<h2 id="我与日语"><a href="#我与日语" class="headerlink" title="我与日语"></a>我与日语</h2><p>刚毕业那会，误打误撞进入日企，从此与日语结下不解之缘，一口气考到日语最高等级JLPT-N1，然后辞职去日本游学一年，口语如今也说得过去，读日文原版书也毫无压力。现在终于下定决心，离开日语圈子，一心一意搞我钟爱的编程。从今以后，日语可能只是一个兴趣爱好了，与工作不再相关，为了与它道别，再次参加了JLPT-N1的考试，不论考试结果如何，这是一场告别战。(最终成绩 161分)</p>
-<blockquote>
-<p>さようなら、日本語。</p>
-</blockquote>
-<h2 id="我与编程语言"><a href="#我与编程语言" class="headerlink" title="我与编程语言"></a>我与编程语言</h2><p>大学期间疯狂参加各种比赛，什么数学趣味知识大赛，算法比赛，数学建模，能参加的都参加了。非常遗憾的是，没有进一步深入，一方面是因为当时大学校园里没有参加ACM和topcoder的氛围，另一方面也因为个人眼光太狭隘，只局限于周围的人，没有能里跳出这个圈子。而且大学期间本能地很排斥java，喜欢C++。进而直接导致在MFC上花了过多的时间，甚至工作以后有大概半年多的时间还是在搞这个。<br>现在来看，也许对C++并不是“真爱”，只是当时大家都觉得C++比java难，而我比较喜欢啃硬骨头，所以就开始死嗑C++，无论是简单的字符串处理还是UI，都用它来做，很显然这是相当不明智的做法。</p>
-<p>对于当时的项目来说，用C++实在是太麻烦了。因为自动化测试软件本身不追求效率，何不用脚本语言来写，然后就跟当时的一个实习生边学边做，把解析C代码文件的依赖关系、生成makefile的C++代码都用Python重写了，测试用例文件也直接使用python，抛弃之前别人写的测试用例解析器。如此一来测试人员就可以既迅速又自由地测试用例，但是另一面却增加了学习成本，不是每个人都喜欢学习新东西，后来随着我离开项目组去做android开发，推进地也不顺利。</p>
-<p>生成测试目标和测试用例的功能全部用Python重写之后，接下来的一个重点就是软件UI了，那个时候我们用的还是XP系统，win7没出，vista没人用。提到windows上的UI，当然不能再搞MFC了，因为再搞下去会没完没了，于是选择了基于C#的框架WPF，那个时候我坚信，随着微软跟诺基亚的强强结合，WP肯定会大卖，这样我们就可以无缝迁移到手机端了，现在来看，一句话：</p>
-<blockquote>
-<p>あまかった　Naive</p>
-</blockquote>
-<p>这个项目做的很失败，一个主要原因就是我对采用新技术开发的风险预估不够，搞的大家都很累，好歹最后还是完成了。后来读了《人月神话》才知道，其实是陷入了二次系统的泥潭。<br>领导成功地把这个项目申请为公司的自主项目，项目企划书上写的人员配置与真实情况大相径庭，实际上是我一个人带三个实习生，加起来也不过1.6个人，更何况那时候才刚进公司一年不到，工资比较低，所以实际花费肯定低于1.6。以至于后面的大部分工作都是在做文档、整理数据、控制进度、安排工作。本来这个项目的1.0版本是通过日本客户付给我们钱做出来的，如果转化为公司的自主项目必然要跟日方客户谈清楚各自所占的百分比。从个人角度来看，领导不敢去谈，因为这会损害与客户之间的关系。我当时也已经快受不了整天加班整理文档的琐碎工作，于是把当前的状况跟他仔细谈了一下，并希望领导给我们配一个编程能力不错的正式员工。<br>可是，第二天领导把我喊到会议室，突然告诉我，这个项目他不打算做了，让我去做其他事情。最后他一个人参加了这个项目的最后一次自主项目会议（没让我参加，之前一直都是我们共同参加的）。不知道他是怎么跟总经理汇报的，结果就是这个项目的自主产品之路就结束了。</p>
-<p>当时公司正在接日本富士通的android开发业务，我也从2012年1月1日开始正式转到其他部门，开始了android之旅。一开始对android开发真是一窍不通，凭借扎实的C++功底，把android的四大components - Activity Service Receiver ContentProvider弄清楚之后，很快就上手了，我负责的功能模块整体来看比较简单（当然了，整个team都是UI开发），由于那时日语已经过了N1，所以做为sub-leader一边跟日本客户沟通，一边带着其他三个人一起写代码。这个项目几乎天天加班，不分昼夜，也不分周末，一周通宵三次的情况也时有发生，高峰时期有30个人一起开发，由于前期架构的失败，导致大量的重复代码，垃圾代码，到了后期bug迭出，近乎失控。就这样项目一直延期到7月份才结束。其实《人月神话》中也讲到，</p>
-<blockquote>
-<p>向一个已经延期的项目中增加更多的人手，只会导致项目更加延迟，因为沟通成本会急剧上升</p>
-</blockquote>
-<p>一直以来我都想做一些比较难的东西，可惜这两个项目都无法看到希望，我记得网上看过一句名言：</p>
-<blockquote>
-<p>判断应不应该在一个公司继续待下去的一个标准就是看看周围工作年限比你长的人，你是否也想成为这样的人。</p>
-</blockquote>
-<p>我不想成为那样的人，于是下定决心去日本留学深造，8月份离职，去新东方学了一下TOEFL，凑够了学费，2012年10月，登上了飞往日本的飞机。坐在飞机上，看着陆地上的房子变得越来越小、越来越小，心中思绪万千，将来的我会在哪里，一切都是未知数。</p>
-<p>在日本这一年，深深地喜欢上了自然语言处理（NLP），因为本身对自然语言的兴趣，掌握中文、日文、英文三国语言，再加上计算机知识，应该很easy，就把《Natural Language Processing with Python》前后读了两遍，代码照着敲了一遍，后面又看了几本日语版的介绍NLP的书，仍然不得要领。后来读了《数学之美》我才发现我又あまい了，因为现在的自然语言处理所用的方法是基于统计的，基于规则的方法已经不在适用。所以，我觉得：</p>
-<blockquote>
-<p>自然语言处理重点不在自然语言，而是处理。</p>
-</blockquote>
-<p>不过这个学习过程倒是让我的Python编程能力提升了不少。</p>
-<p>当决定回国时，重新规划了自己的职业生涯，萌生了一个新的想法，天真地以为对日外包也好，产品研发也好，都是不同的行业，只要充分发挥自己的能力，一样可以成为一个行业的佼佼者。</p>
-<p>2013年10月，又回到了原先的公司，作为leader，继续做富士通手机的Android应用开发，每天跟日方客户开会、讨论，就这样也忙得不亦乐乎，直到去北京参加了一次 MDCC 2014大会，在会场买了一本《淘宝技术这十年》，读罢此书后让我明白:</p>
-<blockquote>
-<p>无论你做任何行业，不要忽略了兴趣，那才是你最大的动力</p>
-</blockquote>
-<p>所以，不能忽略兴趣，我要继续专心搞技术。<br>四年了，写了不少代码，也读了不少书，可惜这四年没有始终保持一条技术主线，总是走过一段路后就叉到其路上。<br>看着开源社区的大牛们所写的代码，惭愧汗颜。想成为大牛，就必须改变现状，朝着目标前进！</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-05-17T16:00:00.000Z"><a href="/2014/05/18/how-to-inheritent-an-inner-class/">2014-05-18</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/05/18/how-to-inheritent-an-inner-class/">怎样继承一个内部类</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>定义一个内部类时，这个内部类会有一个隐式引用 (implicit reference) 指向外部类的实例。例如下面的代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其实，内部类Inner默认会有一个带参数的构造函数，我们通过反射来看一下。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.reflect.Constructor;</div><div class="line"><span class="keyword">import</span> java.lang.reflect.Field;</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getConstructors</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">for</span> (Constructor&lt;?&gt; cons : getClass().getDeclaredConstructors()) &#123;</div><div class="line">                StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">                sb.append(<span class="string">"constructor: "</span>).append(cons.getName()).append(<span class="string">"("</span>);</div><div class="line">                <span class="keyword">for</span> (Class&lt;?&gt; param : cons.getParameterTypes()) &#123;</div><div class="line">                    sb.append(param.getSimpleName()).append(<span class="string">", "</span>);</div><div class="line">                &#125;</div><div class="line">                <span class="keyword">if</span> (sb.charAt(sb.length() - <span class="number">1</span>) == <span class="string">' '</span>) &#123;</div><div class="line">                    sb.replace(sb.length() - <span class="number">2</span>, sb.length(), <span class="string">")"</span>);</div><div class="line">                &#125; <span class="keyword">else</span> &#123;</div><div class="line">                    sb.append(<span class="string">')'</span>);</div><div class="line">                &#125;</div><div class="line">                System.out.println(sb);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritInner</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        WithInner wi = <span class="keyword">new</span> WithInner();</div><div class="line">        WithInner.Inner i = wi.new Inner();</div><div class="line">        i.getConstructors();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>输出结果为：</p>
-<pre>
-constructor: WithInner$Inner(WithInner)
-</pre>
-
-<p>从结果可以看出参数的类型就是就是外部类 (outer class)，也就是说，构造内部类的时候，必须要给它一个外部类的引用。接下来我们让 <code>InheritInner</code> 继承 <code>WithInner.Inner</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;&#125;</div><div class="line">&#125;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritInner</span> <span class="keyword">extends</span> <span class="title">WithInner</span>.<span class="title">Inner</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>无法通过编译：</p>
-<pre>
-InheritInner.java:5: an enclosing instance that contains WithInner.Inner is required
-public class InheritInner extends WithInner.Inner {
-       ^
-1 error
-</pre>
-
-<p>报错信息提示我们 <code>InheritInner</code> 需要一个 <code>WithInner</code> 实例。</p>
-<p>那我们给 <code>InheritInner</code> 加上我们反射出的带参数的构造函数。照样编译通不过，而且会报同样的错误。这是因为语法规定：在继承内部类的时候，在构造函数中必须要添加 enclosingClassReference.super()。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">WithInner</span> </span>&#123;</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Inner</span> </span>&#123;&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InheritInner</span> <span class="keyword">extends</span> <span class="title">WithInner</span>.<span class="title">Inner</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">InheritInner</span><span class="params">(WithInner wi)</span> </span>&#123;</div><div class="line">        wi.<span class="keyword">super</span>();</div><div class="line">    &#125;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        WithInner wi = <span class="keyword">new</span> WithInner();</div><div class="line">        InheritInner ii = <span class="keyword">new</span> InheritInner(wi);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>OK，编译通过，运行也正常。但是为什么要这么做，我现在也不是很清楚。</p>
-
-      
-    </div>
-    <footer>
-      
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
 
 <nav id="pagination">
   
@@ -475,7 +573,7 @@ public class InheritInner extends WithInner.Inner {
 <div class="widget tagcloud">
   <h3 class="title">标签云</h3>
   <div class="entry">
-    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 12px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 12px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 12px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/前端/" style="font-size: 14px;">前端</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 14px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
+    <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Git/" style="font-size: 11.67px;">Git</a> <a href="/tags/Gradle/" style="font-size: 10px;">Gradle</a> <a href="/tags/HTTP2/" style="font-size: 10px;">HTTP2</a> <a href="/tags/Hybrid/" style="font-size: 10px;">Hybrid</a> <a href="/tags/Java/" style="font-size: 16.67px;">Java</a> <a href="/tags/Mockito/" style="font-size: 16.67px;">Mockito</a> <a href="/tags/OkHttp/" style="font-size: 10px;">OkHttp</a> <a href="/tags/Retrofit/" style="font-size: 11.67px;">Retrofit</a> <a href="/tags/RxJava/" style="font-size: 10px;">RxJava</a> <a href="/tags/Web/" style="font-size: 11.67px;">Web</a> <a href="/tags/dart/" style="font-size: 10px;">dart</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/iOS/" style="font-size: 10px;">iOS</a> <a href="/tags/个人总结/" style="font-size: 18.33px;">个人总结</a> <a href="/tags/产品设计/" style="font-size: 10px;">产品设计</a> <a href="/tags/前端/" style="font-size: 15px;">前端</a> <a href="/tags/单元测试/" style="font-size: 10px;">单元测试</a> <a href="/tags/汽车/" style="font-size: 10px;">汽车</a> <a href="/tags/测试/" style="font-size: 13.33px;">测试</a> <a href="/tags/移动开发/" style="font-size: 10px;">移动开发</a> <a href="/tags/网络/" style="font-size: 10px;">网络</a>
   </div>
 </div>
 
@@ -498,11 +596,11 @@ public class InheritInner extends WithInner.Inner {
       </li>
     
       <li>
-        <a href="/2017/07/28/okhttp-overview/">OkHttp略读</a>
+        <a href="/2017/08/21/note-of-css-mastery/">CSS Mastery笔记</a>
       </li>
     
       <li>
-        <a href="/2017/07/26/mockito-details-5-annotation/">Mockito 详解（五）MockitoAnnotation</a>
+        <a href="/2017/07/28/okhttp-overview/">OkHttp略读</a>
       </li>
     
   </ul>
