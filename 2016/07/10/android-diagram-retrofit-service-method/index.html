@@ -64,8 +64,8 @@
     </header>
     <div class="entry">
       
-        <p>通过 <a href="http://www.liangfei.me/2016/07/06/my-practice-of-retrofit-and-rxandroid/" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a>，我们已经了解到了 Retrofit 的基本用法，为了知其所以然，我们以图解加源码的方式从 Service Method 入手，逐步解析 Retrofit。</p>
-<p>首先以官方网站的示例代码为例，看一下一个 Service Method 的组成部分。</p>
+        <p>通过 <a href="http://www.liangfei.me/2016/07/06/android-retrofit-and-rxjava" target="_blank" rel="external">Retrofit + RxAndroid 实践总结</a>，我们已经了解到了 Retrofit 的基本用法，为了知其所以然，我们以图解加源码的方式从 Service Method 入手，逐步拨开 Retrofit 的神秘面纱。</p>
+<p>首先以官方网站的示例代码为例，看一下一个 Service Method 的组成部分：</p>
 <img src="/2016/07/10/android-diagram-retrofit-service-method/service_method.png" alt="service method" title="service method">
 <p><code>ServiceMethod</code> 使用了 Builder 模式，先来看 <code>ServiceMethod.Builder</code> 的构造方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Retrofit retrofit, Method method)</span> </span>&#123;</div><div class="line">  <span class="keyword">this</span>.retrofit = retrofit;</div><div class="line">  <span class="keyword">this</span>.method = method;</div><div class="line">  <span class="keyword">this</span>.methodAnnotations = method.getAnnotations();</div><div class="line">  <span class="keyword">this</span>.parameterTypes = method.getGenericParameterTypes();</div><div class="line">  <span class="keyword">this</span>.parameterAnnotationsArray = method.getParameterAnnotations();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
@@ -93,10 +93,9 @@
 <p>由以上代码可以看出，<code>CallAdapter</code> 会把一个 <code>Call</code> 类型适配为用户定义的 service method 的 return type。</p>
 <p>举个例子，如果我们配合 RxAndroid 使用 Retrofit，service method 的返回值类型会由 <code>Call</code> 类型变成 <code>Observable</code> 类型，这个转换其实就由 <code>RxJavaCallAdapterFactory</code> 来实现。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()      </div><div class="line">    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())</div><div class="line">    .baseUrl(BASE_URL) .build();</div></pre></td></tr></table></figure>
-<p>由以上代码可以看出，<code>RxJavaCallAdapterFactory</code> 是通过 <code>Retrofit.Builder</code> 的<br><code>addCallAdapterFactory</code> 方法传递给 <code>Retrofit</code>，而 <code>create</code> 方法中 <code>adapt</code> 的执行者却是 <code>ServiceMethod</code>，也就是说 <code>ServiceMethod</code> 的 <code>CallAdapter</code> 是由 <code>Retrofit</code> 提供的，两者的交互关系如下图所示：</p>
+<p>由以上代码可以看出，<code>RxJavaCallAdapterFactory</code> 是通过 <code>Retrofit.Builder</code> 的<br><code>addCallAdapterFactory</code> 方法传递给 <code>Retrofit</code>，而 <code>create</code> 方法中 <code>adapt</code> 的执行者却是 <code>ServiceMethod</code>，也就是说 <code>ServiceMethod</code> 的 <code>CallAdapter</code> 是由 <code>Retrofit</code> 提供的，两者的交互关系如下图所示：  </p>
+<hr>
 <img src="/2016/07/10/android-diagram-retrofit-service-method/retrofit_and_service_method.png" alt="retrofit vs service method" title="retrofit vs service method">
-<h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><p>敬请期待下一篇 - <strong>图解 Retrofit - Converter</strong></p>
-
       
     </div>
     <footer>

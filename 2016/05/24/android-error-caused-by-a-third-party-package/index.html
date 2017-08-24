@@ -71,7 +71,8 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tools:replace="android:allowBackup, android:theme"</div></pre></td></tr></table></figure>
 <p>结果主题依然失效，然后把三方包中在 AndroidManifest 中注册的 <code>Activity</code> 挪到 App 的 Manifest 中，还是不行。</p>
 <p>最后跳转 <code>@style/AppTheme</code> 时发现三方包的依赖包中也定义了一个同名的 Style，而且还是在 <strong>values-21</strong> 文件下，而 App 并没有定义 <strong>values-21</strong> 下的 Style，所以 APP 的主题就被三方包的 Style 给覆盖掉了，而 <code>android:replace=&#39;android:theme</code> 只有在属性冲突的时候起作用，我的 App 并没有提供 values-21 的 Style，因此没有冲突，无法 <code>replace</code>，于是悲剧了。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<p><strong>解决方案</strong></p>
+<ol>
 <li>App 的主题名字最好具有唯一性， 不要叫 <code>AppTheme</code>，容易同名。</li>
 <li>App 的主题要定义完整，比如 values / values-21</li>
 </ol>
