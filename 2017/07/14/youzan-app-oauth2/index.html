@@ -69,53 +69,33 @@
     </header>
     <div class="entry">
       
-        <p>分析来源： <a href="https://tools.ietf.org/html/rfc6749" target="_blank" rel="external">The OAuth 2.0 Authorization Framework</a>。</p>
+        <p><strong>本文精华</strong></p>
+<ul>
+<li>分析来源： <a href="https://tools.ietf.org/html/rfc6749" target="_blank" rel="external">The OAuth 2.0 Authorization Framework</a>。 </li>
+<li>找到 Resource Owner 是判断 OAuth2 模型的关键。</li>
+</ul>
+<hr>
 <a id="more"></a>
-<p>有赞自有 APP（微商城、微小店、买家版）的 OAuth2 类型是 <strong>Resource Owner Password Credentials</strong>。</p>
-<blockquote>
-<p>The resource owner password credentials (i.e., username and password) can be used directly as an authorization grant to obtain an access token. The credentials should only be used when there is a high degree of trust between the resource owner and the client (e.g., the client is part of the device operating system or a highly privileged application), and when other authorization grant types are not available (such as an authorization code).</p>
-<p>Even though this grant type requires direct client access to the resource owner credentials, the resource owner credentials are used for a single request and are exchanged for an access token. This grant type can eliminate the need for the client to store the resource owner credentials for future use, by exchanging the credentials with a long-lived access token or refresh token.</p>
-</blockquote>
+<p>有赞自有 APP（微商城、微小店）的 OAuth2 类型是 <strong>Resource Owner Password Credentials</strong>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">The resource owner password credentials (i.e., username and password)</div><div class="line">can be used directly as an authorization grant to obtain an access</div><div class="line">token.  The credentials should only be used when there is a high</div><div class="line">degree of trust between the resource owner and the client (e.g., the</div><div class="line">client is part of the device operating system or a highly privileged</div><div class="line">application), and when other authorization grant types are not</div><div class="line">available (such as an authorization code).</div><div class="line"></div><div class="line">Even though this grant type requires direct client access to the</div><div class="line">resource owner credentials, the resource owner credentials are used</div><div class="line">for a single request and are exchanged for an access token.  This</div><div class="line">grant type can eliminate the need for the client to store the</div><div class="line">resource owner credentials for future use, by exchanging the</div><div class="line">credentials with a long-lived access token or refresh token.</div></pre></td></tr></table></figure>
 <p>其验证流程如下所示：</p>
-<pre><code>+----------+
-| Resource |
-|  Owner   |
-|          |
-+----------+
-    v
-    |    Resource Owner
-    (A) Password Credentials
-    |
-    v
-+---------+                                  +---------------+
-|         |&gt;--(B)---- Resource Owner -------&gt;|               |
-|         |         Password Credentials     | Authorization |
-| Client  |                                  |     Server    |
-|         |&lt;--(C)---- Access Token ---------&lt;|               |
-|         |    (w/ Optional Refresh Token)   |               |
-+---------+                                  +---------------+
-
-    Figure 5: Resource Owner Password Credentials Flow
-</code></pre><p>可以通过一个具体的请求来分析一下登录流程：</p>
-<p><strong>第一步：</strong> 用户（resource owner）通过 APP（client）向 SSO接入服务（<a href="https://uic.youzan.com/sso/yzApp/login）发起登录请求来获取" target="_blank" rel="external">https://uic.youzan.com/sso/yzApp/login）发起登录请求来获取</a> access token。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">+----------+</div><div class="line">| Resource |</div><div class="line">|  Owner   |</div><div class="line">|          |</div><div class="line">+----------+</div><div class="line">      v</div><div class="line">      |    Resource Owner</div><div class="line">      (A) Password Credentials</div><div class="line">      |</div><div class="line">      v</div><div class="line">+---------+                                  +---------------+</div><div class="line">|         |&gt;--(B)---- Resource Owner -------&gt;|               |</div><div class="line">|         |         Password Credentials     | Authorization |</div><div class="line">| Client  |                                  |     Server    |</div><div class="line">|         |&lt;--(C)---- Access Token ---------&lt;|               |</div><div class="line">|         |    (w/ Optional Refresh Token)   |               |</div><div class="line">+---------+                                  +---------------+</div><div class="line"></div><div class="line">      Figure 5: Resource Owner Password Credentials Flow</div></pre></td></tr></table></figure>
+<p>可以通过一个具体的请求来分析一下登录流程：</p>
+<p><strong>第一步：</strong> 用户（resource owner）通过 APP（client）向 SSO接入服务发起登录请求来获取 access token。</p>
+<blockquote>
+<p><a href="https://uic.youzan.com/sso/yzApp/login" target="_blank" rel="external">https://uic.youzan.com/sso/yzApp/login</a></p>
+</blockquote>
 <p>该请求必须是 POST 请求（Content-Type: application/x-www-form-urlencoded），请求参数如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">grant_type</div><div class="line">      REQUIRED.  Value MUST be set to &quot;password&quot;.</div><div class="line"></div><div class="line">username</div><div class="line">      REQUIRED.  The resource owner username.</div><div class="line"></div><div class="line">password</div><div class="line">      REQUIRED.  The resource owner password.</div><div class="line"></div><div class="line">scope</div><div class="line">      OPTIONAL.  The scope of the access request.</div></pre></td></tr></table></figure>
 <p>除此之外还要带上客户端身份（client credentials）</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">client_id</div><div class="line">      REQUIRED.</div><div class="line"></div><div class="line">client_secret</div><div class="line">      REQUIRED.</div></pre></td></tr></table></figure>
 <p><strong>第二步：</strong> SSO 接入服务拿到请求之后，先通过 username &amp; password 去 Account服务验证用户身份，然后携带 Account 服务返回的 user_id 以及 client_id &amp; client_secret 去 carmen-oauth 验证 client 身份，</p>
 <img src="/2017/07/14/youzan-app-oauth2/auth-server.jpeg" alt="auth-server.jpeg" title="">
-<blockquote>
-<p>The authorization server MUST:</p>
-<ul>
-<li>require client authentication for confidential clients or for any client that was issued client credentials (or with other authentication requirements),</li>
-<li>authenticate the client if client authentication is included, and</li>
-<li>validate the resource owner password credentials using its existing password validation algorithm.</li>
-</ul>
-</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">The authorization server MUST:</div><div class="line"></div><div class="line">   o  require client authentication for confidential clients or for any</div><div class="line">      client that was issued client credentials (or with other</div><div class="line">      authentication requirements),</div><div class="line"></div><div class="line">   o  authenticate the client if client authentication is included, and</div><div class="line"></div><div class="line">   o  validate the resource owner password credentials using its</div><div class="line">      existing password validation algorithm.</div></pre></td></tr></table></figure>
 <p><strong>第三步：</strong> 如果 client 和 resource owner 的身份验证成功，authorization server（SSO接入服务 &amp; carmen-oauth）就会签发 access_token 以及可选的 refresh_token。</p>
 <p>Response 参数如下：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">The authorization server issues an access token and optional refresh token, </div><div class="line">and constructs the response by adding the following parameters </div><div class="line">to the entity-body of the HTTP response with a 200 (OK) status code:</div><div class="line"></div><div class="line">   access_token</div><div class="line">         REQUIRED.  The access token issued by the authorization server.</div><div class="line"></div><div class="line">   token_type</div><div class="line">         REQUIRED.  The type of the token issued as described in</div><div class="line">         Section 7.1.  Value is case insensitive.</div><div class="line"></div><div class="line">   expires_in</div><div class="line">         RECOMMENDED.  The lifetime in seconds of the access token.  For</div><div class="line">         example, the value &quot;3600&quot; denotes that the access token will</div><div class="line">         expire in one hour from the time the response was generated.</div><div class="line">         If omitted, the authorization server SHOULD provide the</div><div class="line">         expiration time via other means or document the default value.</div><div class="line">   </div><div class="line">   refresh_token</div><div class="line">         OPTIONAL.  The refresh token, which can be used to obtain new</div><div class="line">         access tokens using the same authorization grant as described</div><div class="line">         in Section 6.</div><div class="line"></div><div class="line">   scope</div><div class="line">         OPTIONAL, if identical to the scope requested by the client;</div><div class="line">         otherwise, REQUIRED.  The scope of the access token as</div><div class="line">         described by Section 3.3.</div></pre></td></tr></table></figure>
-<h2 id="AppSDK-的-OAuth2-类型分析"><a href="#AppSDK-的-OAuth2-类型分析" class="headerlink" title="AppSDK 的 OAuth2 类型分析"></a>AppSDK 的 OAuth2 类型分析</h2><p>mo</p>
+<p>时机可以的话，再来分析一下「AppSDK」和「微商城小程序」。 </p>
 
       
     </div>
