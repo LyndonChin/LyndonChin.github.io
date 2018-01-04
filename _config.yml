@@ -127,5 +127,5 @@ livereload:
 deploy:
   type: git
   repo: git@github.com:LyndonChin/LyndonChin.github.io.git
-  branch: gh-pages
+  branch: master
 
