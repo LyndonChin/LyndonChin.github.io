@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Git Flow 用法总结 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2015/08/04/meeting-git-flow/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Git" title="Git">Git</a>
+                        
+                    </div>
+                    <h1>Git Flow 用法总结</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2015-08-04
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>Git Flow 是 Git 一个扩展，基于 Vincent Driessen 提出的 <a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="noopener">A successful Git branching model</a>。</p>
+<a id="more"></a>
+<p><strong>注意</strong></p>
+<ul>
+<li>Git Flow 基于 <code>merge</code> 而不是 <code>rebase</code>，基于 <code>merge</code> 的优势在于可以很快定位到出问题的 <code>commit</code>，便于快速回滚。</li>
+<li>git merge –no-ff 可以保证即使是 fast-forward 也会产生一个 merge commit。</li>
+</ul>
+<p><img src="http://nvie.com/img/git-model@2x.png" alt=""></p>
+<p>基于以下五类 branch 进行项目管理。</p>
+<ol>
+<li>master - 每一个 commit 都是一个可发布的版本</li>
+<li>develop - 开发分支</li>
+<li>release - 发布分支，fork 自 develop 分支</li>
+<li>feature - 新功能分支，fork 自 develop 分支</li>
+<li>hotfix - 线上紧急修复</li>
+</ol>
+<p>以上五种 branch 基本可以覆盖我们开发中常见的活动。</p>
+<h2 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h2><h3 id="master"><a href="#master" class="headerlink" title="master"></a>master</h3><p>master 是主分支，必须保证它的每一个 commit 都是可以发布的，每一个正式发布的版本都要打上 tag。</p>
+<p>release- 分支以及 hotfix- 分支都要 merge 到此分支。</p>
+<h3 id="develop"><a href="#develop" class="headerlink" title="develop"></a>develop</h3><p>develop 是开发分支，当需要新功能开发时，首先从 develop 分支 fork 出一个 feature- 分支，开发完成后再 merge 回 develop 分支。</p>
+<p>feature- 分支可以是实验性的功能，也可能是一个下一个版本需要的功能。</p>
+<h3 id="release"><a href="#release" class="headerlink" title="release"></a>release</h3><p>realse 分支是临近发布时从 develop 分支拉取的分支，这样可以保证当前的发布版本不会影响到下一个版本的新功能开发。</p>
+<pre>
+          |develop
+          |
+          *
+          |\
+          | \
+         /*  |relase
+        / |  |
+feature|  |  |
+       |  |  |
+       |  |  |
+</pre>
+
+<p>release 分支创建以后，还可以继续在 develop 上进行新功能开发，但是 release 分支只允许小的 bug fix，不能有大功能改动。</p>
+<p>最后 release 分支还是要 merge 回 master 和 feature 分支。</p>
+<h3 id="feature"><a href="#feature" class="headerlink" title="feature"></a>feature</h3><p>feature 负责新功能开发，开发完毕后需要 merge 回 develop 分支。</p>
+<h3 id="hotfix"><a href="#hotfix" class="headerlink" title="hotfix"></a>hotfix</h3><p>hotfix 的主要用于线上 bug 的紧急修复，fork 自 master 分支，修复完毕后需要 merge 回 master 分支和 develop 分支。</p>
+<p>如果此时 release 分支还存在，hotfix 需要 merge 到 release 分支而不是 develop 分支，因为 release 分支最终会被 merge 到 develop 分支上。</p>
+<h2 id="命令"><a href="#命令" class="headerlink" title="命令"></a>命令</h2><h3 id="创建-feature-分支"><a href="#创建-feature-分支" class="headerlink" title="创建 feature 分支"></a>创建 feature 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b myfeature develop</span><br></pre></td></tr></table></figure>
+<h3 id="完成-feature-分支"><a href="#完成-feature-分支" class="headerlink" title="完成 feature 分支"></a>完成 feature 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">$ git branch -d myfeature</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
+<h3 id="创建-release-分支"><a href="#创建-release-分支" class="headerlink" title="创建 release 分支"></a>创建 release 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b relese-1.2 develop</span><br><span class="line">$ ./bump-version.sh 1.2</span><br><span class="line">$ git commit -a -m <span class="string">"Bumped version number to 1.2"</span></span><br></pre></td></tr></table></figure>
+<h3 id="完成-release-分支"><a href="#完成-release-分支" class="headerlink" title="完成 release 分支"></a>完成 release 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">$ git tag -a 1.2</span><br><span class="line">$ git checkout develop</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">$ git branch -d release-1.2</span><br></pre></td></tr></table></figure>
+<h3 id="创建-hotfix-分支"><a href="#创建-hotfix-分支" class="headerlink" title="创建 hotfix 分支"></a>创建 hotfix 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b hotfix-1.2.1 master</span><br><span class="line">$ ./bump-version.sh 1.2.1</span><br><span class="line">$ git commit -a -m <span class="string">"Bumped version number to 1.2.1"</span></span><br><span class="line">$ git commit -m<span class="string">"Fixed savere production problem"</span></span><br></pre></td></tr></table></figure>
+<h3 id="完成-hotfix-分支"><a href="#完成-hotfix-分支" class="headerlink" title="完成 hotfix 分支"></a>完成 hotfix 分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">$ git tag -a 1.2.1</span><br><span class="line">$ git checkout develop</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">$ git branch -d hotfix-1.2.1</span><br></pre></td></tr></table></figure>
+<h2 id="Git-Flow-命令"><a href="#Git-Flow-命令" class="headerlink" title="Git Flow 命令"></a>Git Flow 命令</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git flow init</span><br></pre></td></tr></table></figure>
+<h3 id="feature-1"><a href="#feature-1" class="headerlink" title="feature"></a>feature</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git flow feature start &lt;name&gt;</span><br><span class="line">$ git flow feature finish &lt;name&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="release-1"><a href="#release-1" class="headerlink" title="release"></a>release</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git flow release start &lt;release&gt; [&lt;base&gt;]</span><br><span class="line">$ git flow release finish &lt;release&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="hotfix-1"><a href="#hotfix-1" class="headerlink" title="hotfix"></a>hotfix</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git flow hotfix start &lt;release&gt; [&lt;base&gt;]</span><br><span class="line">$ git flow hotfix finish &lt;release&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://github.com/danielkummer/git-flow-cheatsheet" target="_blank" rel="noopener">git-flow-cheatsheet</a></li>
+<li><a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="noopener">A successful Git branching model</a></li>
+</ul>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2015/09/30/android-source-reading-of-explosion-field/" data-toggle="tooltip" data-placement="top" title="Android 中 View 炸裂特效的实现分析">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2015/08/03/meeting-ios/" data-toggle="tooltip" data-placement="top" title="iOS 开发总结">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Git" title="Git">Git</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2015/08/04/meeting-git-flow/";
+var disqus_url = "http://liangfei.me/2015/08/04/meeting-git-flow/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

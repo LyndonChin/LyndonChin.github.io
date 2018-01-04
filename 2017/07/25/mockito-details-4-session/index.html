@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Mockito 详解（四）MockitoSession - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/07/25/mockito-details-4-session/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                    <h1>Mockito 详解（四）MockitoSession</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-07-25
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><code>MockitoSession</code>表示一次mock会话，这个会话通常是一次测试方法的执行。</p>
+<a id="more"></a>
+<p>在一个会话周期内，<code>MockitoSession</code>会做三件事：</p>
+<ol>
+<li>mock初始化（initializes mocks）</li>
+<li>mock使用验证（validates usage）</li>
+<li>检测插桩错误（detects incorrect stubbing）</li>
+</ol>
+<p><code>MockitoSession</code>可以帮我们省去一些原本需要手动去写的代码，并且通过一些额外的验证来驱使我们写“干净的测试”。</p>
+<p><code>MockitoSession</code>结束之后必须调用<code>finishMocking()</code>方法，否则下个Session开始时会抛出异常（<code>UnfinishedMockingSessionException</code>）。</p>
+<p>Mockito提供的JUnit组件<code>MockitoJUnitRunner</code>和<code>MockitoRule</code>都使用了<code>MockitoSession</code>，所以如果我们用到了<code>MockitoJUnitRunner</code>或<code>MockitoRule</code>则不需要再使用<code>MockitoSession</code>管理会话。</p>
+<p>如果使用了其他单测框架（例如TestNG）或者其他的JUnit Runner（Jukito、Springockito）则需要手动去集成MockitoSession。</p>
+<p>先来看一个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExampleTest</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Mock</span> Foo foo;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Keeping session object in a field so that we can complete session in 'tear down' method.</span></span><br><span class="line">    <span class="comment">// It is recommended to hide the session object, along with 'setup' and 'tear down' methods in a base class / runner.</span></span><br><span class="line">    <span class="comment">// Keep in mind that you can use Mockito's JUnit runner or rule instead of MockitoSession and get the same behavior.</span></span><br><span class="line">    MockitoSession mockito;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//initialize session to start mocking</span></span><br><span class="line">        mockito = Mockito.mockitoSession()</span><br><span class="line">            .initMocks(<span class="keyword">this</span>)</span><br><span class="line">            .strictness(Strictness.STRICT_STUBS)</span><br><span class="line">            .startMocking();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">tearDown</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// It is necessary to finish the session so that Mockito</span></span><br><span class="line">        <span class="comment">// can detect incorrect stubbing and validate Mockito usage</span></span><br><span class="line">        <span class="comment">// 'finishMocking()' is intended to be used in your test framework's 'tear down' method.</span></span><br><span class="line">        mockito.finishMocking();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// test methods ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在<code>@Before setup</code>方法中通过<code>startMocking</code>启动了一个<code>MockitoSession</code>，相应地，在<code>@After tearDown</code>方法中通过<code>finishMocking</code>结束会话。<br><code>ExampleTest</code>中使用<code>Mock</code>标记了一个成员变量——<code>@Mock Foo foo</code>，<code>MockitoSession</code>自动创建foo这个mock对象。</p>
+<p><code>Mockito#mockitoSession</code>是一个工厂方法，每次调用都会创建一个新的<code>MockitoSessionBuilder</code>，通过这个Builder再创建一个<code>MockitoSession</code>。</p>
+<blockquote>
+<p>mockitoSession的方法命名不太合理，私以为newSessionBuilder更合理一些。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Incubating</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MockitoSessionBuilder <span class="title">mockitoSession</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DefaultMockitoSessionBuilder();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MockitoSessionBuilder</code>的定义如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Incubating</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MockitoSessionBuilder</span> </span>&#123; </span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    <span class="function">MockitoSessionBuilder <span class="title">initMocks</span><span class="params">(Object testClassInstance)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    <span class="function">MockitoSessionBuilder <span class="title">strictness</span><span class="params">(Strictness strictness)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    <span class="function">MockitoSession <span class="title">startMocking</span><span class="params">()</span> <span class="keyword">throws</span> UnfinishedMockingSessionException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>initMocks</code>方法并不会立即初始化标记了<code>@Mock</code>的成员变量，只有调用<code>startMocking</code>创建<code>MockitoSession</code>实例时才会执行初始化。</p>
+<p>在一个线程内只允许有一个<code>MockitoSession</code>，所以开启新会话之前必须要调用<code>finishMocking</code>来结束上一次会话。但是多个线程可以允许有多个<code>MockitoSession</code>实例。</p>
+<p><code>finishMocking</code>定义在<code>MockitoSession</code>这个接口中：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Incubating</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MockitoSession</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">finishMocking</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>strictness</code>可以驱动开发人员写“干净的测试”，而且可以根据level来打印日志，方便调试。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Incubating</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Strictness &#123;</span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    LENIENT,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    WARN,</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    STRICT_STUBS</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Mockito#startMocking</code>方法返回的<code>DefaultMockitoSessionBuilder</code>是<code>MockitoSessionBuilder</code>的默认实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultMockitoSessionBuilder</span> <span class="keyword">implements</span> <span class="title">MockitoSessionBuilder</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> Object testClassInstance;</span><br><span class="line">  <span class="keyword">private</span> Strictness strictness;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> MockitoSessionBuilder <span class="title">initMocks</span><span class="params">(Object testClassInstance)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.testClassInstance = testClassInstance;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> MockitoSessionBuilder <span class="title">strictness</span><span class="params">(Strictness strictness)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.strictness = strictness;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> MockitoSession <span class="title">startMocking</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//Configure default values</span></span><br><span class="line">    Object effectiveTest = <span class="keyword">this</span>.testClassInstance == <span class="keyword">null</span> ? <span class="keyword">new</span> Object() : <span class="keyword">this</span>.testClassInstance;</span><br><span class="line">    Strictness effectiveStrictness = <span class="keyword">this</span>.strictness == <span class="keyword">null</span> ? Strictness.STRICT_STUBS : <span class="keyword">this</span>.strictness;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DefaultMockitoSession(effectiveTest, effectiveStrictness, <span class="keyword">new</span> ConsoleMockitoLogger());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>当<code>initMocks</code>传入的参数为<code>null</code>时，<code>startMocking</code>会返回一个 <code>new Object()</code></li>
+<li>当<code>strictness</code>传入的参数为<code>null</code>时，默认使用<code>Strictness.STRICT_STUBS</code></li>
+</ul>
+<p><code>DefaultMockitoSession#startMocking</code>创建了一个<code>MockitoSession</code>的默认实现——<code>DefaultMockitoSession</code>，我们先来看构造方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Object testClassInstance;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> UniversalTestListener listener;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">DefaultMockitoSession</span><span class="params">(Object testClassInstance, Strictness strictness, MockitoLogger logger)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.testClassInstance = testClassInstance;</span><br><span class="line">    listener = <span class="keyword">new</span> UniversalTestListener(strictness, logger);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//So that the listener can capture mock creation events</span></span><br><span class="line">        Mockito.framework().addListener(listener);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RedundantListenerException e) &#123;</span><br><span class="line">        Reporter.unfinishedMockingSession();</span><br><span class="line">    &#125;</span><br><span class="line">    MockitoAnnotations.initMocks(testClassInstance);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>构造方法内使用<code>Strictness</code>和<code>MockitoLogger</code>实例创建了一个 <code>UniversalTestListener</code>，它会监听一次mock会话中的事件：</p>
+<ul>
+<li>onMockCreated</li>
+<li>testFinished</li>
+</ul>
+<p>然后在<code>testFinished</code>事件中，根据<code>Strictness</code>打印日志（借助<code>MockitoLogger</code>）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> (currentStrictness) &#123;</span><br><span class="line">    <span class="keyword">case</span> WARN: emitWarnings(logger, event, createdMocks); <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> STRICT_STUBS: reportUnusedStubs(event, createdMocks); <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> LENIENT: <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>: <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Unknown strictness: "</span> + currentStrictness);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MockitoLogger</code>是<code>Logger</code>的接口规范：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MockitoLogger</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">log</span><span class="params">(Object what)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>ConsoleMockitoLogger</code>就是将log打印至<code>System.out</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConsoleMockitoLogger</span> <span class="keyword">implements</span> <span class="title">MockitoLogger</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">log</span><span class="params">(Object what)</span> </span>&#123;</span><br><span class="line">        System.out.println(what);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么<code>UniversalTestListener</code>是如何监听mock的创建呢？</p>
+<p>再回到DefaultMockitoSession的构造方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mockito.framework().addListener(listener);</span><br></pre></td></tr></table></figure></p>
+<p><code>Mockito#framework</code>也是一个工厂方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Incubating</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MockitoFramework <span class="title">framework</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DefaultMockitoFramework();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>MockitoFramework</code>用于管理Mockito框架的配置以及其生命周期的回调。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Incubating</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MockitoFramework</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    <span class="function">MockitoFramework <span class="title">addListener</span><span class="params">(MockitoListener listener)</span> <span class="keyword">throws</span> RedundantListenerException</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Incubating</span></span><br><span class="line">    <span class="function">MockitoFramework <span class="title">removeListener</span><span class="params">(MockitoListener listener)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MockitoFramework</code>支持的Listner类型是<code>MockitoListener</code>，而且同一类型的Listener只能add一次，否则会抛出<code>RedundantListenerException</code>。</p>
+<p><code>DefaultMockitoFramework</code>是<code>MockitoFramework</code>的默认实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DefaultMockitoFramework</span> <span class="keyword">implements</span> <span class="title">MockitoFramework</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> MockitoFramework <span class="title">addListener</span><span class="params">(MockitoListener listener)</span> </span>&#123;</span><br><span class="line">        Checks.checkNotNull(listener, <span class="string">"listener"</span>);</span><br><span class="line">        mockingProgress().addListener(listener);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> MockitoFramework <span class="title">removeListener</span><span class="params">(MockitoListener listener)</span> </span>&#123;</span><br><span class="line">        Checks.checkNotNull(listener, <span class="string">"listener"</span>);</span><br><span class="line">        mockingProgress().removeListener(listener);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>addListener</code>和<code>removeListener</code>必须在同一个线程内才会生效，因为<code>MockingProgress</code>是<code>ThreadLocal</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadSafeMockingProgress</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;MockingProgress&gt; MOCKING_PROGRESS_PROVIDER = </span><br><span class="line">        <span class="keyword">new</span> ThreadLocal&lt;MockingProgress&gt;() &#123; </span><br><span class="line">            <span class="meta">@Override</span> </span><br><span class="line">            <span class="function"><span class="keyword">protected</span> MockingProgress <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> MockingProgressImpl();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">ThreadSafeMockingProgress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> MockingProgress <span class="title">mockingProgress</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> MOCKING_PROGRESS_PROVIDER.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>DefaultMockitoSession</code>的<code>finishMocking</code>方法会调用<code>removeListener</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">finishMocking</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//Cleaning up the state, we no longer need the listener hooked up</span></span><br><span class="line">    <span class="comment">//The listener implements MockCreationListener and at this point</span></span><br><span class="line">    <span class="comment">//we no longer need to listen on mock creation events. We are wrapping up the session</span></span><br><span class="line">    Mockito.framework().removeListener(listener);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Emit test finished event so that validation such as strict stubbing can take place</span></span><br><span class="line">    listener.testFinished(<span class="keyword">new</span> TestFinishedEvent() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Throwable <span class="title">getFailure</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">getTestClassInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> testClassInstance;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getTestMethodName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Finally, validate user's misuse of Mockito framework.</span></span><br><span class="line">    Mockito.validateMockitoUsage();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>Mockito.validateMockitoUsage()</code>也是通过<code>MockingProgress</code>来实现。</p>
+<p><code>MockingProgress</code>顾名思义，表示一次mock过程，实现略复杂，暂且按下不表，后面再分析。</p>
+<p>最后再回到<code>DefaultMockitoSession</code>的构造方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MockitoAnnotations.initMocks(testClassInstance);</span><br></pre></td></tr></table></figure></p>
+<p>至此则真相大白了，原来<code>@Mock</code>标记的成员变量是由<code>MockitoAnnotations</code>来初始化，欲知后事如何，且看下回分析。</p>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/07/26/mockito-details-5-annotation/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（五）MockitoAnnotation">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/22/SalesforceAnalytics-analysis/" data-toggle="tooltip" data-placement="top" title="SalesforceAnalytics 源码分析">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/07/25/mockito-details-4-session/";
+var disqus_url = "http://liangfei.me/2017/07/25/mockito-details-4-session/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Mockito 详解（一）基本用法 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/07/06/mockito-details-1-usage/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                    <h1>Mockito 详解（一）基本用法</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-07-06
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>Mockito 是一个用于 Java 单测的 Mock 框架，除了 JUnit 之外，它还可以用于其他单测框架（例如：TestNG）。<code>Mockito</code> 可以改变一个类或者对象的行为，能够让我们更加专注地去测试代码逻辑，省去了构造数据所花费的努力。</p>
+<a id="more"></a>
+<h2 id="0x00-基本概念"><a href="#0x00-基本概念" class="headerlink" title="0x00 基本概念"></a>0x00 基本概念</h2><p>Mock 可分为两种类型，一种是 <strong>Class Mock</strong>，另一种是 <strong>Partial Mock</strong>（Mockito 叫 <strong>spy</strong>）。<br>改变 mock 对象方法（method）的行为叫 <strong>Stub</strong>（插桩）。<br>一次 Mock 过程称为 <strong>Mock Session</strong>，它会记录所有的 <strong>Stubbing</strong>，基本包含如下三个步骤：</p>
+<pre><code>+----------+      +------+      +--------+
+| Mock/Spy | ===&gt; | Stub | ===&gt; | Verify |
++----------+      +------+      +--------+
+</code></pre><h2 id="0x01-Class-Mock"><a href="#0x01-Class-Mock" class="headerlink" title="0x01 Class Mock"></a>0x01 Class Mock</h2><p>Class Mock 改变了 class 的行为，所以 mock 出来的对象就完全失去了原来的行为。<br>如果没有对 method 进行插桩，那么 method 会返回默认值（<code>null</code>、<code>false</code>、<code>0</code>等）。</p>
+<p>最基本的用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> org.mockito.Mockito.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 利用 List.class 创建一个 mock 对象 --- mockedList</span></span><br><span class="line">List mockedList = mock(List.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 操作 mockedList</span></span><br><span class="line">mockedList.add(<span class="string">"one"</span>);</span><br><span class="line">mockedList.clear();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 验证</span></span><br><span class="line">verify(mockedList).add(<span class="string">"one"</span>);</span><br><span class="line">verify(mockedList).clear();</span><br></pre></td></tr></table></figure>
+<h2 id="0x02-Partial-Mock（spy）"><a href="#0x02-Partial-Mock（spy）" class="headerlink" title="0x02 Partial Mock（spy）"></a>0x02 Partial Mock（spy）</h2><p>如果只是想改变一个实例（instance）的行为，我们需要使用 <code>spy</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">List list = <span class="keyword">new</span> LinkedList();</span><br><span class="line">List spy = spy(list);</span><br><span class="line"></span><br><span class="line"><span class="comment">// optionally, you can stub out some methods:</span></span><br><span class="line">when(spy.size()).thenReturn(<span class="number">100</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// using the spy calls *real* methods</span></span><br><span class="line">spy.add(<span class="string">"one"</span>);</span><br><span class="line">spy.add(<span class="string">"two"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// prints "one" - the first element of a list</span></span><br><span class="line">System.out.println(spy.get(<span class="number">0</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// size() method was stubbed - 100 is printed</span></span><br><span class="line">System.out.println(spy.size());</span><br><span class="line"></span><br><span class="line"><span class="comment">// optionally, you can verify</span></span><br><span class="line">verify(spy).add(<span class="string">"one"</span>);</span><br><span class="line">verify(spy).add(<span class="string">"two"</span>);</span><br></pre></td></tr></table></figure>
+<p>如果方法没有被插桩，那么它的行为就不会被改变。所以有些情况下，我们不能使用 <code>when(Object)</code> 进行插桩，只能使用 do 系列方法（<code>doReturn|Answer|Throw()</code>）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">List list = <span class="keyword">new</span> LinkedList();</span><br><span class="line">List spy = spy(list);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Impossible: real method is called so spy.get(0) throws IndexOutOfBoundsException </span></span><br><span class="line"><span class="comment">// (the list is yet empty)</span></span><br><span class="line">when(spy.get(<span class="number">0</span>)).thenReturn(<span class="string">"foo"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// You have to use doReturn() for stubbing</span></span><br><span class="line">doReturn(<span class="string">"foo"</span>).when(spy).get(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<hr>
+<p><em>Mockito 的静态方法 spy 和 mock 的区别*</em></p>
+<p><code>spy</code> 是 partial mock，所以其本质上也是 <code>mock</code>，通过源码可以得知：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">spy</span><span class="params">(T object)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> MOCKITO_CORE.mock((Class&lt;T&gt;) object.getClass(), withSettings()</span><br><span class="line">    .spiedInstance(object)</span><br><span class="line">    .defaultAnswer(CALLS_REAL_METHODS));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>MOCKITO_CORE</code> 是 <code>Mockito</code> 的核心实现类，<code>spy</code> 和 <code>mock</code> 方法一样，都是调用了 <code>MOCKITO_CORE.mock</code>。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">mock</span><span class="params">(Class&lt;T&gt; classToMock)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> mock(classToMock, withSettings());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">mock</span><span class="params">(Class&lt;T&gt; classToMock, MockSettings mockSettings)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> MOCKITO_CORE.mock(classToMock, mockSettings);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MockSettings <span class="title">withSettings</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> MockSettingsImpl().defaultAnswer(RETURNS_DEFAULTS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过代码可以看出，<code>spy</code> 和 <code>mock</code> 最大的区别在于使用了不同的 <code>MockSettings</code>，<code>spy</code> 的 <code>MockSettings</code> 需要传入一个 <code>spiedInstance</code>。</p>
+<p><code>spy</code> 的默认 Answer 是 <code>CALLS_REAL_METHODS</code>，也就是说，如果一个方法没有被 stub，那么会执行它真实的行为。<br><code>mock</code> 的默认 Answer 是 <code>RETURNS_DEFAULTS</code>，没有被 stub 的方法会返回一个默认值。</p>
+<h2 id="0x03-Stub（插桩）"><a href="#0x03-Stub（插桩）" class="headerlink" title="0x03 Stub（插桩）"></a>0x03 Stub（插桩）</h2><p>仅仅 Mock 出来一个对象显然是不够的，虽然可以通过验证<strong>方法的执行情况</strong>来测试代码的逻辑，但是多数情况下我们还需要改变方法的返回值，这时就需要用到“插桩”。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">LinkedList mockedList = mock(LinkedList.class);</span><br><span class="line"></span><br><span class="line"><span class="comment">// stubbing</span></span><br><span class="line">when(mockedList.get(<span class="number">0</span>)).thenReturn(<span class="string">"first"</span>);</span><br><span class="line">when(mockedList.get(<span class="number">1</span>)).thenThrow(<span class="keyword">new</span> RuntimeException());</span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印出 "first"</span></span><br><span class="line">System.out.println(mockedList.get(<span class="number">0</span>));</span><br><span class="line"><span class="comment">// 抛出异常</span></span><br><span class="line">System.out.println(mockedList.get(<span class="number">1</span>));</span><br><span class="line"><span class="comment">// 返回 null，因为 get(999) 没有被 stub</span></span><br><span class="line">System.out.println(mockedList.get(<span class="number">999</span>));</span><br></pre></td></tr></table></figure>
+<h3 id="Stubbing"><a href="#Stubbing" class="headerlink" title="Stubbing"></a>Stubbing</h3><p>Stubbing 表示一次插桩，它的形式是 <code>when(x).then(y)</code>，用于指定 mock 的行为。</p>
+<p><em>Stubbing 的示例代码</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">when(mock.foo()).thenReturn(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
+<p>可以通过如下代码获取 mock 对象的所有 stubbing：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mockito.mockingDetails(mock).getStubbings();</span><br></pre></td></tr></table></figure>
+<p>Stubbing 的接口规范如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Stubbing</span> </span>&#123;</span><br><span class="line">    <span class="function">Invocation <span class="title">getInvocation</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">wasUsed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>getInvocation()</code> 返回被插桩的方法调用，例如，<code>mock.foo()</code> 就是一个 <code>Invocation</code>。</li>
+<li><code>wasUsed()</code> 用于表示 stubbing 是否被使用，如果 <code>mock.foo()</code> 没有被调用，那么 <code>wasUsed()</code> 返回 false，说明存在未被使用的 stubbing，为了保持 <code>clarity of tests</code>，最好删除未被使用的 stubbing 代码。</li>
+</ul>
+<p><strong>Stubbing关系图</strong></p>
+<pre><code>   +-----------------+
+   | OngoingStubbing |
+   +-----------------+
+           /|\
+            |
+        implements
+            |
+            |
+   +-----------------+
+   |   BaseStubbing  |&lt;-----------------+
+   +-----------------+                  | 
+           /|\                          |
+            |                           |
+         extends                     extends 
+            |                           |
+            |                           |
++----------------------+    +---------------------+
+| ConsecutiveStubbing  |    | OngoingStubbingImpl |
++----------------------+    +---------------------+
+</code></pre><h2 id="Stubber"><a href="#Stubber" class="headerlink" title="Stubber"></a>Stubber</h2><p>Stubber 是一个插装器。</p>
+<p>当我们用 <code>doThrow()|doAnswer()|doNothing()|doReturn()</code> 的形式进行插桩时，可以通过 Stubber 来选择 mock 对象的方法：</p>
+<p><em>示例一</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">doThrow(<span class="keyword">new</span> RuntimeException()).when(mockedList).clear();</span><br></pre></td></tr></table></figure></p>
+<p><em>示例二</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">doThrow(<span class="keyword">new</span> RuntimeException(<span class="string">"one"</span>))</span><br><span class="line">    .doThrow(<span class="keyword">new</span> RuntimeException(<span class="string">"two"</span>))</span><br><span class="line">        .when(mock).someVoidMethod();</span><br></pre></td></tr></table></figure></p>
+<h3 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h3><p>不管是 <code>Stubber</code> 还是 <code>OngoingStubbing</code>，除了标准返回之外，都提供了自定义返回值的方法：</p>
+<ul>
+<li><code>Stubber doAnswer(Answer answer);</code></li>
+<li><code>OngoingStubbing&lt;T&gt; then(Answer&lt;?&gt; answer);</code></li>
+</ul>
+<p>Answer 的接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Answer</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">T <span class="title">answer</span><span class="params">(InvocationOnMock invocation)</span> <span class="keyword">throws</span> Throwable</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如下代码利用 <code>Answer</code> 改变了 mock 方法的行为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">when(mock.someMethod(anyString())).thenAnswer(</span><br><span class="line">    <span class="keyword">new</span> Answer() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">answer</span><span class="params">(InvocationOnMock invocation)</span> </span>&#123;</span><br><span class="line">            Object[] args = invocation.getArguments();</span><br><span class="line">            Object mock = invocation.getMock();</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"called with arguments: "</span> + Arrays.toString(args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>那么 <code>mock.someMethod(&quot;foo&quot;)</code> 的返回值就变成了 <code>called with arguments: [foo]</code>。</p>
+<p><code>Answer</code> 不接受参数，只有返回值，Mockito 还提供了其他 5 个 Answer，分别接受不同个数的参数，然后返回一个值。</p>
+<ul>
+<li>Answer1</li>
+<li>Answer2</li>
+<li>Answer3</li>
+<li>Answer4</li>
+<li>Answer5</li>
+</ul>
+<p>只接受参数，没有返回值的 Answer 包括：</p>
+<ul>
+<li>VoidAnswer1</li>
+<li>VoidAnswer2</li>
+<li>VoidAnswer3</li>
+<li>VoidAnswer4</li>
+<li>VoidAnswer5</li>
+</ul>
+<h2 id="0x04-Verify（验证）"><a href="#0x04-Verify（验证）" class="headerlink" title="0x04 Verify（验证）"></a>0x04 Verify（验证）</h2><p>Verify 用于验证 mock 行为。</p>
+<p>Mockito 提供了两个 <code>verify</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">verify</span><span class="params">(T mock, VerificationMode mode)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> MOCKITO_CORE.verify(mock, mode);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// times(1) 是 VerificationMode 的默认值</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">verify</span><span class="params">(T mock)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> MOCKITO_CORE.verify(mock, times(<span class="number">1</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>验证模式如下所示：</p>
+<h3 id="times"><a href="#times" class="headerlink" title="times"></a>times</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">verify(mock, times(<span class="number">2</span>)).someMethod(<span class="string">"some arg"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="never"><a href="#never" class="headerlink" title="never"></a>never</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">verify(mock, never()).someMethod();</span><br></pre></td></tr></table></figure>
+<h3 id="atLeastOnce"><a href="#atLeastOnce" class="headerlink" title="atLeastOnce"></a>atLeastOnce</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">verify(mock, atLeastOnce()).someMethod(<span class="string">"some arg"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="atLeast"><a href="#atLeast" class="headerlink" title="atLeast"></a>atLeast</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">verify(mock, atLeast(<span class="number">3</span>)).someMethod(<span class="string">"some arg"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="atMost"><a href="#atMost" class="headerlink" title="atMost"></a>atMost</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">verify(mock, atMost(<span class="number">3</span>)).someMethod(<span class="string">"some arg"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="calls"><a href="#calls" class="headerlink" title="calls"></a>calls</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">inOrder.verify(mock, calls(<span class="number">2</span>)).someMethod( <span class="string">"some arg"</span> );</span><br></pre></td></tr></table></figure>
+<h3 id="only"><a href="#only" class="headerlink" title="only"></a>only</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">verify(mock, only()).someMethod();</span><br><span class="line"><span class="comment">//above is a shorthand for following 2 lines of code:</span></span><br><span class="line">verify(mock).someMethod();</span><br><span class="line">verifyNoMoreInvocations(mock);</span><br></pre></td></tr></table></figure>
+<h3 id="timeout"><a href="#timeout" class="headerlink" title="timeout"></a>timeout</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//passes when someMethod() is called within given time span</span></span><br><span class="line">verify(mock, timeout(<span class="number">100</span>)).someMethod();</span><br><span class="line"><span class="comment">//above is an alias to:</span></span><br><span class="line">verify(mock, timeout(<span class="number">100</span>).times(<span class="number">1</span>)).someMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//passes as soon as someMethod() has been called 2 times before the given timeout</span></span><br><span class="line">verify(mock, timeout(<span class="number">100</span>).times(<span class="number">2</span>)).someMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//equivalent: this also passes as soon as someMethod() has been called 2 times before the given timeout</span></span><br><span class="line">verify(mock, timeout(<span class="number">100</span>).atLeast(<span class="number">2</span>)).someMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//verifies someMethod() within given time span using given verification mode</span></span><br><span class="line"><span class="comment">//useful only if you have your own custom verification modes.</span></span><br><span class="line">verify(mock, <span class="keyword">new</span> Timeout(<span class="number">100</span>, yourOwnVerificationMode)).someMethod();</span><br></pre></td></tr></table></figure>
+<h3 id="after"><a href="#after" class="headerlink" title="after"></a>after</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//passes after 100ms, if someMethod() has only been called once at that time.</span></span><br><span class="line">verify(mock, after(<span class="number">100</span>)).someMethod();</span><br><span class="line"><span class="comment">//above is an alias to:</span></span><br><span class="line">verify(mock, after(<span class="number">100</span>).times(<span class="number">1</span>)).someMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//passes if someMethod() is called *exactly* 2 times after the given timespan</span></span><br><span class="line">verify(mock, after(<span class="number">100</span>).times(<span class="number">2</span>)).someMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//passes if someMethod() has not been called after the given timespan</span></span><br><span class="line">verify(mock, after(<span class="number">100</span>).never()).someMethod();</span><br><span class="line"></span><br><span class="line"><span class="comment">//verifies someMethod() after a given time span using given verification mode</span></span><br><span class="line"><span class="comment">//useful only if you have your own custom verification modes.</span></span><br><span class="line">verify(mock, <span class="keyword">new</span> After(<span class="number">100</span>, yourOwnVerificationMode)).someMethod();</span><br></pre></td></tr></table></figure>
+<h2 id="0x05-ArgumentMatcher"><a href="#0x05-ArgumentMatcher" class="headerlink" title="0x05 ArgumentMatcher"></a>0x05 ArgumentMatcher</h2><p>插桩时除了指定特定的参数，还可以使用通配符 —— <code>ArgumentMatcher</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ListOfTwoElements</span> <span class="keyword">implements</span> <span class="title">ArgumentMatcher</span>&lt;<span class="title">List</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(List list)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> list.size() == <span class="number">2</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//printed in verification errors</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">"[list of 2 elements]"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">List mock = mock(List.class);</span><br><span class="line"></span><br><span class="line">when(mock.addAll(argThat(<span class="keyword">new</span> ListOfTwoElements))).thenReturn(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">mock.addAll(Arrays.asList(<span class="string">"one"</span>, <span class="string">"two"</span>));</span><br><span class="line"></span><br><span class="line">verify(mock).addAll(argThat(<span class="keyword">new</span> ListOfTwoElements()));</span><br></pre></td></tr></table></figure>
+<p><code>ArgumentMatchers</code> 负责生产 <code>ArgumentMatcher</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArgumentMatchers</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">any</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">any</span><span class="params">(Class&lt;T&gt; type)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">isA</span><span class="params">(Class&lt;T&gt; type)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">anyBoolean</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span> <span class="title">anyByte</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">anyChar</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">anyInt</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">anyLong</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">anyFloat</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">anyDouble</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">short</span> <span class="title">anyShort</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">anyString</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">anyList</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">List&lt;T&gt; <span class="title">anyListOf</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Set&lt;T&gt; <span class="title">anySet</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Set&lt;T&gt; <span class="title">anySetOf</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;K, V&gt; <span class="function">Map&lt;K, V&gt; <span class="title">anyMap</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;K, V&gt; <span class="function">Map&lt;K, V&gt; <span class="title">anyMapOf</span><span class="params">(Class&lt;K&gt; keyClazz, Class&lt;V&gt; valueClazz)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Collection&lt;T&gt; <span class="title">anyCollection</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Collection&lt;T&gt; <span class="title">anyCollectionOf</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Iterable&lt;T&gt; <span class="title">anyIterable</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Iterable&lt;T&gt; <span class="title">anyIterableOf</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">eq</span><span class="params">(<span class="keyword">boolean</span> value)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span> <span class="title">eq</span><span class="params">(<span class="keyword">byte</span> value)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">eq</span><span class="params">(<span class="keyword">char</span> value)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">eq</span><span class="params">(<span class="keyword">double</span> value)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">eq</span><span class="params">(<span class="keyword">float</span> value)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">eq</span><span class="params">(<span class="keyword">int</span> value)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">eq</span><span class="params">(<span class="keyword">long</span> value)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">short</span> <span class="title">eq</span><span class="params">(<span class="keyword">short</span> value)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">eq</span><span class="params">(T value)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">refEq</span><span class="params">(T value, String... excludeFields)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">same</span><span class="params">(T value)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; T <span class="title">isNull</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">isNull</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">notNull</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">notNull</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">isNotNull</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">isNotNull</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">nullable</span><span class="params">(Class&lt;T&gt; clazz)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// String argument matcher</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">contains</span><span class="params">(String substring)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">matches</span><span class="params">(String regex)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">matches</span><span class="params">(Pattern pattern)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">endsWith</span><span class="params">(String suffix)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">startsWith</span><span class="params">(String prefix)</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Custom argument matcher</span></span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">T <span class="title">argThat</span><span class="params">(ArgumentMatcher&lt;T&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">charThat</span><span class="params">(ArgumentMatcher&lt;Character&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">booleanThat</span><span class="params">(ArgumentMatcher&lt;Boolean&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span> <span class="title">byteThat</span><span class="params">(ArgumentMatcher&lt;Byte&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">short</span> <span class="title">shortThat</span><span class="params">(ArgumentMatcher&lt;Short&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">intThat</span><span class="params">(ArgumentMatcher&lt;Integer&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">longThat</span><span class="params">(ArgumentMatcher&lt;Long&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">floatThat</span><span class="params">(ArgumentMatcher&lt;Float&gt; matcher)</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">doubleThat</span><span class="params">(ArgumentMatcher&lt;Double&gt; matcher)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/07/07/mockito-details-2-plugins/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（二）插件机制">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/04/summary-of-2017-semi-annual/" data-toggle="tooltip" data-placement="top" title="2017 年中总结">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/07/06/mockito-details-1-usage/";
+var disqus_url = "http://liangfei.me/2017/07/06/mockito-details-1-usage/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

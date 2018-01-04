@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          图解 Retrofit 之 ServiceMethod - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2016/07/10/android-diagram-retrofit-service-method/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Android" title="Android">Android</a>
+                        
+                          <a class="tag" href="/tags/#Retrofit" title="Retrofit">Retrofit</a>
+                        
+                    </div>
+                    <h1>图解 Retrofit 之 ServiceMethod</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2016-07-10
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>通过 <a href="http://www.liangfei.me/2016/07/06/android-retrofit-and-rxjava" target="_blank" rel="noopener">Retrofit + RxAndroid 实践总结</a>，我们已经了解到了 Retrofit 的基本用法，为了知其所以然，我们以图解加源码的方式从 Service Method 入手，逐步拨开 Retrofit 的神秘面纱。</p>
+<a id="more"></a>
+<p>首先以官方网站的示例代码为例，看一下一个 Service Method 的组成部分：</p>
+<img src="/hexo-theme-huxblog/2016/07/10/android-diagram-retrofit-service-method/service_method.png" title="service method">
+<p><code>ServiceMethod</code> 使用了 Builder 模式，先来看 <code>ServiceMethod.Builder</code> 的构造方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Builder</span><span class="params">(Retrofit retrofit, Method method)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.retrofit = retrofit;</span><br><span class="line">  <span class="keyword">this</span>.method = method;</span><br><span class="line">  <span class="keyword">this</span>.methodAnnotations = method.getAnnotations();</span><br><span class="line">  <span class="keyword">this</span>.parameterTypes = method.getGenericParameterTypes();</span><br><span class="line">  <span class="keyword">this</span>.parameterAnnotationsArray = method.getParameterAnnotations();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>构造方法接受两个参数 - <code>retrofit</code> 和 <code>method</code>，然后通过调用 <code>Method</code> 类的方法获取以下数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Annotation[] methodAnnotations;</span><br><span class="line"><span class="keyword">final</span> Annotation[][] parameterAnnotationsArray;</span><br><span class="line"><span class="keyword">final</span> Type[] parameterTypes;</span><br></pre></td></tr></table></figure>
+<p><code>methodAnnotations</code> 就对应着上例中的  <code>@GET(&quot;users/{user}/repos&quot;</code>，由 <code>parseMethodAnnotation</code> 负责解析。</p>
+<p>method parameter 也有对应的 annotation type，由对应的 <code>ParameterHandler</code> 进行处理，例如上例中的 <code>@Path</code> 就对应着 <code>class Path&lt;T&gt; extends ParameterHandler&lt;T&gt;</code>。</p>
+<p>一个 parameter 可以有多个 annotation，所以  <code>parameterAnnotationsArray</code> 是一个二维数组 - <code>Annotation[][]</code>。</p>
+<p><code>ServiceMethod.Builder</code> 最终会 <code>build</code> 出一个 <code>ServiceMethod</code> 实例，我们先来看 method annotations 的解析过程。</p>
+<h2 id="method-annotations"><a href="#method-annotations" class="headerlink" title="method annotations"></a>method annotations</h2><p><em>ServiceMethod.Builder#build</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (Annotation annotation : methodAnnotations) &#123;</span><br><span class="line">  parseMethodAnnotation(annotation);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如下图所示，<code>parseMethodAnnotation</code> 方法根据 method annotation 的类型（蓝色框内）生成一个 request 所需要的数据（褐色框内）。</p>
+<img src="/hexo-theme-huxblog/2016/07/10/android-diagram-retrofit-service-method/parse_method_annotation.png" title="parse method annotation">
+<p>其中 <code>httpMethod</code> 不能为空，如果 <code>hasBody == false</code>，那么 <code>isMultipart</code> 和 <code>isFormEncoded</code> 也必须为 <code>false</code>，而且两者互斥不能同时为 <code>true</code>，否则会抛出异常。</p>
+<p>解析完 method annotations 之后，再来解析  parameters（代码示例中的 <code>@Path(&quot;user&quot;) String user</code>）。</p>
+<h2 id="parameters"><a href="#parameters" class="headerlink" title="parameters"></a>parameters</h2><img src="/hexo-theme-huxblog/2016/07/10/android-diagram-retrofit-service-method/parse_parameter.png" title="parse parameters">
+<p>每一个 parameter annotation 类型都有对应的 <code>ParameterHandler</code>，method parameters 解析完成之后生成一个数组 - <code>ParameterHandler[] parameterHandlers</code>，这个数组在后面构建 request 的时候会用到。</p>
+<p>解析过程中会验证 <code>@Path</code> value 的合法性，并确保 value 在 <code>relativeUrlParamNames</code>（<em>由 method annotations 生成</em>） 中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Upper and lower characters, digits, underscores, and hyphens, starting with a character.</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> String PARAM = <span class="string">"[a-zA-Z][a-zA-Z0-9_-]*"</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_URL_REGEX = Pattern.compile(<span class="string">"\\&#123;("</span> + PARAM + <span class="string">")\\&#125;"</span>);</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> Pattern PARAM_NAME_REGEX = Pattern.compile(PARAM);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">validatePathName</span><span class="params">(<span class="keyword">int</span> p, String name)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!PARAM_NAME_REGEX.matcher(name).matches()) &#123;</span><br><span class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"@Path parameter name must match %s. Found: %s"</span>,</span><br><span class="line">        PARAM_URL_REGEX.pattern(), name);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// Verify URL replacement name is actually present in the URL path.</span></span><br><span class="line">  <span class="keyword">if</span> (!relativeUrlParamNames.contains(name)) &#123;</span><br><span class="line">    <span class="keyword">throw</span> parameterError(p, <span class="string">"URL \"%s\" does not contain \"&#123;%s&#125;\"."</span>, relativeUrl, name);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>parseParameterAnnotation</code>  方法在解析 <code>Url</code> 类型的 parameter annotation 时会判断 parameter 类型，由于 Retrofit 本身没有依赖 Android SDK，所以无法像 <code>HttpUrl.class</code> 那样获取 <code>Uri.class</code>，但是 Retrofit 的实现很巧妙，学到了：）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (type == HttpUrl.class</span><br><span class="line">    || type == String.class</span><br><span class="line">    || type == URI.class</span><br><span class="line">    || (type <span class="keyword">instanceof</span> Class &amp;&amp; <span class="string">"android.net.Uri"</span>.equals(((Class&lt;?&gt;) type).getName()))) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> ParameterHandler.RelativeUrl();</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  <span class="keyword">throw</span> parameterError(p,</span><br><span class="line">      <span class="string">"@Url must be okhttp3.HttpUrl, String, java.net.URI, or android.net.Uri type."</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>method annotations 以及 parameters 都解析完成后，我们再回到 service method 的 callAdapter。</p>
+<h2 id="CallAdapter"><a href="#CallAdapter" class="headerlink" title="CallAdapter"></a>CallAdapter</h2><p>想要了解 <code>CallAdapter</code> 的功能，我们需要先从 <code>Retrofit</code> 的 <code>create</code> 方法开始分析。</p>
+<p><code>create</code> 方法使用<strong>动态代理</strong>把 service method 的调用转发给一个 <code>InvocationHandler</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ServiceMethod serviceMethod = loadServiceMethod(method);</span><br><span class="line">OkHttpCall okHttpCall = <span class="keyword">new</span> OkHttpCall&lt;&gt;(serviceMethod, args);</span><br><span class="line"><span class="keyword">return</span> serviceMethod.callAdapter.adapt(okHttpCall);</span><br></pre></td></tr></table></figure>
+<p>由以上代码可以看出，<code>CallAdapter</code> 会把一个 <code>Call</code> 类型适配为用户定义的 service method 的 return type。</p>
+<p>举个例子，如果我们配合 RxAndroid 使用 Retrofit，service method 的返回值类型会由 <code>Call</code> 类型变成 <code>Observable</code> 类型，这个转换其实就由 <code>RxJavaCallAdapterFactory</code> 来实现。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()      </span><br><span class="line">    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())</span><br><span class="line">    .baseUrl(BASE_URL) .build();</span><br></pre></td></tr></table></figure>
+<p>由以上代码可以看出，<code>RxJavaCallAdapterFactory</code> 是通过 <code>Retrofit.Builder</code> 的<br><code>addCallAdapterFactory</code> 方法传递给 <code>Retrofit</code>，而 <code>create</code> 方法中 <code>adapt</code> 的执行者却是 <code>ServiceMethod</code>，也就是说 <code>ServiceMethod</code> 的 <code>CallAdapter</code> 是由 <code>Retrofit</code> 提供的，两者的交互关系如下图所示：  </p>
+<hr>
+<img src="/hexo-theme-huxblog/2016/07/10/android-diagram-retrofit-service-method/retrofit_and_service_method.png" title="retrofit vs service method">
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2016/07/20/android-the-weird-NoClassDefFoundError/" data-toggle="tooltip" data-placement="top" title="诡异的问题 NoClassDefFoundError">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2016/07/06/android-retrofit-and-rxjava/" data-toggle="tooltip" data-placement="top" title="Retrofit + RxAndroid 实践总结">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Android" title="Android">Android</a>
+                        
+                          <a class="tag" href="/tags/#Retrofit" title="Retrofit">Retrofit</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2016/07/10/android-diagram-retrofit-service-method/";
+var disqus_url = "http://liangfei.me/2016/07/10/android-diagram-retrofit-service-method/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

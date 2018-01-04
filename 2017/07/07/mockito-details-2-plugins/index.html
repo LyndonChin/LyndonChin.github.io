@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Mockito 详解（二）插件机制 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/07/07/mockito-details-2-plugins/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                    <h1>Mockito 详解（二）插件机制</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-07-07
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>Mockito 通过插件形式对外提供了扩展能力，本篇主要分析其插件加载原理。</p>
+<a id="more"></a>
+<h2 id="注册插件"><a href="#注册插件" class="headerlink" title="注册插件"></a>注册插件</h2><p>插件通过 <code>PluginRegister</code> 进行注册，现在只支持四个组件，分别是：</p>
+<ul>
+<li>MockMaker</li>
+<li>StackTraceCleanerProvider</li>
+<li>InstantiatorProvider</li>
+<li>AnnotationEngine</li>
+</ul>
+<p><code>PluginRegistry</code> 是 package 级别的 class，其初始化的组件通过 public 级别的类 <code>Plugins</code> 对外提供：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Plugins</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> PluginRegistry registry = <span class="keyword">new</span> PluginRegistry();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> StackTraceCleanerProvider <span class="title">getStackTraceCleanerProvider</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> registry.getStackTraceCleanerProvider();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MockMaker <span class="title">getMockMaker</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> registry.getMockMaker();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> InstantiatorProvider <span class="title">getInstantiatorProvider</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> registry.getInstantiatorProvider();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> AnnotationEngine <span class="title">getAnnotationEngine</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> registry.getAnnotationEngine();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Mockito 提供了默认的插件。</p>
+<ul>
+<li>AnnotationEngine <ul>
+<li>org.mockito.internal.configuration.InjectingAnnotationEngine</li>
+</ul>
+</li>
+<li>InstantiatorProvider<ul>
+<li>org.mockito.internal.creation.instance.DefaultInstantiatorProvider</li>
+</ul>
+</li>
+<li>MockMaker <ul>
+<li>Default = org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker </li>
+<li>Inline = org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker</li>
+<li>Android = org.mockito.android.internal.creation.AndroidByteBuddyMockMaker</li>
+</ul>
+</li>
+<li>StackTraceCleanerProvider <ul>
+<li>org.mockito.internal.exceptions.stacktrace.DefaultStackTraceCleanerProvider</li>
+</ul>
+</li>
+</ul>
+<h2 id="加载插件"><a href="#加载插件" class="headerlink" title="加载插件"></a>加载插件</h2><p><code>PluginLoader</code> 负责加载插件。</p>
+<blockquote>
+<p>需要深入了解 ClassLoader 机制。</p>
+</blockquote>
+<h2 id="构造"><a href="#构造" class="headerlink" title="构造"></a>构造</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> PluginSwitch pluginSwitch;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, String&gt; alias;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PluginLoader</span><span class="params">(PluginSwitch pluginSwitch)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.pluginSwitch = pluginSwitch;</span><br><span class="line">    <span class="keyword">this</span>.alias = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>pluginSwitch</code> 用于是否需要加载组件。（后面会分析）</li>
+<li><code>alias</code> 表示插件别名，可以用一个简单的名字表示插件的全称（fully qualified type name）。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PluginLoader <span class="title">withAlias</span><span class="params">(String name, String type)</span> </span>&#123;</span><br><span class="line">    alias.put(name, type);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="加载插件-1"><a href="#加载插件-1" class="headerlink" title="加载插件"></a>加载插件</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; <span class="function">T <span class="title">loadPlugin</span><span class="params">(<span class="keyword">final</span> Class&lt;T&gt; pluginType, String defaultPluginClassName)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>loadPlugin</code> 方法接受两个参数，一个是插件Class，另一个是默认插件名称。</p>
+<p>首先尝试加载 <code>pluginType</code>，如果加载成功，直接返回插件实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">T plugin = loadImpl(pluginType)</span><br><span class="line"><span class="keyword">if</span> (plugin != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> plugin;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>loadImpl</code> 方法的声明如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * Equivalent to &#123;<span class="doctag">@link</span> java.util.ServiceLoader#load&#125; but without requiring</span></span><br><span class="line"><span class="comment">  * Java 6 / Android 2.3 (Gingerbread).</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">private</span> &lt;T&gt; <span class="function">T <span class="title">loadImpl</span><span class="params">(Class&lt;T&gt; service)</span></span></span><br></pre></td></tr></table></figure>
+<p><strong>1. 首先获取 ClassLoader </strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ClassLoader loader = Thread.currentThread().getContextClassLoader();</span><br><span class="line"><span class="keyword">if</span> (loader == <span class="keyword">null</span>) &#123;</span><br><span class="line">    loader = ClassLoader.getSystemClassLoader();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2. 然后加载 mockito-extensions 下配置的资源</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Enumeration&lt;URL&gt; resources;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    resources = loader.getResources(<span class="string">"mockito-extensions/"</span> + service.getName());</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Failed to load "</span> + service, e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>以 Android 平台的 Mockito 为例</p>
+</blockquote>
+<p><code>MockMaker</code> 插件的路径为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">src/main/resources/mockito-extensions/org.mockito.plugins.MockMaker</span><br></pre></td></tr></table></figure>
+<p><code>MockMaker</code> 插件的实现类为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.mockito.android.internal.creation.AndroidByteBuddyMockMaker`</span><br></pre></td></tr></table></figure>
+<p>那么 <code>loader.getResources</code> 的返回值 <code>resources</code> 中会包含 <code>AndroidByteBuddyMockMaker</code>。</p>
+<p><strong>3. 通过 PluginFinder 寻找插件的类名</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String foundPluginClass = <span class="keyword">new</span> PluginFinder(pluginSwitch).findPluginClass(Iterables.toIterable(resources))</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>PluginFinder 的查询规则是：找到第一个不被 PluginSwitch 禁用掉的 plugin 类名。</p>
+</blockquote>
+<p><code>PluginFinder#findPluginClass</code> 的代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">findPluginClass</span><span class="params">(Iterable&lt;URL&gt; resources)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (URL resource : resources) &#123;</span><br><span class="line">        InputStream s = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            s = resource.openStream();</span><br><span class="line">            String pluginClassName = <span class="keyword">new</span> PluginFileReader().readPluginClass(s);</span><br><span class="line">            <span class="keyword">if</span> (pluginClassName == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">//For backwards compatibility</span></span><br><span class="line">                <span class="comment">//If the resource does not have plugin class name we're ignoring it</span></span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!pluginSwitch.isEnabled(pluginClassName)) &#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> pluginClassName;</span><br><span class="line">        &#125; <span class="keyword">catch</span>(Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> MockitoException(<span class="string">"Problems reading plugin implementation from: "</span> + resource, e);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            IOUtil.closeQuietly(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>4. 加载找到的插件</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (foundPluginClass != <span class="keyword">null</span>) &#123;</span><br><span class="line">    String aliasType = alias.get(foundPluginClass);</span><br><span class="line">    <span class="keyword">if</span> (aliasType != <span class="keyword">null</span>) &#123;</span><br><span class="line">        foundPluginClass = aliasType;</span><br><span class="line">    &#125;</span><br><span class="line">    Class&lt;?&gt; pluginClass = loader.loadClass(foundPluginClass);</span><br><span class="line">    Object plugin = pluginClass.newInstance();</span><br><span class="line">    <span class="keyword">return</span> service.cast(plugin);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>因为 [插件名字] 可能是简称，所以需要尝试去 <code>alias</code> 寻找 [插件名字] 的 [类名]</li>
+<li>然后利用上文获得的 <code>loader</code> 加载 [找到的插件类]</li>
+<li>创建类实例，转换类型后返回</li>
+</ol>
+<h2 id="插件开关"><a href="#插件开关" class="headerlink" title="插件开关"></a>插件开关</h2><p><code>PluginSwitch</code> 用于判断是否需要加载 classpath 中配置的插件。</p>
+<p><code>PluginSwitch</code> 本身也是一个插件，在 <code>PluginRegistry</code> 中注册：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> PluginSwitch pluginSwitch = <span class="keyword">new</span> PluginLoader(<span class="keyword">new</span> DefaultPluginSwitch())</span><br><span class="line">    .loadPlugin(PluginSwitch.class, DefaultPluginSwitch.class.getName());</span><br></pre></td></tr></table></figure>
+<p>它的默认实现为 <code>DefaultPluginSwitch</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DefaultPluginSwitch</span> <span class="keyword">implements</span> <span class="title">PluginSwitch</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEnabled</span><span class="params">(String pluginClassName)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 <code>PluginLoader</code> 的分析过程中，我们以 Android 平台的插件 <code>MockMaker</code> 为例已经稍微了解了插件的加载原理，下面再详细分析一下。</p>
+<p>我们知道，插件通过 <code>PluginRegistry</code> 进行注册：</p>
+<p><em>PluginRegistry.java</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> MockMaker mockMaker = <span class="keyword">new</span> PluginLoader(pluginSwitch)</span><br><span class="line">            .withAlias(<span class="string">"mock-maker-inline"</span>, <span class="string">"org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker"</span>)</span><br><span class="line">            .loadPlugin(MockMaker.class, <span class="string">"org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>以上代码可以看出，<code>PluginLoader</code> 的构造方法需要参数 <code>pluginSwitch</code>，也就是说 <code>PluginLoader</code> 可以根据 <code>pluginSwitch</code> 是否需要加载某个 plugin。</p>
+<p>再来看一下 <code>withAlias</code> 和 <code>loadPlugin</code> 的声明：</p>
+<p><em>withAlias@PluginLoader.java</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Adds an alias for a class name to this plugin loader. Instead of the fully qualified type name,</span></span><br><span class="line"><span class="comment"> * the alias can be used as a convenience name for a known plugin.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">PluginLoader <span class="title">withAlias</span><span class="params">(String name, String type)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>针对上例，<code>withAlias</code> 的参数对应关系如下：</p>
+<ul>
+<li>name = “mock-maker-inline”</li>
+<li>type = “org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker”</li>
+</ul>
+<p>也就是说，当我们遇到名字为 <code>mock-maker-inline</code> 的插件时，如果没有被 <code>pluginSwitch</code> diasable 掉，那么就去加载 <code>org.mockito.internal.creation.bytebuddy.InlineByteBuddyMockMaker</code> 这个类。</p>
+<p><em>loadPlugin@PluginLoader.java</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Scans the classpath for given pluginType. If not found, default class is used.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unchecked"</span>)</span><br><span class="line">&lt;T&gt; <span class="function">T <span class="title">loadPlugin</span><span class="params">(<span class="keyword">final</span> Class&lt;T&gt; pluginType, String defaultPluginClassName)</span></span></span><br></pre></td></tr></table></figure></p>
+<p>还是针对上例，参数对应关系如下：</p>
+<table>
+<thead>
+<tr>
+<th>参数名</th>
+<th>参数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pluginType</td>
+<td>MockMaker.class</td>
+</tr>
+<tr>
+<td>defaultPluginClassName</td>
+<td>“org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker”</td>
+</tr>
+</tbody>
+</table>
+<p>直接看注释，具体原理还没有完全搞懂。</p>
+<blockquote>
+<p>The plugin mechanism of mockito works in a similar way as the <code>java.util.ServiceLoader</code>, however instead of<br> looking in the <code>META-INF</code> directory, Mockito will look in <code>mockito-extensions</code> directory.<br><strong>The reason for that is that Android SDK strips jar from the <code>META-INF</code> directory when creating an APK.</strong></p>
+</blockquote>
+<p>Mockito 加载插件的方式类似于 <code>ServiceLoader</code>，但是它是去 <code>mockito-extensions</code> 目录下寻找插件，而不是 <code>META-INF</code>。</p>
+<p>以 Android 平台为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">├── android</span><br><span class="line">│   └── src</span><br><span class="line">│       └── main</span><br><span class="line">│           ├── java</span><br><span class="line">│           │   └── org</span><br><span class="line">│           │       └── mockito</span><br><span class="line">│           │           └── android</span><br><span class="line">│           │               └── internal</span><br><span class="line">│           │                   └── creation</span><br><span class="line">│           │                       ├── AndroidByteBuddyMockMaker.java</span><br><span class="line">│           │                       ├── AndroidLoadingStrategy.java</span><br><span class="line">│           │                       └── AndroidTempFileLocator.java</span><br><span class="line">│           └── resources</span><br><span class="line">│               └── mockito-extensions</span><br><span class="line">│                   └── org.mockito.plugins.MockMaker</span><br></pre></td></tr></table></figure>
+<p>mockito-extensions 目录下有一个文件 <code>org.mockito.plugins.MockMaker</code>，那么 <code>PluginLoader</code> 在加载 <code>MockMaker</code> 时会首先读取 <code>org.mockito.plugins.MockMaker</code> 文件的内容（类全称或者别名）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.mockito.android.internal.creation.AndroidByteBuddyMockMaker</span><br></pre></td></tr></table></figure>
+<p>ClassLoader 把这个类加载进来之后，插件就加载完成了。</p>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/07/08/mockito-details-3-stubbing/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（三）插桩">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/06/mockito-details-1-usage/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（一）基本用法">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/07/07/mockito-details-2-plugins/";
+var disqus_url = "http://liangfei.me/2017/07/07/mockito-details-2-plugins/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

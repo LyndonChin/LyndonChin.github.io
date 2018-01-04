@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Mockito 详解（三）插桩 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/07/08/mockito-details-3-stubbing/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                    <h1>Mockito 详解（三）插桩</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-07-08
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>每次插桩（Stubbing）都会产生一个 Invocation，本篇从 Invocation 着手，重点分析插桩的原理。</p>
+<a id="more"></a>
+<p>Invocation 之间的关系如下所示：</p>
+<pre><code>+----------+              +----------+
+| StubInfo |--stubbedAt--&gt;| Location |
++----------+              +----------+
+     /|\
+      |
+ implements
+      |  
+      |  
++--------------+                            +---------------------+
+| StubInfoImpl |-----has a-----------------&gt;| DescribedInvocation |
++--------------+                            +---------------------+
+
++---------------------+
+| DescribedInvocation |
++---------------------+
+     /|\         /|\  \ 
+      |           |     \        +------------------+
+      |           |       \      | InvocationOnMock | 
+      |           |         \    +------------------+
+      |           |           \       / 
+      |           |           extends
+      |        extends           \ /
+      |           |        +------------+
+ implements       |        | Invocation |
+      |           |        +------------+
+      |           |                  /|\
+      |     +---------------------+   |
+      |     | MatchableInvocation |   |
+      |     +---------------------+   |
+      |             /|\               |
+      |              |                |
+      |         implements           has
+      |              |                |
+      |              |                |
+   +-------------------+              |
+   | InvocationMatcher |--------------+
+   +-------------------+
+              |
+              |                         +-----------------+
+              +------ has list of -----&gt;| ArgumentMatcher |
+                                        +-----------------+
+</code></pre><p><code>MatchableInvocation</code> 与 <code>Invocation</code> 的区别如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mock.foo();   <span class="comment">// &lt;- invocation</span></span><br><span class="line">verify(mock).bar();  <span class="comment">// &lt;- matchable invocation</span></span><br></pre></td></tr></table></figure>
+<h2 id="MockHandler"><a href="#MockHandler" class="headerlink" title="MockHandler"></a>MockHandler</h2><p><code>Invocation</code> 通过 <code>MockHandler</code> 进行处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MockHandler</span> <span class="keyword">extends</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="function">Object <span class="title">handle</span><span class="params">(Invocation invocation)</span> <span class="keyword">throws</span> Throwable</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Mockito 提供的的 <code>MockHandler</code> 实现了如下功能：</p>
+<ol>
+<li>记录 Mock 对象上的方法调用以进行后续验证</li>
+<li>当 Mock 对象被插桩之后捕获 stubbing 信息</li>
+<li>返回 invocation 的插桩值</li>
+</ol>
+<hr>
+<p>Invocation 表示在 Mock 方法上的一次调用，它包含两部分信息 DescribedInvocation &amp; InvocationOnMock。</p>
+<blockquote>
+<p>A method call on a mock object. Contains all information and state needed for the Mockito framework to operate.</p>
+</blockquote>
+<h2 id="DescribedInvocation"><a href="#DescribedInvocation" class="headerlink" title="DescribedInvocation"></a>DescribedInvocation</h2><p><code>DescribedInvocation</code> 只是用于描述 <code>Invocation</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DescribedInvocation</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">toString</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Location <span class="title">getLocation</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 <code>Location</code> 用于描述 <code>Invocation</code> 的位置：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Location</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">toString</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="InvocationOnMock"><a href="#InvocationOnMock" class="headerlink" title="InvocationOnMock"></a>InvocationOnMock</h2><p><code>InvocationOnMock</code> 用于表示 <code>Invocation</code> 和 <code>Mock</code> 之间的数据联系。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">InvocationOnMock</span> <span class="keyword">extends</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="function">Object <span class="title">getMock</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Method <span class="title">getMethod</span><span class="params">()</span></span>;</span><br><span class="line">    Object[] getArguments();</span><br><span class="line">    &lt;T&gt; <span class="function">T <span class="title">getArgument</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line">    <span class="function">Object <span class="title">callRealMethod</span><span class="params">()</span> <span class="keyword">throws</span> Throwable</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Invocation"><a href="#Invocation" class="headerlink" title="Invocation"></a>Invocation</h2><p><code>Invocation</code> 除此之外，还包含其他功能：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Invocation</span> <span class="keyword">extends</span> <span class="title">InvocationOnMock</span>, <span class="title">DescribedInvocation</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isVerified</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getSequenceNumber</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Location <span class="title">getLocation</span><span class="params">()</span></span>;</span><br><span class="line">    Object[] getRawArguments();</span><br><span class="line">    Class&lt;?&gt; getRawReturnType();</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">markVerified</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">StubInfo <span class="title">stubInfo</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">markStubbed</span><span class="params">(StubInfo stubInfo)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isIgnoredForVerification</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">ignoreForVerification</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>StubInfo</code> 用于描述 stubbing：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">StubInfo</span> </span>&#123;</span><br><span class="line">    <span class="function">Location <span class="title">stubbedAt</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="MatchableInvocation"><a href="#MatchableInvocation" class="headerlink" title="MatchableInvocation"></a>MatchableInvocation</h2><p><code>MatchableInvocation</code> 包含 <code>Invocation</code> 实例和 <code>ArgumentMatcher</code> 列表。它用于验证的过程（verification process）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MatchableInvocation</span> <span class="keyword">extends</span> <span class="title">DescribedInvocation</span> </span>&#123;</span><br><span class="line">    <span class="function">Invocation <span class="title">getInvocation</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">List&lt;ArgumentMatcher&gt; <span class="title">getMatchers</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(Invocation candidate)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">hasSimilarMethod</span><span class="params">(Invocation candidate)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">hasSameMethod</span><span class="params">(Invocation candidate)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">captureArgumentsFrom</span><span class="params">(Invocation invocation)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="InvocationContainer-关系图"><a href="#InvocationContainer-关系图" class="headerlink" title="InvocationContainer 关系图"></a>InvocationContainer 关系图</h2><pre><code>+---------------------+                           +------------+
+| InvocationContainer |--- clear / get list of---&gt;| Invocation |
++---------------------+                           +------------+
+</code></pre><h2 id="Stubbing-关系图"><a href="#Stubbing-关系图" class="headerlink" title="Stubbing 关系图"></a>Stubbing 关系图</h2><pre><code>   +-----------------+
+   | OngoingStubbing |
+   +-----------------+
+           /|\
+            |
+        implements
+            |
+            |
+   +-----------------+
+   |   BaseStubbing  |&lt;-----------------+
+   +-----------------+                  | 
+           /|\                          |
+            |                           |
+         extends                     extends 
+            |                           |
+            |                           |
++----------------------+    +---------------------+
+| ConsecutiveStubbing  |    | OngoingStubbingImpl |
++----------------------+    +---------------------+
+</code></pre><h2 id="Stubbing"><a href="#Stubbing" class="headerlink" title="Stubbing"></a>Stubbing</h2><p>Stubbing 表示一次插桩，它的形式是 <code>when(x).then(y)</code>，用于指定 mock 的行为。</p>
+<p><em>Stubbing 的示例代码</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">when(mock.foo()).thenReturn(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure></p>
+<p>可以通过如下代码获取 mock 对象的所有 stubbing：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mockito.mockingDetails(mock).getStubbings();</span><br></pre></td></tr></table></figure>
+<p>Stubbing 的接口规范如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Stubbing</span> </span>&#123;</span><br><span class="line">    <span class="function">Invocation <span class="title">getInvocation</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">wasUsed</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>getInvocation()</code> 返回被插桩的方法调用，例如，<code>mock.foo()</code> 就是一个 <code>Invocation</code>。</li>
+<li><code>wasUsed()</code> 用于表示 stubbing 是否被使用，如果 <code>mock.foo()</code> 没有被调用，那么 <code>wasUsed()</code> 返回 false，说明存在未被使用的 stubbing，为了保持 <code>clarity of tests</code>，最好删除未被使用的 stubbing 代码。</li>
+</ul>
+<h2 id="Stubber"><a href="#Stubber" class="headerlink" title="Stubber"></a>Stubber</h2><p>Stubber 是一个插装器。</p>
+<p>当我们用 <code>doThrow()|doAnswer()|doNothing()|doReturn()</code> 的形式进行插桩时，可以通过 Stubber 来选择 mock 对象的方法：</p>
+<p><em>示例一</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">doThrow(<span class="keyword">new</span> RuntimeException()).when(mockedList).clear();</span><br></pre></td></tr></table></figure></p>
+<p><em>示例二</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">doThrow(<span class="keyword">new</span> RuntimeException(<span class="string">"one"</span>)).doThrow(<span class="keyword">new</span> RuntimeException(<span class="string">"two"</span>)).when(mock).someVoidMethod();</span><br></pre></td></tr></table></figure></p>
+<p>Stubber 接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Stubber</span> </span>&#123;</span><br><span class="line">    &lt;T&gt; <span class="function">T <span class="title">when</span><span class="params">(T mock)</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doThrow</span><span class="params">(Throwable... toBeThrown)</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doThrow</span><span class="params">(Class&lt;? extends Throwable&gt; toBeThrown)</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doThrow</span><span class="params">(Class&lt;? extends Throwable&gt; toBeThrown, Class&lt;? extends Throwable&gt;... nextToBeThrown)</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doAnswer</span><span class="params">(Answer answer)</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doNothing</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doReturn</span><span class="params">(Object toBeReturned)</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doReturn</span><span class="params">(Object toBeReturned, Object... nextToBeReturned)</span></span>;</span><br><span class="line">    <span class="function">Stubber <span class="title">doCallRealMethod</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，<code>doXXX</code> 方法的返回值是一个 <code>Stubber</code>，<code>when</code> 方法对 mock 对象进行处理之后再返回这个对象。</p>
+<h2 id="OngoingStubbing"><a href="#OngoingStubbing" class="headerlink" title="OngoingStubbing"></a>OngoingStubbing</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OngoingStubbing</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">thenReturn</span><span class="params">(T value)</span></span>;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">thenReturn</span><span class="params">(T value, T... values)</span></span>;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">thenThrow</span><span class="params">(Throwable... throwables)</span></span>;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">thenThrow</span><span class="params">(Class&lt;? extends Throwable&gt; throwableType)</span></span>;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">thenThrow</span><span class="params">(Class&lt;? extends Throwable&gt; toBeThrown, Class&lt;? extends Throwable&gt;... nextToBeThrown)</span></span>;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">thenCallRealMethod</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">thenAnswer</span><span class="params">(Answer&lt;?&gt; answer)</span></span>;</span><br><span class="line">    <span class="function">OngoingStubbing&lt;T&gt; <span class="title">then</span><span class="params">(Answer&lt;?&gt; answer)</span></span>;</span><br><span class="line">    &lt;M&gt; <span class="function">M <span class="title">getMock</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>调用 <code>Mockito#when</code> 返回一个 <code>OngoingStubbing</code>，通过 <code>OngoingStubbing#thenXxx</code> 可以改变 mock 对象的行为，从而产生一个 stubbing。</p>
+<p><em>示例代码</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">when(mock.someMethod(anyString())).thenReturn(<span class="number">10</span>);</span><br></pre></td></tr></table></figure></p>
+<h2 id="Answer"><a href="#Answer" class="headerlink" title="Answer"></a>Answer</h2><p>不管是 <code>Stubber</code> 还是 <code>OngoingStubbing</code>，除了标准返回之外，都提供了自定义返回值的方法：</p>
+<ul>
+<li><code>Stubber doAnswer(Answer answer);</code></li>
+<li><code>OngoingStubbing&lt;T&gt; then(Answer&lt;?&gt; answer);</code></li>
+</ul>
+<p>Answer 的接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Answer</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">T <span class="title">answer</span><span class="params">(InvocationOnMock invocation)</span> <span class="keyword">throws</span> Throwable</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如下代码利用 <code>Answer</code> 改变了 mock 方法的行为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">when(mock.someMethod(anyString())).thenAnswer(</span><br><span class="line">    <span class="keyword">new</span> Answer() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">answer</span><span class="params">(InvocationOnMock invocation)</span> </span>&#123;</span><br><span class="line">            Object[] args = invocation.getArguments();</span><br><span class="line">            Object mock = invocation.getMock();</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"called with arguments: "</span> + Arrays.toString(args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>那么 <code>mock.someMethod(&quot;foo&quot;)</code> 的返回值就变成了 <code>called with arguments: [foo]</code>。</p>
+<p><code>Answer</code> 不接受参数，只有返回值，Mockito 还提供了其他 5 个 Answer，分别接受不同个数的参数，然后返回一个值。</p>
+<ul>
+<li>Answer1</li>
+<li>Answer2</li>
+<li>Answer3</li>
+<li>Answer4</li>
+<li>Answer5</li>
+</ul>
+<p>只接受参数，没有返回值的 Answer 包括：</p>
+<ul>
+<li>VoidAnswer1</li>
+<li>VoidAnswer2</li>
+<li>VoidAnswer3</li>
+<li>VoidAnswer4</li>
+<li>VoidAnswer5</li>
+</ul>
+<blockquote>
+<p><code>ValidableAnswer</code> 用到再分析</p>
+</blockquote>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/07/14/youzan-app-oauth2/" data-toggle="tooltip" data-placement="top" title="有赞自有APP的OAuth2授权模型分析">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/07/mockito-details-2-plugins/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（二）插件机制">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/07/08/mockito-details-3-stubbing/";
+var disqus_url = "http://liangfei.me/2017/07/08/mockito-details-3-stubbing/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

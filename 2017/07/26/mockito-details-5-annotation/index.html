@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Mockito 详解（五）MockitoAnnotation - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/07/26/mockito-details-5-annotation/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                    <h1>Mockito 详解（五）MockitoAnnotation</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-07-26
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>MockitoAnnotations负责初始化<code>@Mock</code>、<code>@Spy</code>、<code>@Captor</code>、<code>@InjectMocks</code>等注解。</p>
+<p>如果不用<code>@Mock</code>，我们当然可以手动创建一个mock对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List mockedList = Mockito.mock(List.class);</span><br></pre></td></tr></table></figure></p>
+<p>但是相比于手动创建，使用注解可带来如下好处：</p>
+<ul>
+<li>代码更简洁</li>
+<li>避免重复创建</li>
+<li>可读性好</li>
+<li>验证错误更易读（因为注解默认使用field name来标记mock对象）</li>
+</ul>
+<a id="more"></a>
+<p>先来看一下用法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArticleManagerTest</span> <span class="keyword">extends</span> <span class="title">SampleBaseTestCase</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Mock</span> <span class="keyword">private</span> ArticleCalculator calculator;</span><br><span class="line">  <span class="meta">@Mock</span> <span class="keyword">private</span> ArticleDatabase database;</span><br><span class="line">  <span class="meta">@Mock</span> <span class="keyword">private</span> UserProvider userProvider;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> ArticleManager manager;</span><br><span class="line"></span><br><span class="line">  <span class="meta">@Before</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    manager = <span class="keyword">new</span> ArticleManager(userProvider, database, calculator);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleBaseTestCase</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Before</span> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initMocks</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    MockitoAnnotations.initMocks(<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>MockitoAnnotations</code>必须在执行测试方法之前（<code>@Before</code>标记）执行初始化。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MockitoAnnotations</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">initMocks</span><span class="params">(Object testClass)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (testClass == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> MockitoException(<span class="string">"testClass cannot be null."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    AnnotationEngine annotationEngine = <span class="keyword">new</span> GlobalConfiguration().tryGetPluginAnnotationEngine();</span><br><span class="line">    annotationEngine.process(testClass.getClass(), testClass);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所有注解都由<code>AnnotationEngine</code>来处理。</p>
+<h2 id="寻找AnnotationEngine"><a href="#寻找AnnotationEngine" class="headerlink" title="寻找AnnotationEngine"></a>寻找AnnotationEngine</h2><p>为了保证线程安全，Mockito的configuration会保存在ThreadLocal，也就说一个线程只有一个实例。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GlobalConfiguration</span> <span class="keyword">implements</span> <span class="title">IMockitoConfiguration</span>, <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = -<span class="number">2860353062105505938L</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 线程安全</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;IMockitoConfiguration&gt; GLOBAL_CONFIGURATION = </span><br><span class="line">        <span class="keyword">new</span> ThreadLocal&lt;IMockitoConfiguration&gt;();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">GlobalConfiguration</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (GLOBAL_CONFIGURATION.get() == <span class="keyword">null</span>) &#123;</span><br><span class="line">      GLOBAL_CONFIGURATION.set(createConfig());</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">private</span> IMockitoConfiguration <span class="title">createConfig</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    IMockitoConfiguration defaultConfiguration = <span class="keyword">new</span> DefaultMockitoConfiguration();</span><br><span class="line">    IMockitoConfiguration config = <span class="keyword">new</span> ClassPathLoader().loadConfiguration();</span><br><span class="line">    <span class="keyword">if</span> (config != <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> config;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> defaultConfiguration;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> org.mockito.plugins.<span class="function">AnnotationEngine <span class="title">tryGetPluginAnnotationEngine</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    IMockitoConfiguration configuration = GLOBAL_CONFIGURATION.get();</span><br><span class="line">    <span class="keyword">if</span> (configuration.getClass() == DefaultMockitoConfiguration.class) &#123;</span><br><span class="line">      <span class="keyword">return</span> Plugins.getAnnotationEngine();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> configuration.getAnnotationEngine();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>IMockitoConfiguration</code>的实例存储在一个static ThreadLocal变量中——<code>GLOBAL_CONFIGURATION</code>，所以在每一个线程中只有一个configuration实例，那么每次<code>new GlobalConfiguration</code>并不会多次创建实例。</p>
+<p><code>GlobalConfiguration</code>构造时会首先尝试通过<code>ClassPathLoader</code>来加载configuration：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassPathLoader</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String MOCKITO_CONFIGURATION_CLASS_NAME = <span class="string">"org.mockito.configuration.MockitoConfiguration"</span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> IMockitoConfiguration <span class="title">loadConfiguration</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// try-catch is omitted.</span></span><br><span class="line">    Class&lt;?&gt; configClass = Class.forName(MOCKITO_CONFIGURATION_CLASS_NAME);</span><br><span class="line">    <span class="keyword">return</span> (IMockitoConfiguration) configClass.newInstance();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>MockitoConfiguration</code>是一个插件，关于插件的加载方式可参考<a href="http://www.liangfei.me/2017/07/07/mockito-details-2-plugins/#加载插件" target="_blank" rel="noopener">Mockito 详解（二）插件机制</a>。</p>
+</blockquote>
+<p>如果加载不到类<code>MockitoConfiguration</code>，说明没有配置插件，那么就退而求其次，使用默认值——<code>DefaultMockitoConfiguration</code>，它内部配置的 <code>AnnotationEngine</code>是<code>InjectingAnnotationEngine</code>。</p>
+<p><code>AnnotationEngine</code>找到了，开始分析如何处理annotation。</p>
+<h2 id="处理Annotation"><a href="#处理Annotation" class="headerlink" title="处理Annotation"></a>处理Annotation</h2><p><code>AnnotationEngine</code>的接口规范如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AnnotationEngine</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">process</span><span class="params">(Class&lt;?&gt; clazz, Object testInstance)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>每个<code>Annotation</code>所对应的<code>AnnotationEngine</code>如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>Annotation</th>
+<th>AnnotationEngine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>@Mock &amp; @Captor</td>
+<td>IndependentAnnotationEngine</td>
+</tr>
+<tr>
+<td>@Spy</td>
+<td>SpyAnnotationEngine</td>
+</tr>
+<tr>
+<td>@InjectMocks</td>
+<td>InjectingAnnotationEngine</td>
+</tr>
+</tbody>
+</table>
+<p>因为注解会作用到单个变量（Field）上，根据注解初始化变量的工作由<code>FieldAnnotationProcessor</code>完成：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FieldAnnotationProcessor</span>&lt;<span class="title">A</span> <span class="keyword">extends</span> <span class="title">Annotation</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function">Object <span class="title">process</span><span class="params">(A annotation, Field field)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>process</code>的返回值<code>Object</code>就是根据注解创建的对象。</p>
+<h3 id="IndependentAnnotationEngine-Mock-amp-Captor"><a href="#IndependentAnnotationEngine-Mock-amp-Captor" class="headerlink" title="IndependentAnnotationEngine(@Mock &amp; @Captor)"></a>IndependentAnnotationEngine(@Mock &amp; @Captor)</h3><p><code>@Mock</code>可以指定创建mock所需要的变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(&#123;FIELD, PARAMETER&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Mock &#123;</span><br><span class="line">  <span class="function">Answers <span class="title">answer</span><span class="params">()</span> <span class="keyword">default</span> Answers.RETURNS_DEFAULTS</span>;</span><br><span class="line">  <span class="function">String <span class="title">name</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line">  Class&lt;?&gt;[] extraInterfaces() <span class="keyword">default</span> &#123;&#125;;</span><br><span class="line">  <span class="function"><span class="keyword">boolean</span> <span class="title">serializable</span><span class="params">()</span> <span class="keyword">default</span> <span class="keyword">false</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MockAnnotationProcessor</code>会首先读取<code>Mock</code>的参数，然后构建一个<code>mockSettings</code>，最后通过调用<code>Mockito#mock</code>创建一个mock对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MockAnnotationProcessor</span> <span class="keyword">implements</span> <span class="title">FieldAnnotationProcessor</span>&lt;<span class="title">Mock</span>&gt; </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> Object <span class="title">process</span><span class="params">(Mock annotation, Field field)</span> </span>&#123;</span><br><span class="line">    MockSettings mockSettings = Mockito.withSettings();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (annotation.extraInterfaces().length &gt; <span class="number">0</span>) &#123; <span class="comment">// never null</span></span><br><span class="line">      mockSettings.extraInterfaces(annotation.extraInterfaces());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认使用field name</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="string">""</span>.equals(annotation.name())) &#123;</span><br><span class="line">      mockSettings.name(field.getName());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      mockSettings.name(annotation.name());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (annotation.serializable()) &#123;</span><br><span class="line">      mockSettings.serializable();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    mockSettings.defaultAnswer(annotation.answer());</span><br><span class="line">    <span class="keyword">return</span> Mockito.mock(field.getType(), mockSettings);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Captor</code>的原理是一样的，它会创建一个<code>ArgumentCaptor</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CaptorAnnotationProcessor</span> <span class="keyword">implements</span> <span class="title">FieldAnnotationProcessor</span>&lt;<span class="title">Captor</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">process</span><span class="params">(Captor annotation, Field field)</span> </span>&#123;</span><br><span class="line">        Class&lt;?&gt; type = field.getType();</span><br><span class="line">        <span class="keyword">if</span> (!ArgumentCaptor.class.isAssignableFrom(type)) &#123;</span><br><span class="line">            <span class="comment">// exception message is omitted</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> MockitoException(<span class="string">""</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Class&lt;?&gt; cls = <span class="keyword">new</span> GenericMaster().getGenericType(field);</span><br><span class="line">        <span class="keyword">return</span> ArgumentCaptor.forClass(cls);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过代码可以看出，<code>@Captor</code>标记的变量必须是<code>ArgumentCaptor</code>类型。</p>
+<p><code>IndependentAnnotationEngine</code>会初始化一个Annotation Class到FieldAnnotationProcessor的映射：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 成员变量，省略了new</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Class&lt;? extends Annotation&gt;, FieldAnnotationProcessor&lt;?&gt;&gt; annotationProcessorMap;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造方法，注册了两个annotation processor</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">IndependentAnnotationEngine</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  registerAnnotationProcessor(Mock.class, <span class="keyword">new</span> MockAnnotationProcessor());</span><br><span class="line">  registerAnnotationProcessor(Captor.class, <span class="keyword">new</span> CaptorAnnotationProcessor());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MockitoAnnotations#initMocks</code>方法直接调用了<code>AnnotationEngine#process</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">annotationEngine.process(testClass.getClass(), testClass);</span><br></pre></td></tr></table></figure></p>
+<p><code>IndependentAnnotationEngine#process</code>的实现如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Class&lt;?&gt; clazz, Object testInstance)</span> </span>&#123;</span><br><span class="line">  Field[] fields = clazz.getDeclaredFields();</span><br><span class="line">  <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">    <span class="keyword">boolean</span> alreadyAssigned = <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">for</span>(Annotation annotation : field.getAnnotations()) &#123;</span><br><span class="line">      Object mock = createMockFor(annotation, field);</span><br><span class="line">      <span class="keyword">if</span> (mock != <span class="keyword">null</span>) &#123;</span><br><span class="line">        throwIfAlreadyAssigned(field, alreadyAssigned);</span><br><span class="line">        alreadyAssigned = <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">          setField(testInstance, field,mock);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> MockitoException(<span class="string">"Problems setting field "</span> + field.getName() + <span class="string">" annotated with "</span></span><br><span class="line">                    + annotation, e);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>首先遍历所有的<code>field</code>，获取该<code>field</code>的annotations</li>
+<li><p>然后根据annotation类型创建mock对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">createMockFor</span><span class="params">(Annotation annotation, Field field)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> forAnnotation(annotation).process(annotation, field);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> &lt;A extends Annotation&gt; <span class="function">FieldAnnotationProcessor&lt;A&gt; <span class="title">forAnnotation</span><span class="params">(A annotation)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (annotationProcessorMap.containsKey(annotation.annotationType())) &#123;</span><br><span class="line">    <span class="keyword">return</span> (FieldAnnotationProcessor&lt;A&gt;) annotationProcessorMap.get(annotation.annotationType());</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> FieldAnnotationProcessor&lt;A&gt;() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">process</span><span class="params">(A annotation, Field field)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>setField</code>会把新创建的mock对象——<code>Object mock</code>通过反射赋值给<code>testInstance</code>的成员变量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FieldSetter</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">private</span> <span class="title">FieldSetter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setField</span><span class="params">(Object target, Field field, Object value)</span> </span>&#123;</span><br><span class="line">    AccessibilityChanger changer = <span class="keyword">new</span> AccessibilityChanger();</span><br><span class="line">    changer.enableAccess(field);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      field.set(target, value);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalAccessException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"msg omitted"</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"msg omitted"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    changer.safelyDisableAccess(field);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><code>MockitoAnnotations</code>只是负责初始化<code>testInstance</code>内用<code>Annotation</code>标记的<code>Field</code>。</li>
+<li><code>Field</code>通过<code>Mockito#mock</code>完成初始化。</li>
+<li><code>MockitoSession</code>除了借助<code>MockitoAnnotations</code>完成<code>Field</code>初始化之外，还会监控整个mock progress</li>
+</ul>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/08/21/note-on-css-mastery/" data-toggle="tooltip" data-placement="top" title="CSS Mastery笔记">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/25/mockito-details-4-session/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（四）MockitoSession">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#UnitTest" title="UnitTest">UnitTest</a>
+                        
+                          <a class="tag" href="/tags/#Mockito" title="Mockito">Mockito</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/07/26/mockito-details-5-annotation/";
+var disqus_url = "http://liangfei.me/2017/07/26/mockito-details-5-annotation/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

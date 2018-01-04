@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          2017 年中总结 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/07/04/summary-of-2017-semi-annual/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Summary" title="Summary">Summary</a>
+                        
+                    </div>
+                    <h1>2017 年中总结</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-07-04
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>复盘是一个总结过去、发现问题的好方法，借着公司复盘的东风，很有必要进行一次个人复盘。<br>唯有不断地自我反省，才能更深刻地认识自己、找到短板，从而变得更加优秀。 </p>
+<a id="more"></a>
+<h2 id="团队管理"><a href="#团队管理" class="headerlink" title="团队管理"></a>团队管理</h2><p>为了了解“创业”这件事，我疯狂地阅读了很多大佬的书，差不多两三天一本。阅读过程中不求甚解，只是大概了解故事的经过，但是大量阅读之后，一些共通的概念会不断得到强化，这些强化过后的观点就形成自己的认知。当然也可以说被洗脑，但是个人的执念又何尝不是一种洗脑呢。</p>
+<ul>
+<li>《蚂蚁金服》</li>
+<li>《阿里传：这是阿里巴巴的世界》</li>
+<li>《马云：未来已来》</li>
+<li>《在线：数据改变商业本质，计算重塑经济未来》</li>
+<li>《腾讯：中国互联网公司进化论》</li>
+<li>《微信帝国：张小龙的内争与外伐》</li>
+<li>《周鸿祎自述：我的互联网方法论》</li>
+<li>《九败一胜：美团创始人王兴创业十年》</li>
+<li>《创京东：刘强东亲述创业之路》</li>
+<li>《人工智能：李开复谈AI如何重塑个人、商业与社会的未来图谱》</li>
+<li>《十亿美金的教训》</li>
+<li>《你凭什么做好互联网：从技术思维到商业逻辑》</li>
+<li>《精益创业》</li>
+<li>《干法》</li>
+<li>《领导者的资质》</li>
+<li>《零售的哲学》</li>
+</ul>
+<p>去年刚接手微商城APP时整个人完全沉溺在技术当中，疯狂地写代码、堆功能，很享受这种冲在前线“手撕鬼子”的乐趣。但是现在基本能够跳出技术去看问题，也比以前更加重视思考方式和看问题的角度。</p>
+<p><strong>一、团队很重要</strong></p>
+<p>去年，遇到新鲜好玩的技术都想亲自冲锋陷阵，当手头积压了很多任务时就会忽略掉很多不感兴趣的事，结果一波又一波的琐事不断涌来，经常忙得焦头烂额、疲于应战。当“伤痛”变多之后，就会慢慢明白个人能力是有限的，不依靠团队只靠自己单打独斗终究成不了事， 唯有提升自己管理团队的能力才有可能发挥出团队的力量。今年上半年我觉得自己应该从代码中跳出来，以团队为整体，站在更高的角都去思考技术的方向，思考如何提高团队战斗力。</p>
+<p><strong>二、技术服务于商业才有价值</strong></p>
+<p>以前，掌握了一门新技术或者写了一段很漂亮的代码会感到很满足，现在则更想学习技术的本质，了解框架的原理，不给自己设限，坚信他山之石可以攻玉。会想办法去看得更高、更远，然后按照个人兴趣去引导他人的技术热情，只有团队中有更多技术专家型的人存在，才能提升整个团队的学习效率。而对于创业公司而言，只有产品快速迭代试错才有可能抢占市场，个人认为：思考并<strong>实践</strong>如何让技术更好地服务于产品比单纯写代码更有价值。</p>
+<p><strong>三、技术之外的风景也很美</strong></p>
+<p>翻看大佬们的创业历程会不自觉地代入角色，创业过程中会面临无数个难解的问题，你没办法，我没办法，大家都没办法，都很无奈，但是大佬之所以成为大佬就是能够解决别人解决不了的事情，承担别人承担不了的责任。<br>大佬们的品质给了我很大启发：普通人往往喜欢停留在舒适区，要想成功必须要付出不亚于常人的努力。不要逃避困难，面对它，接受它，解决它，这个能力远比能写一万行代码有用。</p>
+<p><strong>四、投入其中才能感受到深层次的乐趣</strong></p>
+<p>公司的每一项决定，每一次转型，每一个会议，每一次培训等等，对我来说都是精进自己的好机会，不再像以前那样以一个观察者的身份置身事外。现在则会用心体会公司的文化，深入了解公司的使命、愿景和价值观，慢慢已经感觉到只有深入其中并乐在其中才能体会到公司的精妙之处。<br>公司或团队做得不好的地方就是我们的机会，不抱怨，立即行动，努力让她变得更好，深度参与的过程是个人价值的体现。</p>
+<p><strong>其他</strong></p>
+<ul>
+<li>《人类简史 : 从动物到上帝》让我更了解“人”，作为一个技术团队，技术固然很重要，“人”更重要，要知己知彼。</li>
+<li>《人民的名义》电视剧太拖沓，两个晚上刷完了书，略知“权术”，这就是游戏规则，不服不行。</li>
+<li>《万万没想到：用理工科思维理解世界》的写作套路很熟悉，类似《时间的朋友》。</li>
+<li>《不能承受的生命之轻》学习到了看问题的另一个角度，有很多<strong>文化タブー</strong>的问题不见得是问题，做人可以出世，做事需要入世，入乡随俗，遵守游戏规则。</li>
+</ul>
+<h2 id="技术精进"><a href="#技术精进" class="headerlink" title="技术精进"></a>技术精进</h2><p>太执着于“虚”的东西容易让人变得眼高手低，但是作为一名“行走江湖的手艺人”，还是心想着能成为一名优秀的“職人”。<br>下半年我会学习比较难、之前不敢碰的知识（例如 Clojure、编译原理）。</p>
+<h2 id="复盘感悟"><a href="#复盘感悟" class="headerlink" title="复盘感悟"></a>复盘感悟</h2><p>一天的复盘时间，从别人身上学到很多东西，记录下来，方便以后不断借鉴参考。</p>
+<p>很多时候，我们技术人员需要跳出技术思维，不要一味追求学习新技术，除了不断强化自身“硬”技能之外，还要增强“软”能力。</p>
+<p>很多“兴趣驱动”的开发人员，往往会排斥不感兴趣的工作，但是我们要明白：老板雇你来是为了解决问题，而不是单纯地搞技术。就好像玩狼人杀，如果不遵守游戏规则，中途睁眼偷看，那游戏就没法玩了。职场也有它的游戏规则，既然入局，就要遵守规则。每一段经历都弥足珍贵，投入其中，乐在其中，必将收获满满。</p>
+<p>以我个人的经历来看，在日本 7-eleven 做了一年时间的アルバイト使得我在很短的时间内了解了日本人的生活习惯，回国之后，因为了解他们的日常茶飯事，所有跟日本客户沟通起来会非常顺畅。但当时也仅仅停留在这个层面，当我最近开始学习“新零售”时才发觉：如果那时候能够深入了解日本便利店的经营之道，多跟店长沟通，现在看问题的角度和深度也许就不会这么肤浅了。</p>
+<p>做了TL之后，技术上投入的时间必然会减少很多，如何提高技术学习的效率，是每一个技术管理者要思考的课题，毕竟作为一线TL，只有专业技能过硬，才能带领团队更好地往前冲。<br>既然时间有限，那么我们更应该追求技术的本质，学习技术之上的“哲学”，而且必须提炼出业务代码背后的“理念”，只有“理念”才能指导我们更好地开发永远做不完、可能还会重复的业务需求。这应该也是李善友的“第一性原理”吧。</p>
+<p>还有关于团队创新能力的思考。<br>一线TL习惯了前线作战，往往会不自觉地替团队拍板、做决定，这样一来，团队小伙伴往往会变得偏执行，不敢也不想提出自己的见解，那么团队成长的瓶颈很容易就卡在TL自身。所以我们在拍板、做决定的时候要把握好“度”，不要凡事亲力亲为，要学会放权，让别人做决定。而把握好“度”，则需要TL对公司的使命、愿景、价值观能有所理解，同时也要知道公司当前的战略，这样才能够把握好原则性的东西。<br>特别是在制定OKR之时，<strong>O是定性的描述</strong>，而且要围绕公司战略去制定，而KR则是O的一个落地手段，所以<strong>KR是定量的描述</strong>。</p>
+<p>最后则是崔分享的“向上管理”。</p>
+<ol>
+<li>首先要强迫自己去反馈。想到了你就说，不需要太顾忌场合。很多情况下，我们在开口之前，可能已经预料到了对方会怎么回复，但是我们依然需要去说这件事，因为真正执行的人才会明白事情的复杂度，上面有时候并不会意识到。</li>
+<li>反馈的时候不要觉得驳了对方的面子，因为管理者就是要脸皮厚，把面子撕下来踩在脚底，因为无论你做什么决定，都会有人觉得你是傻逼。</li>
+<li>反馈时要拉上第三者，因为第三者不知道上下文，是一个中立的角色。这个第三者最好是女性，比如HR，因为女性往往是<strong>弱势形象、强势结果</strong>，比男性更容易沟通。</li>
+<li>向上反馈必然会存在时延性，一般会在15天到1个月的时间，所以在沟通的过程中，要使用非暴力沟通，即使当下怒火冲天，也要强忍着怒气采用一种更加柔和的方式去沟通。</li>
+</ol>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/07/06/mockito-details-1-usage/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（一）基本用法">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/03/http-status-code/" data-toggle="tooltip" data-placement="top" title="精通 HTTP 之 STATUS CODE">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Summary" title="Summary">Summary</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/07/04/summary-of-2017-semi-annual/";
+var disqus_url = "http://liangfei.me/2017/07/04/summary-of-2017-semi-annual/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

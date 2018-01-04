@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          SalesforceAnalytics 源码分析 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/07/22/SalesforceAnalytics-analysis/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Android" title="Android">Android</a>
+                        
+                    </div>
+                    <h1>SalesforceAnalytics 源码分析</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-07-22
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><a href="https://github.com/forcedotcom/SalesforceMobileSDK-Android/tree/master/libs/SalesforceAnalytics" target="_blank" rel="noopener">SalesforceAnalytics</a> 可分为两个部分：</p>
+<ul>
+<li>Event 存储</li>
+<li>Event 上报</li>
+</ul>
+<a id="more"></a>
+<h2 id="AnalyticsManager"><a href="#AnalyticsManager" class="headerlink" title="AnalyticsManager"></a>AnalyticsManager</h2><p>AnalyticsManager 有三个属性：</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>type</th>
+<th>comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>storeManager</td>
+<td><code>EventStoreManager</code></td>
+<td>在 AnalyticsManager 的构造方法中初始化，只有 getter 没有 setter</td>
+</tr>
+<tr>
+<td>deviceAppAttributes</td>
+<td><code>DeviceAppAttribute</code></td>
+<td></td>
+</tr>
+<tr>
+<td>globalSequenceId</td>
+<td><code>int</code></td>
+<td>global sequence ID used by events</td>
+</tr>
+</tbody>
+</table>
+<p>上面的三个属性在构造方法中进行初始化：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AnalyticsManager</span><span class="params">(String uniqueId, </span></span></span><br><span class="line"><span class="function"><span class="params">                        Context context, </span></span></span><br><span class="line"><span class="function"><span class="params">                        String encryptionKey, </span></span></span><br><span class="line"><span class="function"><span class="params">                        DeviceAppAttributes deviceAppAttributes)</span> </span>&#123; </span><br><span class="line">    storeManager = <span class="keyword">new</span> EventStoreManager(uniqueId, context, encryptionKey);</span><br><span class="line">    <span class="keyword">this</span>.deviceAppAttributes = deviceAppAttributes;</span><br><span class="line">    globalSequenceId = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>deviceAppAttributes</code> 和 <code>globalSequenceId</code> 都可以通过 set 方法赋新值。</p>
+<p>AnalyticsManage#reset 方法可以删除 storeManager 中的所有 Events：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AnalyticsManager</span><span class="params">(String uniqueId, </span></span></span><br><span class="line"><span class="function"><span class="params">                        Context context, </span></span></span><br><span class="line"><span class="function"><span class="params">                        String encryptionKey, </span></span></span><br><span class="line"><span class="function"><span class="params">                        DeviceAppAttributes deviceAppAttributes)</span> </span>&#123; </span><br><span class="line">    storeManager = <span class="keyword">new</span> EventStoreManager(uniqueId, context, encryptionKey);</span><br><span class="line">    <span class="keyword">this</span>.deviceAppAttributes = deviceAppAttributes;</span><br><span class="line">    globalSequenceId = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="DeviceAppAttribute"><a href="#DeviceAppAttribute" class="headerlink" title="DeviceAppAttribute"></a>DeviceAppAttribute</h2><p><code>DeviceAppAttribute</code> 包含了 App、OS、SDK、Device 的信息，它可以和 <code>JSONObject</code> 互相转换。</p>
+<p><code>DeviceAppAttribute</code> 的构造初始化位于应用层（SalesforceSDK 模块的 SalesforceAnalyticsManager.java 文件）。</p>
+<table>
+<thead>
+<tr>
+<th>key</th>
+<th>meaning</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appVersion</td>
+<td>App version</td>
+<td>packageInfo.versionName</td>
+</tr>
+<tr>
+<td>appName</td>
+<td>App name</td>
+<td>通过 SalesforceSDKManager 设置</td>
+</tr>
+<tr>
+<td>osVersion</td>
+<td>OS version</td>
+<td>Build.VERSION.RELEASE</td>
+</tr>
+<tr>
+<td>osName</td>
+<td>OS name</td>
+<td>android</td>
+</tr>
+<tr>
+<td>nativeAppType</td>
+<td>App type</td>
+<td>Native（SalesforceSDKManager）</td>
+</tr>
+<tr>
+<td>mobileSdkVersion</td>
+<td>Mobile SDK version</td>
+<td>SalesforceSDKManager.SDK_VERSION</td>
+</tr>
+<tr>
+<td>deviceModel</td>
+<td>Device model</td>
+<td>Build.MODEL</td>
+</tr>
+<tr>
+<td>deviceId</td>
+<td>Device ID</td>
+</tr>
+<tr>
+<td>clientId</td>
+<td>Client ID</td>
+<td>BootConfig 提供</td>
+</tr>
+</tbody>
+</table>
+<h2 id="Encryptor"><a href="#Encryptor" class="headerlink" title="Encryptor"></a>Encryptor</h2><p>Encryptor 是一个工具类，其用途包括 Encryption、Decryption、Hash。</p>
+<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>从 Encryptor 的初始化开始分析：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Encrytor.init(getContext())</span><br></pre></td></tr></table></figure>
+<p>init 是一个静态方法，参数是一个 Context 实例。</p>
+<p>init 方法首先检查文件系统是否支持加密：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> isFileSystemEncrypted;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">init</span><span class="params">(Context ctx)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Checks if file system encryption is available and active.</span></span><br><span class="line">    DevicePolicyManager devicePolicyManager = (DevicePolicyManager) ctx.getSystemService(Service.DEVICE_POLICY_SERVICE);</span><br><span class="line">    isFileSystemEncrypted = devicePolicyManager.getStorageEncryptionStatus() == DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后尝试去获取最好的加密算法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String bestCipherAvailable;</span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">init</span><span class="params">(Context ctx)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Checks if file system encryption is available and active.</span></span><br><span class="line">  <span class="comment">// ...(omitted)</span></span><br><span class="line">  <span class="comment">// Make sure the cryptographic transformations we want to use are available.</span></span><br><span class="line">  bestCipherAvailable = <span class="keyword">null</span>;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    getBestCipher();</span><br><span class="line">  &#125; <span class="keyword">catch</span> (GeneralSecurityException gex) &#123;</span><br><span class="line">    Log.e(TAG, <span class="string">"Security exception thrown"</span>, gex);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (bestCipherAvailable == <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果获取不到 cipher，则 init 失败，直接返回 <code>false</code>。 <code>getBestCipher()</code> 通过 <code>javax.crypto.Cipher</code> 去获取加密算法，使用 BC 作为算法提供者（Provider）。</p>
+<blockquote>
+<p>BC(Bouncy Castle) is a collection of APIs used in cryptography.</p>
+</blockquote>
+<p>Encryptor 并没有把获取到的 Cipher 实例保存下来，而是仅仅保存了 Cipher 的名称 - <code>bestCipherAvailable</code>，并且提供了一个默认值 —— <code>PREFER_CIPHER_TRANSFORMATION</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String PREFER_CIPHER_TRANSFORMATION = <span class="string">"AES/CBC/PKCS5Padding"</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String bestCipherAvailable;</span><br></pre></td></tr></table></figure>
+<p>getBestCipher() 会在多个地方被调用，所以 Encryptor 在初始化时先获取 best cipher 的名称 —— bestCipherAvailable，后续调用 getBestCipher 时会首先尝试使用缓存起来的 bestCipherAvailable 去获取 Cipher 实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Cipher cipher = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">if</span> (bestCipherAvailable != <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> Cipher.getInstance(bestCipherAvailable, <span class="string">"BC"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果 Cipher 实例获取失败，再尝试通过 PREFER_CIPHER_TRANSFORMATION 去获取：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    cipher = Cipher.getInstance(PREFER_CIPHER_TRANSFORMATION, <span class="string">"BC"</span>);</span><br><span class="line">    <span class="keyword">if</span> (cipher != <span class="keyword">null</span>) &#123;</span><br><span class="line">        bestCipherAvailable = PREFER_CIPHER_TRANSFORMATION;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (GeneralSecurityException gex1) &#123;</span><br><span class="line">    Log.e(TAG, <span class="string">"Preferred combo not available"</span>, gex1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PREFER_CIPHER_TRANSFORMATION 获取成功之后，会把它赋值给 bestCipherAvailable。</p>
+<p>通过以上代码分析得出如下结论：</p>
+<blockquote>
+<p>bestCipherAvailabel 的赋值只有两种情况，要么是 “AES/CBC/PKCS5Padding”，要么是 null<br>bestCipherAvailabel 作用是不是为了方便扩展？例如让用户自己指定算法。</p>
+</blockquote>
+<h3 id="加密"><a href="#加密" class="headerlink" title="加密"></a>加密</h3><p>PREFER_CIPHER_TRANSFORMATION 指定的 AES（Advance Standard Encryption）是对称加密。<br>encrypt 方法除了需要传入 data 之外，还需要密钥 —— key：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">byte</span>[] encrypt(<span class="keyword">byte</span>[] data, <span class="keyword">byte</span>[] key)</span><br></pre></td></tr></table></figure>
+<p>参数和返回值都是 byte 数组，encrypt 可分解为如下7个步骤：</p>
+<ol>
+<li>调用 getBestCipher 方法获取 Cipher 实例</li>
+<li>构造密钥规格——SecretKeySpec</li>
+<li>构造初始化向量（16位）——IvParameterSpec</li>
+<li>利用 SecretKeySpec 和 IvParameterSpec 来初始化 Cipher</li>
+<li>利用 Cipher 对 data 进行加密（密文128位）</li>
+<li>拼接 IV 和 加密后的 data 到一个大数据 result</li>
+<li>返回 result</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Cipher cipher = getBestCipher();</span><br><span class="line"><span class="keyword">final</span> SecretKeySpec skeySpec = <span class="keyword">new</span> SecretKeySpec(key, cipher.getAlgorithm());</span><br><span class="line"> </span><br><span class="line"><span class="comment">// Generates a unique IV per encryption.</span></span><br><span class="line"><span class="keyword">byte</span>[] initVector = generateInitVector();</span><br><span class="line"><span class="keyword">final</span> IvParameterSpec ivSpec = <span class="keyword">new</span> IvParameterSpec(initVector);</span><br><span class="line">cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivSpec);</span><br><span class="line"><span class="keyword">byte</span>[] meat = cipher.doFinal(data);</span><br><span class="line"> </span><br><span class="line"><span class="comment">// Prepends the IV to the encoded data (first 16 bytes / 128 bits).</span></span><br><span class="line"><span class="keyword">byte</span>[] result = <span class="keyword">new</span> <span class="keyword">byte</span>[initVector.length + meat.length];</span><br><span class="line">System.arraycopy(initVector, <span class="number">0</span>, result, <span class="number">0</span>, initVector.length);</span><br><span class="line">System.arraycopy(meat, <span class="number">0</span>, result, initVector.length, meat.length);</span><br><span class="line"><span class="keyword">return</span> result;</span><br></pre></td></tr></table></figure>
+<p>初始化向量（initVector）是利用方法 generateInitVector 生成的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] generateInitVector() <span class="keyword">throws</span> NoSuchAlgorithmException, NoSuchProviderException &#123;</span><br><span class="line">    <span class="keyword">final</span> SecureRandom random = SecureRandom.getInstance(<span class="string">"SHA1PRNG"</span>);</span><br><span class="line">    <span class="keyword">byte</span>[] iv = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">16</span>];</span><br><span class="line">    random.nextBytes(iv);</span><br><span class="line">    <span class="keyword">return</span> iv;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>名词解释：</p>
+<blockquote>
+<p>SecureRandom</p>
+</blockquote>
+<ul>
+<li>This class provides a cryptographically strong random number generator (RNG).</li>
+</ul>
+<blockquote>
+<p>IV(Initialization Vector)</p>
+</blockquote>
+<ul>
+<li>In cryptography, an initialization vector (IV) or starting variable (SV) is a fixed-size input to a cryptographic primitive that is typically required to be random or pseudorandom.</li>
+</ul>
+<blockquote>
+<p>AES</p>
+</blockquote>
+<ul>
+<li>AES is a variant of Rijndael which has a fixed block size of 128 bits, and a key size of 128, 192, or 256 bits</li>
+</ul>
+<p>Cryptor 根据参数和返回值的不同还提供了两个基于 AES-256（256 是 key 的长度）的加密方法：</p>
+<p>一、(String data, String key) =&gt; byte[]: base64</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] keyBytes = Base64.decode(key, Base64.DEFAULT);</span><br><span class="line"><span class="keyword">byte</span>[] dataBytes = data.getBytes(UTF8);</span><br><span class="line"><span class="keyword">return</span> Base64.encode(encrypt(dataBytes, keyBytes), Base64.DEFAULT);</span><br></pre></td></tr></table></figure>
+<p>二、(String data, String key) =&gt; String: US-ASCII</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] bytes = encryptBytes(data, key);</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> String(bytes, <span class="string">"US-ASCII"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="解密"><a href="#解密" class="headerlink" title="解密"></a>解密</h3><p>decrypt 方法是 encrypt 方法的逆，它的声明如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">byte</span>[] decrypt(<span class="keyword">byte</span>[] data, <span class="keyword">int</span> offset, <span class="keyword">int</span> length, <span class="keyword">byte</span>[] key)</span><br></pre></td></tr></table></figure>
+<p>步骤一、首先获取 encrypt 方法中写入的 IV：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Grabs the init vector prefix (first 16 bytes / 128 bits).</span></span><br><span class="line"><span class="keyword">byte</span>[] initVector = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">16</span>];</span><br><span class="line">System.arraycopy(data, offset, initVector, <span class="number">0</span>, initVector.length);</span><br></pre></td></tr></table></figure>
+<p>步骤二、然后获取密文——meat：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Grabs the encrypted body after the init vector prefix.</span></span><br><span class="line"><span class="keyword">int</span> meatLen = length - initVector.length;</span><br><span class="line"><span class="keyword">int</span> meatOffset = offset + initVector.length;</span><br><span class="line"><span class="keyword">byte</span>[] meat = <span class="keyword">new</span> <span class="keyword">byte</span>[meatLen];</span><br><span class="line">System.arraycopy(data, meatOffset, meat, <span class="number">0</span>, meatLen);</span><br></pre></td></tr></table></figure>
+<p>步骤三、获取 SecretKeySpec 和 IvParameterSpec 来初始化 Cipher（与 encrypt 相反，init 的 mode 是 Cipher.DECRYPT_MODE）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Cipher cipher = getBestCipher();</span><br><span class="line"><span class="keyword">final</span> SecretKeySpec skeySpec = <span class="keyword">new</span> SecretKeySpec(key, cipher.getAlgorithm());</span><br><span class="line"><span class="keyword">final</span> IvParameterSpec ivSpec = <span class="keyword">new</span> IvParameterSpec(initVector);</span><br><span class="line">cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivSpec);</span><br></pre></td></tr></table></figure>
+<p>步骤四、cipher 开始对密文——meat 进行解密处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] padded = cipher.doFinal(meat, <span class="number">0</span>, meatLen);</span><br><span class="line"><span class="keyword">byte</span>[] result = padded;</span><br></pre></td></tr></table></figure>
+<p>PREFER_CIPHER_TRANSFORMATION 定义的 Cipher 名称是 AES/CBC/PKCS5Padding，里面有一个 padding，应该是用于填充 block size。<br>那么 block size 是什么呢，可以再看一次 AES 的定义：</p>
+<blockquote>
+<p>AES is a variant of Rijndael which has a fixed block size of 128 bits, and a key size of 128, 192, or 256 bits</p>
+</blockquote>
+<p>也就是说，block size 是 AES 的长度（128bit/16byte），如果密文长度不足 128 位，需要根据 PKCS5Padding 来填充剩余的位数：</p>
+<blockquote>
+<p>PKCS5Padding is interpreted as a synonym for PKCS7Padding in the cipher specification. It is simply a historical artifact, and rather than change it Sun decided to simply pretend the PKCS5Padding means the same as PKCS7Padding when applied to block ciphers with a blocksize greater than 8 bytes.</p>
+</blockquote>
+<p>因此，解密之后的数据需要去掉填充值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> paddingValue = padded[padded.length - <span class="number">1</span>];</span><br><span class="line"><span class="keyword">if</span> (<span class="number">0</span> &lt;= paddingValue) &#123;</span><br><span class="line">    <span class="keyword">if</span> (paddingValue &lt; (<span class="keyword">byte</span>) <span class="number">16</span>) &#123;</span><br><span class="line">        <span class="keyword">byte</span> compare = padded[padded.length - paddingValue];</span><br><span class="line">        <span class="keyword">if</span> (compare == paddingValue) &#123;</span><br><span class="line">            result = <span class="keyword">new</span> <span class="keyword">byte</span>[padded.length - paddingValue];</span><br><span class="line">            System.arraycopy(padded, <span class="number">0</span>, result, <span class="number">0</span>, result.length);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后、返回 result。<br>Crypto 基于上面的 decrypt 算法还提供了另外两个解密方法：<br>一、(byte[] data, String key) =&gt; String</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] keyBytes = Base64.decode(key, Base64.DEFAULT);</span><br><span class="line"><span class="keyword">byte</span>[] dataBytes = Base64.decode(data, Base64.DEFAULT);</span><br><span class="line"> </span><br><span class="line"><span class="comment">// Decrypts with AES-256.</span></span><br><span class="line"><span class="keyword">byte</span>[] decryptedData = decrypt(dataBytes, <span class="number">0</span>, dataBytes.length, keyBytes);</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> String(decryptedData, <span class="number">0</span>, decryptedData.length, UTF8);</span><br></pre></td></tr></table></figure>
+<p>二、（String data, String key) =&gt; String</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> decrypt(data.getBytes(), key);</span><br></pre></td></tr></table></figure>
+<h3 id="哈希"><a href="#哈希" class="headerlink" title="哈希"></a>哈希</h3><p>Hashing 用于验证数据的完整性（Integrity），并且算法不可逆。常见的哈希算法有：SHA1、SHA2(SHA256)、SHA3、MD5。</p>
+<p>Cryptor 使用了 HMAC SHA-256：</p>
+<blockquote>
+<p>In cryptography, a Keyed-hash Message Authentication code (HMAC) is a specific type of Message Authentication Code (MAC) involving a cryptographic hash function and a secret cryptographic key.</p>
+</blockquote>
+<p>使用 HMAC 还需要提供一个密钥 —— secret cryptographic key。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> String <span class="title">hash</span><span class="params">(String data, String key)</span> </span>&#123;</span><br></pre></td></tr></table></figure>
+<p><strong>步骤一</strong>、把 String 类型的 data 和 key 转换成 UTF8 编码的 byte 数组：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> [] keyBytes = key.getBytes(UTF8);</span><br><span class="line"><span class="keyword">byte</span> [] dataBytes = data.getBytes(UTF8);</span><br></pre></td></tr></table></figure></p>
+<p><strong>步骤二</strong>、获取 MAC（Message Authentication Code） 实例：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mac sha = Mac.getInstance(MAC_TRANSFORMATION, <span class="string">"BC"</span>);</span><br></pre></td></tr></table></figure></p>
+<p><strong>步骤三</strong>、使用 SecreteKeySpec 初始化 MAC 实例（sha）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SecretKeySpec keySpec = <span class="keyword">new</span> SecretKeySpec(keyBytes, sha.getAlgorithm());</span><br><span class="line">sha.init(keySpec);</span><br></pre></td></tr></table></figure></p>
+<p><strong>步骤四</strong>、计算哈希值：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> [] sig = sha.doFinal(dataBytes);</span><br></pre></td></tr></table></figure></p>
+<p><strong>步骤五</strong>、将哈希值（byte 数据）进行 Base64 编码变转换成字符串：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Base64.encodeToString(sig, Base64.NO_WRAP);</span><br></pre></td></tr></table></figure></p>
+<p>android.util.Base64 提供了以下几种编解码 flag</p>
+<table>
+<thead>
+<tr>
+<th>flag</th>
+<th>meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CRLF</td>
+<td>Encoder flag bit to indicate lines should be terminated with a CRLF pair instead of just an LF. Has no effect if NO_WRAP is specified as well.</td>
+</tr>
+<tr>
+<td>NO_WRAP</td>
+<td>Encoder flag bit to omit all line terminators (i.e., the output will be on one long line).</td>
+</tr>
+<tr>
+<td>NO_PADDING</td>
+<td>Encoder flag bit to omit the padding ‘=’ characters at the end of the output (if any).</td>
+</tr>
+<tr>
+<td>URL_SAFE</td>
+<td>Encoder/decoder flag bit to indicate using the “URL and filename safe” variant of Base64 (see RFC 3548 section 4) where - and _ are used in place of + and *. DEFAULT    Encoder/Decoder flag, RFC 2045</td>
+</tr>
+<tr>
+<td>NO_CLOSE</td>
+<td>Flag to pass to Base64OutputStream to indicate that it should not close the output stream it is wrapping when it itself is closed.</td>
+</tr>
+</tbody>
+</table>
+<p>判断是否是 Base64 编码可通过如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isBase64Encoded</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Base64.decode(key, Base64.DEFAULT);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IllegalArgumentException e) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="EventStoreManager"><a href="#EventStoreManager" class="headerlink" title="EventStoreManager"></a>EventStoreManager</h2><p>EventStoreManager 用于将 Event 数据加密后存储在文件系统。它有如下存储规则：</p>
+<ul>
+<li>每一个 Event 对应一个 File</li>
+<li>File 的 rootDir 是 context.getFilesDir()</li>
+<li>File Name 的规则是 EventID + filenameSuffix<ul>
+<li>EventID 通过 UUID.randomUUID() 来生成（by InstrumentationEventBuilder#buildEvent）</li>
+<li>filenameSuffix 时构造时传入</li>
+</ul>
+</li>
+<li>Event 存入 File 之前需要加密（Encryptor）</li>
+<li>从 File 读取 Event 之后需要解密（Encryptor）</li>
+<li>File 最大数是 1000（maxEvents = 1000）</li>
+</ul>
+<h3 id="初始化-1"><a href="#初始化-1" class="headerlink" title="初始化"></a>初始化</h3><p>因为 Cryptor 是基于 AES-256 进行加解密，因此构造时需要传入 encryptionKey。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">EventStoreManager</span><span class="params">(String filenameSuffix, Context context, String encryptionKey)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.filenameSuffix = filenameSuffix;</span><br><span class="line">  <span class="keyword">this</span>.context = context;</span><br><span class="line">  <span class="keyword">this</span>.encryptionKey = encryptionKey;</span><br><span class="line">  fileFilter = <span class="keyword">new</span> EventFileFilter(filenameSuffix);</span><br><span class="line">  rootDir = context.getFilesDir();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="更改-encryptionKey"><a href="#更改-encryptionKey" class="headerlink" title="更改 encryptionKey"></a>更改 encryptionKey</h3><p>encryptionKey 之后可以更改，但是更改之后所有的 Event File 都需要重新加密存储。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">changeEncryptionKey</span><span class="params">(String oldKey, String newKey)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> List&lt;InstrumentationEvent&gt; storedEvents = fetchAllEvents();</span><br><span class="line">    deleteAllEvents();</span><br><span class="line">    encryptionKey = newKey;</span><br><span class="line">    storeEvents(storedEvents);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="存储-Event"><a href="#存储-Event" class="headerlink" title="存储 Event"></a>存储 Event</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">storeEvent</span><span class="params">(InstrumentationEvent event)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (event == <span class="keyword">null</span> || TextUtils.isEmpty(event.toJson().toString())) &#123;</span><br><span class="line">        Log.d(TAG, <span class="string">"Invalid event"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!shouldStoreEvent()) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> String filename = event.getEventId() + filenameSuffix;</span><br><span class="line">    FileOutputStream outputStream;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);</span><br><span class="line">        outputStream.write(encrypt(event.toJson().toString()).getBytes());</span><br><span class="line">        outputStream.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"Exception occurred while saving event to filesystem"</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="获取-Event"><a href="#获取-Event" class="headerlink" title="获取 Event"></a>获取 Event</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> InstrumentationEvent <span class="title">fetchEvent</span><span class="params">(File file)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (file == <span class="keyword">null</span> || !file.exists()) &#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"File does not exist"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    InstrumentationEvent event = <span class="keyword">null</span>;</span><br><span class="line">    String eventString = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">final</span> StringBuilder json = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">final</span> BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(file));</span><br><span class="line">        String line;</span><br><span class="line">        <span class="keyword">while</span> ((line = br.readLine()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            json.append(line).append(<span class="string">'\n'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        br.close();</span><br><span class="line">        eventString = decrypt(json.toString());</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">        Log.e(TAG, <span class="string">"Exception occurred while attempting to read file contents"</span>, ex);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (!TextUtils.isEmpty(eventString)) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">final</span> JSONObject jsonObject = <span class="keyword">new</span> JSONObject(eventString);</span><br><span class="line">            event = <span class="keyword">new</span> InstrumentationEvent(jsonObject);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JSONException e) &#123;</span><br><span class="line">            Log.e(TAG, <span class="string">"Exception occurred while attempting to convert to JSON"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> event;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>EventStoreManager 获取 rootDir 文件夹下 Event File 的方式比较巧妙：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> List&lt;File&gt; <span class="title">getAllFiles</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> List&lt;File&gt; files = <span class="keyword">new</span> ArrayList&lt;File&gt;();</span><br><span class="line">    <span class="keyword">final</span> File[] listOfFiles = rootDir.listFiles();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">final</span> File file : listOfFiles) &#123;</span><br><span class="line">        <span class="keyword">if</span> (file != <span class="keyword">null</span> &amp;&amp; fileFilter.accept(rootDir, file.getName())) &#123;</span><br><span class="line">            files.add(file);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> files;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">EventFileFilter</span> <span class="keyword">implements</span> <span class="title">FilenameFilter</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String fileSuffix;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EventFileFilter</span><span class="params">(String fileSuffix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.fileSuffix = fileSuffix;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File dir, String filename)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> filename != <span class="keyword">null</span> &amp;&amp; filename.endsWith(fileSuffix);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="InstrumentationEvent"><a href="#InstrumentationEvent" class="headerlink" title="InstrumentationEvent"></a>InstrumentationEvent</h2><p>InstrumentationEvent 表示一个埋点事件，其包含如下字段：</p>
+<p>InstrumentEvent 也可以和 JSONObject 互相转换。</p>
+<h3 id="InstrumentationEventBuilder"><a href="#InstrumentationEventBuilder" class="headerlink" title="InstrumentationEventBuilder"></a>InstrumentationEventBuilder</h3><p>InstrumentationEvent 属性比较多，通过 InstrumentationEventBuilder 可方便地构造 InstrumentationEvent。</p>
+<p>buildEvent 需要从 AnalyticsManager 处获取属性值，所以 InstrumentationEvent 的构造需要传入 AnalyticsManager 实例。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">InstrumentationEventBuilder</span><span class="params">(AnalyticsManager analyticsManager, Context context)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.analyticsManager = analyticsManager;</span><br><span class="line">    <span class="keyword">this</span>.context = context;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>build 过程中首先通过 UUID 生成 eventId：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> String eventId = UUID.randomUUID().toString();</span><br></pre></td></tr></table></figure></p>
+<p>如果发现必填的字段没有值，会直接抛出异常 - EventBuilderException。 </p>
+<p>sequenceId 每次加一：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> sequenceId = analyticsManager.getGlobalSequenceId() + <span class="number">1</span>;</span><br><span class="line">analyticsManager.setGlobalSequenceId(sequenceId);</span><br></pre></td></tr></table></figure></p>
+<p>EventBuilderHelper 位于上层（SalesforceSDK 模块），用于应用层代码的埋点。它提供了同步和异步两种方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 同步</span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createAndStoreEventSync</span><span class="params">(<span class="keyword">final</span> String name, <span class="keyword">final</span> UserAccount userAccount,</span></span></span><br><span class="line"><span class="function"><span class="params">                                    <span class="keyword">final</span> String className, <span class="keyword">final</span> JSONObject attributes)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 异步</span></span></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createAndStoreEvent</span><span class="params">(<span class="keyword">final</span> String name, <span class="keyword">final</span> UserAccount userAccount,</span></span></span><br><span class="line"><span class="function"><span class="params">                                <span class="keyword">final</span> String className, <span class="keyword">final</span> JSONObject attributes)</span></span></span><br></pre></td></tr></table></figure>
+<p>异步埋点通过一个后台线程来执行：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ExecutorService threadPool = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br></pre></td></tr></table></figure></p>
+<p>createAndStoreEvent 方法内部的实现如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">threadPool.execute(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        createAndStore(name, userAccount, className, attributes);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>不管是同步还是异步，最终都要通过 createAndStore 实现埋点，而 createAndStore 会通过 InstrumentationEventBuilder 来构造一个 Event，然后通过 EventStoreManager 保存到文件中。</p>
+<p>createAndStore 的 create 需要提供如下参数：</p>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>参数传入</td>
+</tr>
+<tr>
+<td>startTime</td>
+<td><code>System.currentTimeMillis()</code></td>
+</tr>
+<tr>
+<td>page</td>
+<td><code>{ &quot;context&quot;: className（参数传入）}</code></td>
+</tr>
+<tr>
+<td>schemaType</td>
+<td><code>SchemaType.LightningInteraction</code></td>
+</tr>
+<tr>
+<td>eventType</td>
+<td><code>EventType.system</code></td>
+</tr>
+</tbody>
+</table>
+<p>store 通过如下调用链保存到文件：</p>
+<blockquote>
+<p>SalesforceAnalyticsManager ==&gt; AnalyticsManager ==&gt; EventStoreManager#storeEvent</p>
+</blockquote>
+<h2 id="Publisher"><a href="#Publisher" class="headerlink" title="Publisher"></a>Publisher</h2><p>AnalyticsManager 负责存储 Event，Publisher 负责上报 Event。</p>
+<h3 id="AnalyticsPublisher"><a href="#AnalyticsPublisher" class="headerlink" title="AnalyticsPublisher"></a>AnalyticsPublisher</h3><p>Publisher 和 Transformer 一一对应，他们的映射关系存储在 SalesforceAnalyticsManager 的成员变量 <code>remotes</code> 中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SalesforceAnalyticsManager</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> Map&lt;Class&lt;? extends Transform&gt;, Class&lt;? extends AnalyticsPublisher&gt;&gt; remotes;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SalesforceAnalyticsManager 是 AnalyticsManager 的应用层，上层代码的埋点都要使用 SalesforceAnalyticsManager：</p>
+<img src="/hexo-theme-huxblog/2017/07/22/SalesforceAnalytics-analysis/arc.png">
+<p>上报埋点数据必须要用到 networking，而 networking 属于 SalesforceSDKCore 模块，因此 Publisher 也要属于 SalesforceSDKCore 模块。</p>
+<p>Publisher 的接口定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AnalyticsPublisher</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">boolean</span> <span class="title">publish</span><span class="params">(JSONArray events)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="AILTNPublisher"><a href="#AILTNPublisher" class="headerlink" title="AILTNPublisher"></a>AILTNPublisher</h3><p><code>AnalyticsPublisher</code> 负责上报 events，但是 events 需要首先转换成一个 JSONArray。SalesforceSDKCore 模块提供了一个具体的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AILTNPublisher</span> <span class="keyword">implements</span> <span class="title">AnalyticsPublisher</span></span></span><br></pre></td></tr></table></figure>
+<p><code>AILTNPublisher</code> 对应着 <code>AILTNTransformer</code>，它的 publish 方法会构造出 <code>JSONArray</code>：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">"logLines"</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">"code"</span>: <span class="string">"ailtn"</span>,</span><br><span class="line">      <span class="string">"data"</span>: &#123;</span><br><span class="line">        <span class="string">"schemaType"</span>: <span class="string">""</span>,</span><br><span class="line">        <span class="string">"payload"</span>: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="string">"code"</span>: <span class="string">"ailtn"</span>,</span><br><span class="line">      <span class="string">"data"</span>: &#123;</span><br><span class="line">        <span class="string">"schemaType"</span>: <span class="string">""</span>,</span><br><span class="line">        <span class="string">"payload"</span>: &#123;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 <code>payload</code> 属性装载的是经过 AILTNTransfromer#tranform 之后的 event 数据（一个 JSONArray）。</p>
+<p>数组组装完成之后会发往服务端（REST API 是 <code>/services/data/v39.0/connect/proxy/app-analytics-logging</code>）。</p>
+<p><strong>第一步</strong>、因为 SalesforceSDK 支持多用户，所以我们要先获取当前用户的 RestClient：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RestClient allows you to send authenticated HTTP requests to a force.com server.</span></span><br><span class="line"><span class="keyword">final</span> RestClient restClient = SalesforceSDKManager.getInstance().getClientManager().peekRestClient();</span><br></pre></td></tr></table></figure>
+<p><strong>第二步</strong>、首先用之前组装的 logLines 构造一个 <code>RequestBody</code>（Media Type 是 <code>application/json; charset=utf-8</code>）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RequestBody.create(RestRequest.MEDIA_TYPE_JSON, body.toString())</span><br></pre></td></tr></table></figure>
+<p><strong>第三步</strong>、用 gzip 进行压缩：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gzipCompressedBody(RequestBody.create(RestRequest.MEDIA_TYPE_JSON, body.toString()))</span><br></pre></td></tr></table></figure>
+<p><code>gzipCompressBody</code> 的实现方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> RequestBody <span class="title">gzipCompressedBody</span><span class="params">(<span class="keyword">final</span> RequestBody body)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RequestBody() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> MediaType <span class="title">contentType</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> body.contentType(); &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">contentLength</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>; <span class="comment">// We don't know the compressed length in advance!</span></span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeTo</span><span class="params">(BufferedSink sink)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">            <span class="keyword">final</span> BufferedSink gzipSink = Okio.buffer(<span class="keyword">new</span> GzipSink(sink));</span><br><span class="line">            body.writeTo(gzipSink);</span><br><span class="line">            gzipSink.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><em>类似 Decorator 模式，把未压缩的 RequestBody 数据压缩之后返回一个新的 RequestBody。</em></p>
+<p><em>注意：contentLength() 方法的返回值是 -1，因为压缩之后的长度在 gzipCompressBody 创建的 RequestBody 中来不及计算。</em></p>
+<p><strong>第四步</strong>、计算 Content-Length：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> RequestBody <span class="title">setContentLength</span><span class="params">(<span class="keyword">final</span> RequestBody requestBody)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Buffer buffer = <span class="keyword">new</span> Buffer();</span><br><span class="line">    requestBody.writeTo(buffer);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RequestBody() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> MediaType <span class="title">contentType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> requestBody.contentType();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">contentLength</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> buffer.size();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeTo</span><span class="params">(BufferedSink sink)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">            sink.write(buffer.snapshot());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然也可以通过 Interceptor 压缩并计算长度：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GzipRequestInterceptor</span> <span class="keyword">implements</span> <span class="title">Interceptor</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Response <span class="title">intercept</span><span class="params">(Chain chain)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Request originalRequest = chain.request();</span><br><span class="line">        <span class="keyword">if</span> (originalRequest.body() == <span class="keyword">null</span> || originalRequest.header(<span class="string">"Content-Encoding"</span>) != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> chain.proceed(originalRequest);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        Request compressedRequest = originalRequest.newBuilder()</span><br><span class="line">            .header(<span class="string">"Content-Encoding"</span>, <span class="string">"gzip"</span>)</span><br><span class="line">            .method(originalRequest.method(), setContentLength(gzip(originalRequest.body())))</span><br><span class="line">            .build();</span><br><span class="line">        <span class="keyword">return</span> chain.proceed(compressedRequest);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>第五步</strong>、构造 HTTP HEADER 参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Map&lt;String, String&gt; requestHeaders = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">requestHeaders.put(CONTENT_ENCODING, GZIP);</span><br><span class="line">requestHeaders.put(CONTENT_LENGTH, Long.toString(requestBody.contentLength()));</span><br></pre></td></tr></table></figure>
+<p><strong>第六步</strong>、构造 RestRequest 发送请求：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> RestRequest restRequest = <span class="keyword">new</span> RestRequest(</span><br><span class="line">        RestRequest.RestMethod.POST, apiPath, requestBody, requestHeaders);</span><br><span class="line">restResponse = restClient.sendSync(restRequest);</span><br></pre></td></tr></table></figure>
+<h3 id="AnalyticsPublisherService"><a href="#AnalyticsPublisherService" class="headerlink" title="AnalyticsPublisherService"></a>AnalyticsPublisherService</h3><p>AnalyticsPublisherService 继承自 <code>IntentService</code>，在 <code>onHandleIntent</code> 方法中通过调用 SalesforceAnalyticsManager#publishAllEvents 方法把埋点数据发往服务端。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Handles the publish action in the provided background thread.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleActionPublish</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> UserAccount userAccount = UserAccountManager.getInstance().getCurrentUser();</span><br><span class="line">    <span class="keyword">if</span> (userAccount != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">final</span> SalesforceAnalyticsManager analyticsManager = SalesforceAnalyticsManager.getInstance(userAccount);</span><br><span class="line">        analyticsManager.publishAllEvents();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为 SalesforceSDK 支持多用户，所以调用 <code>publishAllEvents</code> 之前先要获取当前用户（userAccount）的 SalesforceAnalyticsManager。 <code>publishAllEvents</code> 最终还是要调回 AnalyticsPublisher 的 publish 方法。不过，它会遍历 remotes，把原始的 Event 列表通过 Transformer 进行格式转换，然后调用对应 Publisher 的 publish 方法。</p>
+<p><em>SalesforceAnalyticsManager.java</em><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Map&lt;Class&lt;? extends Transform&gt;, Class&lt;? extends AnalyticsPublisher&gt;&gt; remotes;</span><br></pre></td></tr></table></figure></p>
+<p>因为 remotes 的 key 和 value 都是 Class 类型，所以要通过反射来实例化它们：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Transform transformer = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    transformer = transformClass.newInstance();</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    Log.e(TAG, <span class="string">"Exception thrown while instantiating class"</span>, e);</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">AnalyticsPublisher networkPublisher = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    networkPublisher = remotes.get(transformClass).newInstance();</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    Log.e(TAG, <span class="string">"Exception thrown while instantiating class"</span>, e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>遍历完成，所有的 publisher 都请求成功之后，删除所有的 events：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (success) &#123;</span><br><span class="line">    eventStoreManager.deleteEvents(eventsIds);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>AnalyticsPublisherService 提供一个静态方法用于启动 Service：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">startActionPublish</span><span class="params">(Context context)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Intent intent = <span class="keyword">new</span> Intent(context, AnalyticsPublisherService.class);</span><br><span class="line">    intent.setAction(ACTION_PUBLISH);</span><br><span class="line">    context.startService(intent);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么，何时启动 Service 呢？SalesforceAnalyticsManager 在初始化时会创建一个「定时任务」，这个定时任务会每隔一段时间去启动一次 AnalyticsPublisherService：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_PUBLISH_FREQUENCY_IN_HOURS = <span class="number">8</span>;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> ScheduledFuture <span class="title">createPublishHandler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();</span><br><span class="line">    <span class="keyword">final</span> Runnable publishRunnable = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            AnalyticsPublisherService.startActionPublish(</span><br><span class="line">                    SalesforceSDKManager.getInstance().getAppContext());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> scheduler.scheduleAtFixedRate(publishRunnable, <span class="number">0</span>, sPublishFrequencyInHours,</span><br><span class="line">            TimeUnit.HOURS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回值用一个静态成员变量 —— sScheduler 保存。 默认间隔时间是8个小时，当然也可以由用户指定。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Adds a handler for publishing if not already active.</span></span><br><span class="line"><span class="keyword">if</span> (!sPublishHandlerActive) &#123;</span><br><span class="line">    sScheduler = createPublishHandler();</span><br><span class="line">    sPublishHandlerActive = <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>sPublishHandlerActivity</code> 也是一个静态变量，用于标记定时任务有没有启动。 因为 sScheduler 是一个静态变量，所以所有的用户（UserAccount）会共享一个定时任务<br>如果用户改变了定时任务的执行周期，需要通过过 sScheduler 结束掉当前的任务，然后重新启动一个新任务</p>
+<h2 id="多用户管理"><a href="#多用户管理" class="headerlink" title="多用户管理"></a>多用户管理</h2><p>SalesforceAnalyticsManager 通过一个 map 来管理多用户实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, SalesforceAnalyticsManager&gt; INSTANCES;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> SalesforceAnalyticsManager <span class="title">getInstance</span><span class="params">(UserAccount account,</span></span></span><br><span class="line"><span class="function"><span class="params">                                                                  String communityId)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 無関係なスースコードを省略</span></span><br><span class="line">  String uniqueId = account.getUserId();</span><br><span class="line">  <span class="keyword">if</span> (UserAccount.INTERNAL_COMMUNITY_ID.equals(communityId)) &#123;</span><br><span class="line">      communityId = <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (!TextUtils.isEmpty(communityId)) &#123;</span><br><span class="line">      uniqueId = uniqueId + communityId;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  SalesforceAnalyticsManager instance;</span><br><span class="line">  <span class="keyword">if</span> (INSTANCES == <span class="keyword">null</span>) &#123;</span><br><span class="line">      INSTANCES = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">      instance = <span class="keyword">new</span> SalesforceAnalyticsManager(account, communityId);</span><br><span class="line">      INSTANCES.put(uniqueId, instance);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      instance = INSTANCES.get(uniqueId);</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">      instance = <span class="keyword">new</span> SalesforceAnalyticsManager(account, communityId);</span><br><span class="line">      INSTANCES.put(uniqueId, instance);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h2><p>Transform 会把一个通用的 Event 转换成特定的目标格式。</p>
+<p>例如把 <code>InstrumentationEvent</code> 转换成 <code>JSONObject</code>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Transform</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> JSONObject <span class="title">transform</span><span class="params">(InstrumentationEvent event)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>SalesforceAnalytics 定义了一个把 Event 转换成 AILTN 格式的 AILTNTransformer。</p>
+<p><em>不知道 AILTN 是什么，网上也没找到资料。</em></p>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/07/25/mockito-details-4-session/" data-toggle="tooltip" data-placement="top" title="Mockito 详解（四）MockitoSession">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/07/14/youzan-app-oauth2/" data-toggle="tooltip" data-placement="top" title="有赞自有APP的OAuth2授权模型分析">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Android" title="Android">Android</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/07/22/SalesforceAnalytics-analysis/";
+var disqus_url = "http://liangfei.me/2017/07/22/SalesforceAnalytics-analysis/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          架构笔记之数据分析 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2017/02/01/note-on-web-data-analysis/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Web" title="Web">Web</a>
+                        
+                    </div>
+                    <h1>架构笔记之数据分析</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2017-02-01
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>蚂蚁积分是一个数据产品，这个简单的积分体现的是<strong>风控</strong>和<strong>信用</strong>，分数越高表明放贷的风险越小、履约的概率越大，而积分背后的风控体系和信用体系都是来自数据的采集和分析，所以数据是最重要的。</p>
+<a id="more"></a>
+<h2 id="数据来源"><a href="#数据来源" class="headerlink" title="数据来源"></a>数据来源</h2><ul>
+<li><strong>UGC</strong>（<em>对这些数据的分析和掌握可以提供更好的服务</em>）</li>
+<li><strong>日志</strong>（<em>可以得到系统的情况</em>）</li>
+</ul>
+<h2 id="数据分析类型"><a href="#数据分析类型" class="headerlink" title="数据分析类型"></a>数据分析类型</h2><ul>
+<li>数据分析的<strong>实时与否</strong><ul>
+<li><strong>实时分析任务</strong>（金融、电子商务）</li>
+<li><strong>离线分析任务</strong>（数据挖掘搜、索引擎索引计算、推荐内容计算、机器学习）</li>
+</ul>
+</li>
+<li>分析的<strong>数据类型</strong>不同<ul>
+<li><strong>流式数据处理</strong>（<em>数据整体价值</em>）<ul>
+<li>负载、QPS、网络 Traffic、磁盘 IO</li>
+<li>交易下单笔数、交易总金额、PV、UV</li>
+<li>用户行为分析</li>
+</ul>
+</li>
+<li><strong>批量数据处理</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="日志收集"><a href="#日志收集" class="headerlink" title="日志收集"></a>日志收集</h2><ul>
+<li><p><strong>inofity 机制</strong>（<em>解决了日志收集的效率问题</em>）<br>监控文件系统的变化，及时通知应用程序进行相关事件处理。响应性的处理机制，避免了频繁的文件轮询任务，提高了任务的处理效率。</p>
+</li>
+<li><p><strong>ActiveMQ</strong>（<em>解决了日志数据分发的问题</em>)<br>ActiveMQ-CPP 是 CMS（C++ Messaging Service）的一种实现，是一个能够与 ActiveMQ（支持 JMS 的 Java MOM）进行通信的 C++ 客户端库，能够与 ActiveMQ 高效和便捷地进行通信。</p>
+</li>
+<li><p><strong>架构和存储</strong><br>数据需要经过 inotify 客户端，经由 ActiveMQ 进行转发，通过 Storm 进行实时处理，在存储到 MySQL、HDFS、Hbase 或者 Memcache 这些存储系统当中，最后在进行深度分析或者实时展现。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-119c11e12169cd7e.png" alt="日志收集和分析系统架构"></p>
+<ul>
+<li><strong>Storm</strong> - 实时分布式流处理系统（数据流切割、集群容错、任务调度），类似 Hadoop 提供的大数据解决方案，但是它处理的对象是<strong>没有终点的数据流</strong>，而非 Hadoop 的 MapReduce 那样的<strong>批处理系统</strong>。</li>
+<li><p><strong>Hadoop</strong>（海量数据持久化存储和分析方案）</p>
+<ul>
+<li><strong>HDFS</strong>（Hadoop Distributed File System）保存<strong>非实时海量数据</strong>，然后通过 MapReduce 或者 HiveSQL 进行数据分析与挖掘。</li>
+<li><strong>Hbase</strong>（列存储系统、天生支持数据表的自动分区）保存实时展现内容。</li>
+<li><strong>关系型数据库</strong>（例 MySQL）存储可控量级的数据（PV信息、系统 load 平均值等）。关系型数据库复杂的条件查询与多表关联的能力是 Hbase 这类列存储数据库所不具备的。</li>
+<li><strong>高效缓存系统</strong>（例 Memcache，内存电信号寻址）用于实时性和系统 TPS（Transaction Per Second）能力要求非常高的场景（活动交易量的实时统计）</li>
+</ul>
+</li>
+<li><p><strong>Chukwa</strong><br>基于 Hadoop 开发的数据采集与分析框架。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="离线数据分析"><a href="#离线数据分析" class="headerlink" title="离线数据分析"></a>离线数据分析</h2><ul>
+<li>Hadoop<ul>
+<li><strong>HDFS</strong><br><img src="https://hadoop.apache.org/docs/r1.2.1/images/hdfsarchitecture.gif" alt=""></li>
+<li><strong>MapReduce</strong>（处理海量数据的并行编程模型和计算框架）<br><img src="http://upload-images.jianshu.io/upload_images/620698-862e495ff97953e7.png" alt=""></li>
+<li><strong>Hive</strong><br>Hive 是基于 Hadoop 的一个<strong>数据仓库</strong>工具，可以讲 HDFS 存储的结构化的数据文件映射为一张数据库表，提供完整的 SQL 查询功能，还可以将 SQL 语句转换成 MapReduce 任务进行运行。<br><img src="http://upload-images.jianshu.io/upload_images/620698-f5a1fcc0e1d9f341.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+</ul>
+</li>
+</ul>
+<h2 id="流式数据分析"><a href="#流式数据分析" class="headerlink" title="流式数据分析"></a>流式数据分析</h2><ul>
+<li><p><strong>Storm</strong></p>
+<ul>
+<li>Topology 原语执行的是实时处理任务，不同于 MapReduce 执行的是批处理任务。</li>
+<li>实习分析、在线机器学习、持续计算、分布式 RPC、ETL 等</li>
+<li>特点<ul>
+<li>编程模型简单（Topology 原语）</li>
+<li>高容错性和高可靠性</li>
+<li>高效（ZeroMQ 作为底层消息队列）</li>
+<li>多语言支持</li>
+<li>可扩展性（方便地支持集群扩展）</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/620698-8ea1b43dc2421b8d.png" alt=""></p>
+</li>
+</ul>
+<h2 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h2><p>数据分析过程：从在线的 OLTP（OnLine Transaction Processing、传统的关系型数据的主要应用）库中，以及日志系统当中，提取和清洗所需要到的数据到 OLAP（OnLine Analytical Processing、数据仓库系统的主要应用） 系统，如构建在 Hadoop 上的 Hive 平台，然后在OLAP 系统上进行多维度复杂的数据分析和汇总操作，利用这些数据构建数据报表，提供前端展现。</p>
+<ul>
+<li><strong>离线数据同步</strong><ul>
+<li>Sqoop</li>
+<li>DataX</li>
+</ul>
+</li>
+<li><strong>实时数据同步</strong><ul>
+<li>ActiveMQ<br><img src="http://upload-images.jianshu.io/upload_images/620698-74b47f6dd1ba3d8d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=""></li>
+<li>MySQL 的 Binary log</li>
+</ul>
+</li>
+</ul>
+<h2 id="数据报表"><a href="#数据报表" class="headerlink" title="数据报表"></a>数据报表</h2><ul>
+<li>数据可视化</li>
+<li>highcharts （js 报表工具）</li>
+</ul>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ol>
+<li>《大型分布式网站架构设计与实践》</li>
+<li><a href="http://tech.youzan.com/you-zan-big-data-practice/" target="_blank" rel="noopener">http://tech.youzan.com/you-zan-big-data-practice/</a></li>
+<li><a href="https://github.com/alibaba/DataX/wiki/DataX-Introduction" target="_blank" rel="noopener">https://github.com/alibaba/DataX/wiki/DataX-Introduction</a></li>
+</ol>
+
+
+                <hr>
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2017/02/04/mobile-thinking/" data-toggle="tooltip" data-placement="top" title="关于 App 开发的一些思考">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2017/02/01/note-on-web-security/" data-toggle="tooltip" data-placement="top" title="架构笔记之安全">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Web" title="Web">Web</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="" target="_blank"></a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2017/02/01/note-on-web-data-analysis/";
+var disqus_url = "http://liangfei.me/2017/02/01/note-on-web-data-analysis/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>
