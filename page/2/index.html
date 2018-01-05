@@ -184,6 +184,36 @@
 
 <div class="post-preview">
 
+    <a href="/2017/07/07/mockito-details-2-plugins/">
+        <h2 class="post-title">
+            Mockito 详解（二）插件机制
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            Mockito 通过插件形式对外提供了扩展能力，本篇主要分析其插件加载原理。
+
+注册插件插件通过 PluginRegister 进行注册，现在只支持四个组件，分别是：
+
+MockMaker
+StackTraceCleanerProvider
+InstantiatorProvider
+AnnotationEngine
+
+PluginRegistry 是 package 级别的 class，其初......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2017-07-07
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2017/07/06/mockito-details-1-usage/">
         <h2 class="post-title">
             Mockito 详解（一）基本用法
@@ -413,34 +443,6 @@ Base 64 编码（每 6 位为一个单元，2^......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/07/28/summary-of-leaving-alibaba-for-half-year/">
-        <h2 class="post-title">
-            有赞入职半年总结
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            今年 1.11 入职有赞，到现在差不多 7 个多月。
-很惭愧，只做了一点微小的工作
-
-统一 Maven 仓库旧的二方包部署方式非常不专业，统一打包脚本之后，使协作变得高效。
-
-所有二方包全部部署到公司内部 Maven 仓库，删掉所有跟随源码的私有仓库，节约 git 服务器空间。
-把源码、注释、文档全部打进二方包，方便接入方查看源码。
-坚持代码为中心，文档（README、WIKI）跟着代码走。......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2016-07-28
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -535,6 +537,8 @@ Base 64 编码（每 6 位为一个单元，2^......
                         
                             
                             <a href="/tags/#Web" title="Web" rel="2">Web</a>
+                            
+                        
                             
                         
                             
