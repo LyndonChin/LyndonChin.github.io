@@ -63,8 +63,16 @@ featured-condition-size: 1              # A tag will be featured if the size of 
 # Friends
 friends: [
     {
-        title: "",
-        href: ""
+        title: "程序亦非猿",
+        href: "http://yifeiyuan.me/"
+    },
+    {
+        title: "秋百万",
+        href: "https://www.liaohuqiu.net/"
+    },
+    {
+        title: "大帅",
+        href: "http://blog.zhaiyifan.cn/"
     }
 ]
 
