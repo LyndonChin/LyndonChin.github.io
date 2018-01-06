@@ -1,5 +1,5 @@
 ---
-title: 管理培训总结（一）
+title: 管理学习日记（一）
 date: 2018-01-05 20:24:26
 tags: Management
 ---
