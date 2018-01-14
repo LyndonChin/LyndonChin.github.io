@@ -134,6 +134,6 @@ livereload:
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:LyndonChin/LyndonChin.github.io.git
+  repo: https://github.com/LyndonChin/LyndonChin.github.io.git
   branch: master
 
