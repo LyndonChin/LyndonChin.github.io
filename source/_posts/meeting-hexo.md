@@ -4,61 +4,45 @@ date: 2016-01-25 13:54:00
 tags: Hexo
 ---
 
-备份
----
+### 分支
+* Github的个人帐户默认渲染`master`分支，只有org帐户才会渲染`gh-pages`分支。
+* 个人帐户的`master`分支是`hexo generate`之后的文件。
 
-除了通过 `hexo generate` 生成 **github pages** 之外，还需要备份整个博客。
+`hexo deploy` 相关的配置（分支和仓库）位于 `_config.yml`：
 
-分支 `master` 用于发布 **public** 文件夹下的内容，`hexo` 用于备份整个博客（不包括 **public**）
+```yml
+# Deployment
+## Docs: https://hexo.io/docs/deployment.html
+deploy:
+  type: git
+  repo: https://github.com/LyndonChin/LyndonChin.github.io.git
+  branch: master
+```
+* [文档地址](https://hexo.io/docs/deployment.html)
 
-用一个简单的脚本实现备份和发布：
+对于个人帐户，可以新建一个 master 之外的分支用于备份，日常写作就用这个分支，然后写一个 shell 脚本自动部署：
 
 ```bash
-git add --all
-git commit -m'update'
-git push
-
-hexo g
+git add .                                                                                              
+git commit -m'update'                                                                                  
+git push                                                                                               
+                                                                                                        
+hexo g                                                                                                 
 hexo d
 ```
-
-添加 disquse
----
+### 初始化
+代码拉下来之后首先要安装 hexo：
 
 ```bash
-hexo config disqus_shortname liangfeizc
-hexo --config themes/light/_config.yml config comment_provider disqus
+npm install hexo --save
 ```
 
-添加 About
----
+然后安装 hexo-server
 
-0. 生成一个 page
-    ```bash
-    hexo new page about
-    ```
-0. 编辑 `source/about/index.md`
-0. 修改 `themes/light/_config.yml`，添加链接
-    ```yml
-    menu:
-      Home: null
-      Archives: archives
-      About: about
-    ```
-
-Header 添加链接
----
-
-修改 `themes/light/layout/_partial/header.ejs`
-
-```html
-<nav id="main-nav" class="alignright">
-  <ul>
-    <% for (var i in theme.menu){ %>
-      <li><a href="<%- config.root %><%- theme.menu[i] %>"><%= i %></a></li>
-    <% } %>
-    <li><a href="https://github.com/lyndonchin">Github</a></li>
-  </ul>
-  <div class="clearfix"></div>
-</nav>
+```bash
+npm install hexo-server --save
 ```
+
+然后执行 `hexo s` 才会把网站 run 起来。
+
+还有一个支持 liveload 的插件[hexo-browsersync](https://github.com/hexojs/hexo-browsersync)，很好用。
