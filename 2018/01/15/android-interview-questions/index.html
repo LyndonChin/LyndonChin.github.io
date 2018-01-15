@@ -13,7 +13,7 @@
 
     <title>
         
-          我的面试问题大汇总（不断更新） - 梁飞的博客 | liangfei&#39;s Blog
+          面试问题大汇总（不断更新） - 梁飞的博客 | liangfei&#39;s Blog
         
     </title>
 
@@ -164,7 +164,7 @@
                           <a class="tag" href="/tags/#Android" title="Android">Android</a>
                         
                     </div>
-                    <h1>我的面试问题大汇总（不断更新）</h1>
+                    <h1>面试问题大汇总（不断更新）</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by liangfei on
@@ -187,16 +187,54 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h2><ul>
-<li>Activity的生命周期</li>
-<li>Activity的启动模式</li>
+                <h3 id="Android"><a href="#Android" class="headerlink" title="Android"></a>Android</h3><ul>
+<li>Activity &amp; Fragment<ul>
+<li>Activity的生命周期<ul>
+<li>onDestroy一定会被执行吗？</li>
+<li>onStop中能更新数据吗？</li>
+</ul>
+</li>
+<li>Activity的启动模式<ul>
+<li>什么情况下Activity的onNewIntent会执行？</li>
+</ul>
+</li>
+<li>Fragment能否不依赖Activity存在？</li>
+<li>描述一下Framgent的栈管理机制？</li>
+<li>Activity和Fragment如何通信？</li>
 <li>如果后台的Activity由于某原因被系统回收了，如何在被系统回收之前保存当前状态？</li>
+<li>Activity间通过Intent传递数据大小有没有限制？</li>
+</ul>
+</li>
+<li>Service<ul>
+<li>Service有几种启动方式？</li>
+<li>Service的生命周期？</li>
+<li>Service和IntentService的区别是什么？</li>
+</ul>
+</li>
+<li>ContentProvider &amp; 数据<ul>
+<li>请介绍下ContentProvider是如何实现数据共享的</li>
+<li>请介绍下Android的数据存储方式</li>
+</ul>
+</li>
+<li>Intent<ul>
+<li>什么是显示intent（explicit intent）、什么是隐式intent（implicit intent）？</li>
+<li>intent-filter的组成部分有哪些？</li>
+</ul>
+</li>
+<li>View &amp; Layout<ul>
 <li>View的绘制流程</li>
 <li>Touch时间的传递机制</li>
-<li>Android中的集中动画<ul>
+<li>Android中的几种动画<ul>
 <li>FrameAnimation</li>
 <li>TweenAnimation</li>
 <li>PropertyAnimation</li>
+</ul>
+</li>
+<li>Android中常用的布局<ul>
+<li>RelativeLayout &amp; LinearLayout &amp; ConstraintLayout</li>
+</ul>
+</li>
+<li>Activity、View、Window之间的关系是什么？</li>
 </ul>
 </li>
 <li>Android中跨进程通讯有几种方式（<strong>多进程</strong>）<ul>
@@ -206,53 +244,72 @@
 <li>AIDL</li>
 </ul>
 </li>
-<li>Activity和Fragment如何通信？</li>
+<li>线程<ul>
 <li>单线程模型中Message,Handler,Message Queue,Looper之间的关系</li>
+<li>Thread和HandlerThread的区别是什么？</li>
+<li>造成ANR的原因是什么？</li>
+</ul>
+</li>
+<li>内存<ul>
 <li>内存溢出和内存泄漏有什么区别？</li>
 <li>何时会产生内存泄漏？</li>
 <li>内存优化有哪些方法？</li>
-<li>Activity间通过Intent传递数据大小有没有限制？</li>
-<li>asset 和 raw 文件夹的区别是什么？</li>
-<li>造成ANR的原因是什么？</li>
-<li>Android中常用的布局<ul>
-<li>RelativeLayout / LinearLayout</li>
-<li>ConstraintLayout</li>
 </ul>
 </li>
-<li>请介绍下Android的数据存储方式</li>
-<li>请介绍下ContentProvider是如何实现数据共享的</li>
-<li>ApplicationId与PackageName的区别</li>
-<li>jsbridge的实现方式？</li>
-<li>协议相关<ul>
+<li>设计模式<ul>
+<li>Android 中常见的设计模式有哪些？</li>
+<li>OkHttp的interceptor是什么设计模式？chain of responsibility</li>
+<li>什么是AOP？</li>
+</ul>
+</li>
+<li>其他<ul>
+<li>asset 和 raw 文件夹的区别是什么？</li>
+<li>ApplicationId和PackageName的区别是什么？</li>
+<li>说一个jsbridge的实现方式？</li>
+<li>DVM和JVM的区别是什么？<ul>
+<li>Android 的类加载机制？ClassLoader</li>
+</ul>
+</li>
+<li>Android最新版本是什么？有哪些新特性？</li>
+<li>version_code和version_name的区别是什么？<h3 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h3></li>
+</ul>
+</li>
 <li>http的method有哪些？</li>
 <li>https与http的区别是什么？</li>
+<li>能描述一下TLS握手的过程吗？</li>
 <li>什么是中间人攻击（MIMA）？</li>
 <li>什么是对称加密、什么是非对称加密？</li>
 <li>OAuth2的client_id和client_secret是干什么用的？</li>
+<li>如何在http层面优化网络？</li>
 </ul>
-</li>
-<li>Git相关问题<ul>
+<h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><ul>
 <li>git怎么暂时保存更改</li>
 </ul>
+<h3 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h3><ul>
+<li>Java中<code>volatile</code>的作用是什么？</li>
+<li>注解 Annotation<ul>
+<li>生命周期有哪些？</li>
+<li>作用对象有哪些？</li>
+</ul>
 </li>
-<li>Java相关问题<ul>
+<li>不应该被序列化的字段用什么关键字标记？- <code>transient</code></li>
 <li>WeakReference和WeakReference的区别</li>
 <li>synchronized的用法（类和对象）</li>
 <li>为什么内部类会持有外部类的引用？</li>
+<li>怎样继承一个内部类？</li>
+<li>内部类的构造方法是什么？</li>
 <li>Java中try catch finally的执行顺序？</li>
 <li>Retrofit中如何使用了动态代理？</li>
 <li>RxJava的线程模型是什么？</li>
 </ul>
-</li>
-<li>FP<ul>
+<h3 id="FP"><a href="#FP" class="headerlink" title="FP"></a>FP</h3><ul>
 <li>闭包是什么？lambda是一个闭包吗？</li>
 <li>FP的有哪些特性？</li>
 <li>Reactive 用到了FP的哪些特性？</li>
 </ul>
-</li>
-</ul>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
 <li><a href="http://blog.csdn.net/crazy__chen/article/details/44901629" target="_blank" rel="noopener">http://blog.csdn.net/crazy__chen/article/details/44901629</a></li>
+<li><a href="http://www.androidchina.net/6474.html" target="_blank" rel="noopener">http://www.androidchina.net/6474.html</a></li>
 </ul>
 
 

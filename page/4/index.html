@@ -393,11 +393,12 @@ OkHttp源码撸了80%，也弄清楚了HTTPS的原......
             
         </h3>
         <div class="post-content-preview">
-            备份除了通过 hexo generate 生成 github pages 之外，还需要备份整个博客。
-分支 master 用于发布 public 文件夹下的内容，hexo 用于备份整个博客（不包括 public）
-用一个简单的脚本实现备份和发布：
-123456git add --allgit commit -m'update'git pushhexo ghexo d
-添加 disquse12......
+            分支
+Github的个人帐户默认渲染master分支，只有org帐户才会渲染gh-pages分支。
+个人帐户的master分支是hexo generate之后的文件。
+
+hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
+123456# Deployment## Docs: https://hexo.io/docs/deployment.htmldeploy:  ......
         </div>
     </a>
     <p class="post-meta">
@@ -559,9 +560,9 @@ synchronized block
                             
                         
                             
-                            <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
-                            
                         
+                            
+                            <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
                             
                         
                             
