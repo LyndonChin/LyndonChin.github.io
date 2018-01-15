@@ -184,6 +184,31 @@
 
 <div class="post-preview">
 
+    <a href="/2014/05/18/java-inherit-inner-class/">
+        <h2 class="post-title">
+            怎样继承一个内部类
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            定义一个内部类时，这个内部类会有一个隐式引用 (implicit reference) 指向外部类的实例。例如下面的代码：
+123class WithInner &#123;    class Inner &#123;&#125;&#125;
+
+其实，内部类Inner默认会有一个带参数的构造函数，我们通过反射来看一下。
+123456789101112131415161718192021222......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2014-05-18
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2014/04/10/java-why-inner-class/">
         <h2 class="post-title">
             为什么要使用内部类
@@ -240,7 +265,7 @@ An inner class provides a kind of window into the outer cl......
                     <div class="tags">
                         
                             
-                            <a href="/tags/#Android" title="Android" rel="14">Android</a>
+                            <a href="/tags/#Android" title="Android" rel="15">Android</a>
                             
                         
                             
@@ -298,9 +323,9 @@ An inner class provides a kind of window into the outer cl......
                             
                         
                             
-                        
-                            
                             <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
+                            
+                        
                             
                         
                             
