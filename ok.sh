@@ -1,7 +1,8 @@
 git config user.name liangfei
 git config user.email njliangfei@gmail.com
 
-git commit -am'update'
+git add .
+git commit -m'update'
 git push
 
 hexo g
