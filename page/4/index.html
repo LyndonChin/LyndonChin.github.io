@@ -191,6 +191,35 @@
 
 <div class="post-preview">
 
+    <a href="/2016/05/19/android-why-not-using-soft-reference/">
+        <h2 class="post-title">
+            SoftReference 为什么被 Android “放弃”
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            JDK 中除了默认的 Strong Reference 之外，还有三个其他的 Reference：
+
+WeakReference
+SoftReference
+PhantomReference
+
+他们都是为了更高效地利用 Heap。
+
+WeakReference如果一个变量的 Reference 只剩下 WeakReference，那么 GC 会毫不留情地把这个变量回收掉。也就是说，WeakR......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2016-05-19
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/05/16/car-basic-knowledge/">
         <h2 class="post-title">
             学习汽车基础知识
@@ -446,33 +475,6 @@ hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/01/25/summary-of-year-2015/">
-        <h2 class="post-title">
-            2015 年终总结
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            
-2015 关键词：结婚、开源、日本游、换工作。
-
-
-回首这一年，首先要感恩阿里，不但让我开阔了眼界，而且意外地进入了开源圈子，拓宽了人脉。
-但是我已经不满足仅仅做一个码农了，外面的世界那么精彩，人生怎么可能只有埋头苦干、升P加薪、贷款买房。失去想象力的生活是无趣的，所以我选择拥抱变化，离开阿里，去做更好玩的事，认识更好玩的人。
-开源把格局放大后才发现能够影响到自己的人不只是身边那一拨，还有......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2016-01-25
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -570,9 +572,11 @@ hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
                             
                         
                             
+                            <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
+                            
                         
                             
-                            <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
+                        
                             
                         
                             

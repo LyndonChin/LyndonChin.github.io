@@ -13,11 +13,11 @@
 
     <title>
         
-          深入浅出JVM - 梁飞的博客 | liangfei&#39;s Blog
+          vim - 梁飞的博客 | liangfei&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="http://liangfei.me/2018/01/16/summary-jvm/">
+    <link rel="canonical" href="http://liangfei.me/2018/01/22/vim/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -168,14 +168,14 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                          <a class="tag" href="/tags/#vim" title="vim">vim</a>
                         
                     </div>
-                    <h1>深入浅出JVM</h1>
+                    <h1>vim</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by liangfei on
-                        2018-01-16
+                        2018-01-22
                     </span>
                 </div>
             </div>
@@ -194,9 +194,35 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><ul>
-<li><a href="https://dzone.com/articles/jvm-architecture-explained" target="_blank" rel="noopener">https://dzone.com/articles/jvm-architecture-explained</a></li>
-<li><a href="https://javatutorial.net/jvm-explained" target="_blank" rel="noopener">https://javatutorial.net/jvm-explained</a></li>
+                <h2 id="Command-Line-Mode"><a href="#Command-Line-Mode" class="headerlink" title="Command-Line Mode"></a>Command-Line Mode</h2><h3 id="Tip-27-Meet-Vim’s-Command-Line"><a href="#Tip-27-Meet-Vim’s-Command-Line" class="headerlink" title="Tip 27 Meet Vim’s Command Line"></a>Tip 27 Meet Vim’s Command Line</h3><ul>
+<li>:[range]delete [x]</li>
+<li>:[range]yank [x]</li>
+<li>:[line]put [x]</li>
+<li>:[range]copy {address}</li>
+<li>:[range]move {address}</li>
+<li>:[range]join</li>
+<li>:[range]normal {commands}</li>
+<li>:[range]substitue/{pattern}/{string}/[flags]</li>
+<li>:[range]global/{pattern}/[cmd]</li>
+<li>:edit/:write</li>
+<li>:tabnew</li>
+<li>:split</li>
+<li>:prev/:next</li>
+<li>:bprev/:bnext</li>
+<li>:h ex-cmd-index</li>
+</ul>
+<h3 id="Tip-28-Execute-a-Command-on-One-or-More-Consecutive-Lines"><a href="#Tip-28-Execute-a-Command-on-One-or-More-Consecutive-Lines" class="headerlink" title="Tip 28 Execute a Command on One or More Consecutive Lines"></a>Tip 28 Execute a Command on One or More Consecutive Lines</h3><ul>
+<li>:print</li>
+<li>:delete</li>
+<li>:join</li>
+<li>:substitute</li>
+<li>:normal</li>
+<li>:3 &lt;=&gt; 3G</li>
+<li>:3d &lt;=&gt; 3G dd</li>
+<li>:{start},{end}</li>
+<li>. = the current line</li>
+<li>$ = the end line</li>
+<li>% = all the lines</li>
 </ul>
 
 
@@ -204,13 +230,9 @@
 
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2018/01/22/vim/" data-toggle="tooltip" data-placement="top" title="vim">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2018/01/15/android-interview-questions/" data-toggle="tooltip" data-placement="top" title="面试问题大汇总（不断更新）">Next Post &rarr;</a>
+                            <a href="/2018/01/16/summary-jvm/" data-toggle="tooltip" data-placement="top" title="深入浅出JVM">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -241,7 +263,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#jvm" title="jvm">jvm</a>
+                          <a class="tag" href="/tags/#vim" title="vim">vim</a>
                         
                     </div>
                 </section>
@@ -272,8 +294,8 @@
 <script type="text/javascript">
 /* * * CONFIGURATION VARIABLES * * */
 var disqus_shortname = "http-www-liangfei-me";
-var disqus_identifier = "http://liangfei.me/2018/01/16/summary-jvm/";
-var disqus_url = "http://liangfei.me/2018/01/16/summary-jvm/";
+var disqus_identifier = "http://liangfei.me/2018/01/22/vim/";
+var disqus_url = "http://liangfei.me/2018/01/22/vim/";
 
 var disqus_config = function () {
 this.page.url = disqus_url;

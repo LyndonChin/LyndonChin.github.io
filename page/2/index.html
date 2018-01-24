@@ -191,6 +191,35 @@
 
 <div class="post-preview">
 
+    <a href="/2017/07/25/mockito-details-4-session/">
+        <h2 class="post-title">
+            Mockito 详解（四）MockitoSession
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            MockitoSession表示一次mock会话，这个会话通常是一次测试方法的执行。
+
+在一个会话周期内，MockitoSession会做三件事：
+
+mock初始化（initializes mocks）
+mock使用验证（validates usage）
+检测插桩错误（detects incorrect stubbing）
+
+MockitoSession可以帮我们省去一些原本需要手动去写的代......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2017-07-25
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2017/07/22/SalesforceAnalytics-analysis/">
         <h2 class="post-title">
             SalesforceAnalytics 源码分析
@@ -439,29 +468,6 @@ statuses@npm 是一个 HTTP 状态码的工具类：1var status = require('statu
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2017/02/04/mobile-thinking/">
-        <h2 class="post-title">
-            关于 App 开发的一些思考
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            春节假期在家看了两本关于 Web 架构方面的书，虽然有很多地方没看懂，有的地方似懂非懂，但是俗话说，他山之石、可以攻玉，知识是相通的，试着总结一下对 APP 开发的一些启示。
-
-关于工具很多时候 Web 开发者通过 ssh 登录到远程服务器，只能利用 terminal 来进行排查日志、更改配置等操作，虽然 GUI 确实能起到事半功倍的效果，但是对于不习惯命令行的同学，面对黑屏上快速滚动的字符......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2017-02-04
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -559,9 +565,11 @@ statuses@npm 是一个 HTTP 状态码的工具类：1var status = require('statu
                             
                         
                             
+                            <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
+                            
                         
                             
-                            <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
+                        
                             
                         
                             
