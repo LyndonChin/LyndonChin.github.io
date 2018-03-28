@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Kotlin 中 var、val、const 关键字解析 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2018/03/28/kotlin-var-val-const/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/todos/">TODOS</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                    </div>
+                    <h1>Kotlin 中 var、val、const 关键字解析</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2018-03-28
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>昨天公众号后台收到一位小伙伴的留言询问，他对于 Kotlin 为何没有 Java 的 <code>final</code> 关键字感到困惑，这应该是很多初学者都会遇到的问题，所以我就写了这篇博文从更底层的角度来解析 Kotlin 声明变量时用到的三个关键字：<code>var</code>、<code>val</code> 和 <code>const</code>。</p>
+<p>其实，Java 的 <code>final</code> 就等价于 Kotlin 的 <code>val</code>， 虽然通过 javap 反编译可以看到两者的底层实现不一样，但是从语义上讲，它们两者的确是等价的。具体原因，我们来逐一分析。</p>
+<h2 id="什么是属性"><a href="#什么是属性" class="headerlink" title="什么是属性"></a>什么是属性</h2><p>我们知道，在 Kotlin 的世界中，class 已经不再是唯一的一等公民，我们可以直接在代码文件的最顶层（top-level）声明类、函数和变量。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Address</span> </span>&#123;</span><br><span class="line">  <span class="comment">// class properties</span></span><br><span class="line">  <span class="keyword">var</span> province = <span class="string">"zhejiang"</span></span><br><span class="line">  <span class="keyword">val</span> city = <span class="string">"hangzhou"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">prettify</span><span class="params">(address: <span class="type">Address</span>)</span></span>: String &#123;</span><br><span class="line">  <span class="comment">// local variable</span></span><br><span class="line">  <span class="keyword">val</span> district = <span class="string">"xihu"</span></span><br><span class="line">  <span class="keyword">return</span> district + <span class="string">','</span> + address.city + <span class="string">','</span> + address.province</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// top-level property</span></span><br><span class="line"><span class="keyword">val</span> author = <span class="string">"liangfei"</span></span><br></pre></td></tr></table></figure>
+<p>上例中的 <code>Address</code> 是一个类，<code>prettify</code> 是一个函数，<code>author</code> 是一个变量，它们都是一等公民，也就是说，函数和变量可以单独存在，不会像 Java 那样依附于类。</p>
+<p>首先，<code>var</code> 和 <code>val</code> 可分为三种类型：</p>
+<ul>
+<li>类的属性（class property），例如上例中的 <code>var province = &quot;zhejiang&quot;</code>，它是 <code>Address</code> 类的一个属性；</li>
+<li>顶层属性（top-level property），例如上例中的 <code>val author = &quot;liangfei&quot;</code>，它是文件（module）的一个属性；</li>
+<li>局部变量（local variable），例如上例中的 <code>val district = &quot;xihu&quot;</code>，它是函数 <code>prettify</code> 的一个局部变量。</li>
+</ul>
+<p>类的属性和顶层属性都是属性，所以可以统一来看待，属性本身不会存储值，也就是说它不是一个字段（field），那它的值是哪里来的呢？我们先来看一下声明一个属性的完整语法：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> &lt;propertyName&gt;[: &lt;PropertyType&gt;] [= &lt;property_initializer&gt;]</span><br><span class="line">    [&lt;getter&gt;]</span><br><span class="line">    [&lt;setter&gt;]</span><br></pre></td></tr></table></figure>
+<p>可以看出，一个属性的声明可以分解为五个部分：属性名、属性类型、initializer、getter、setter。</p>
+<ul>
+<li>属性的名就是就是我们用来引用属性的方式；</li>
+<li>属性的类型可以显示声明，因为 Kotlin 支持类型推导，如果类型能够从上下文推导得出，那么它也可以省略；</li>
+<li>initializer 是类型推导的线索之一，例如 <code>val author = &quot;liangfei&quot;</code>，根据 <code>= &quot;liangfei&quot;</code> 可以得出它是一个 <code>String</code> 类型；</li>
+<li>getter 也是类型推导的线索之一，所有使用属性名获取值的操作，都是通过 getter 来完成的；</li>
+<li>setter 用于给属性赋值。</li>
+</ul>
+<p>以上只是声明了一个属性，如果我们要赋值，它的值会存储在哪里呢？其实，编译器还会自动为属性生成一个用于存储值的字段（field），因为写代码时感知不到到它的存在，所以称为幕后字段（backing field）。具体可以参考<a href="https://github.com/LyndonChin/kotlin-docs-zh/blob/master/classes-and-objects/01_properties-and-fields.md#%E5%B9%95%E5%90%8E%E5%AD%97%E6%AE%B5" target="_blank" rel="noopener">幕后字段</a>，因为与本文关系不大，所以此处不做介绍。</p>
+<p><code>var</code> 和 <code>val</code> 所声明的属性，其最本质的区别就是：<strong><code>val</code> 不能有 setter</strong>，这就达到了 Java 中 <code>final</code> 的效果。</p>
+<p>例如，上面 Kotlin 代码中的 <code>Address</code> 类：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Address</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> province = <span class="string">"zhejiang"</span></span><br><span class="line">  <span class="keyword">val</span> city = <span class="string">"hangzhou"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>它在 JVM 平台上的实现是下面这样的（通过 <code>javap</code> 命令查看）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span> </span>&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">final</span> java.lang.<span class="function">String <span class="title">getProvince</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">setProvince</span><span class="params">(java.lang.String)</span></span>;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">final</span> java.lang.<span class="function">String <span class="title">getCity</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">Address</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，针对 <code>var province</code> 属性，生成了 <code>getProvince()</code> 和 <code>setProvince(java.lang.String)</code> 两个函数。但是 <code>val city</code> 只生成了一个 <code>getCity()</code> 函数。</p>
+<p>对于局部变量来说，<code>var</code> 或者 <code>val</code> 都无法生成 getter 或 setter，所以只会在编译阶段做检查。</p>
+<p>看一下它的<a href="https://kotlinlang.org/docs/reference/properties.html" target="_blank" rel="noopener">官方定义</a>（中文版可参考<a href="https://github.com/LyndonChin/kotlin-docs-zh/blob/master/classes-and-objects/01_properties-and-fields.md" target="_blank" rel="noopener">属性和字段</a>）：</p>
+<blockquote>
+<p>Classes in Kotlin can have properties. These can be declared as mutable, using the var keyword or read-only using the val keyword.</p>
+</blockquote>
+<p>对于类的属性来说：<code>var</code> 表示可变（mutable），<code>val</code> 表示只读（read-only）。对于顶层属性来说也是一样的。</p>
+<h2 id="可变和只读"><a href="#可变和只读" class="headerlink" title="可变和只读"></a>可变和只读</h2><p><code>var</code> 表示可变，<code>val</code> 表示只读，而不是不可变（immutable）。我们已经知道了 <code>val</code> 属性只有 getter，但是这并不能保证它的值是不可变的。例如，下面的代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name = <span class="string">"liangfei"</span></span><br><span class="line">  <span class="keyword">var</span> age = <span class="number">30</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">val</span> nickname: String</span><br><span class="line">    <span class="keyword">get</span>() &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">if</span> (age &gt; <span class="number">30</span>) <span class="string">"laoliang"</span> <span class="keyword">else</span> <span class="string">"xiaoliang"</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">fun</span> <span class="title">grow</span><span class="params">()</span></span> &#123;</span><br><span class="line">    age += <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>属性 <code>nickname</code> 的值并非不可变，当调用 <code>grow()</code> 方法时，它的值会从 <code>&quot;laoliang&quot;</code> 变为 <code>&quot;xiaoliang&quot;</code>，但是无法直接给 <code>nickname</code> 赋值，也就是说，它不能位于赋值运算的左侧，只能位于右侧，这就说明了为什么它是只读（read-only），而不是不可变（immutable）。</p>
+<blockquote>
+<p>其实，Kotlin 有专门的语法来定义可变和不可变的变量，后面会专门写一篇博问来分析，这里不再深入。</p>
+</blockquote>
+<p>我们知道，Java 中可以使用 <code>static final</code> 来定义常量，这个常量会存放于全局常量区，这样编译器会针对这些变量做一些优化，例如，有三个字符串常量，他们的值是一样的，那么就可以让这个三个变量指向同一块空间。我们还知道，局部变量无法声明为 <code>static final</code>，因为局部变量会存放在栈区，它会随着调用的结束而销毁。</p>
+<p>Kotlin 引入一个新的关键字 <code>const</code> 来定义常量，但是这个常量跟 Java 的 <code>static final</code> 是有所区别的，如果它的值无法在编译时确定，则编译不过，因此 <code>const</code> 所定义的常量叫<strong>编译时常量</strong>。</p>
+<h2 id="编译时常量"><a href="#编译时常量" class="headerlink" title="编译时常量"></a>编译时常量</h2><p>首先，<code>const</code> 无法定义局部变量，除了局部变量位于栈区这个原因之外，还因为局部变量的值无法在编译期间确定，因此，<code>const</code> 只能修饰属性（类属性、顶层属性）。</p>
+<p>因为 <code>const</code> 变量的值必须在编译期间确定下来，所以它的类型只能是 <code>String</code> 或基本类型，并且不能有自定义的 getter。</p>
+<p>所以，编译时常量需要满足如下条件：</p>
+<ul>
+<li>顶层或者 <code>object</code> 的成员（<code>object</code> 也是 Kotlin 的一个新特性，具体可参考<a href="https://github.com/LyndonChin/kotlin-docs-zh/blob/master/classes-and-objects/10_objects.md#%E5%AF%B9%E8%B1%A1%E5%A3%B0%E6%98%8E" target="_blank" rel="noopener">对象声明</a>）。</li>
+<li>初始化为一个 String 或者基本类型的值</li>
+<li>没有自定义 getter</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后，总结一下：</p>
+<ul>
+<li><code>var</code>、<code>val</code> 声明的变量分为三种类型：顶层属性、类属性和局部变量；</li>
+<li><code>var</code> 属性可以生成 getter 和 setter，是可变的（mutable），<code>val</code> 属性只有 getter，是只读的（read-only，注意不是 immutable）；</li>
+<li>局部变量只是一个普通变量，不会有 getter 和 setter，它的 <code>val</code> 等价于 Java 的 <code>final</code>，在编译时做检查。</li>
+<li><code>const</code> 只能修饰没有自定义 getter 的 <code>val</code> 属性，而且它的值必须在编译时确定。</li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="https://www.quora.com/Why-is-a-constant-defined-as-a-static-final-in-Java" target="_blank" rel="noopener">Why is a constant defined as a static final in Java?</a></li>
+<li><a href="https://kotlinlang.org/docs/reference/properties.html" target="_blank" rel="noopener">Properties and Fields</a></li>
+<li><a href="https://droidyue.com/blog/2017/11/05/dive-into-kotlin-constants/" target="_blank" rel="noopener">Kotlin中常量的探究- 技术小黑屋</a></li>
+</ul>
+
+
+                <hr>
+
+                <div style="text-align: center;">
+                    <p>欢迎扫码关注 <b>老梁写代码</b> 微信公众号</p>
+                    <img src="https://wx2.sinaimg.cn/mw690/63934de3gy1fpdr77kb6kj209k09kjrc.jpg"/>
+                </div>
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/01/25/sass-less/" data-toggle="tooltip" data-placement="top" title="Sass 和 Less 的用法和比较">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://yifeiyuan.me/" target="_blank">程序亦非猿</a></li>
+                    
+                        <li><a href="https://www.liaohuqiu.net/" target="_blank">秋百万</a></li>
+                    
+                        <li><a href="http://blog.zhaiyifan.cn/" target="_blank">大帅</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2018/03/28/kotlin-var-val-const/";
+var disqus_url = "http://liangfei.me/2018/03/28/kotlin-var-val-const/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

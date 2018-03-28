@@ -191,6 +191,32 @@
 
 <div class="post-preview">
 
+    <a href="/2016/01/25/meeting-hexo/">
+        <h2 class="post-title">
+            Hexo 踩坑记
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            分支
+Github的个人帐户默认渲染master分支，只有org帐户才会渲染gh-pages分支。
+个人帐户的master分支是hexo generate之后的文件。
+
+hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
+123456# Deployment## Docs: https://hexo.io/docs/deployment.htmldeploy:  ......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2016-01-25
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/01/25/summary-of-year-2015/">
         <h2 class="post-title">
             2015 年终总结
@@ -416,31 +442,6 @@ ES6 好像从2009年就开始制定了，现在终于支持 forEach、fo......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2014/10/19/java-byte-code-on-try-catch/">
-        <h2 class="post-title">
-            用 bytecode 来看 try-catch-finally 和 return
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            最近一直在看Java虚拟机规范，发现直接分析bytecode更能加深对Java语言的理解。之前看过一篇关于 return 和 finally 执行顺序的文章，仅在 Java 的语言层面做了分析，其实我倒觉得直接看 bytecode 可能来的更清晰一点。
-
-先看一个只有 try-finally，没有 catch 的例子。
-try - finally
-123456789101112131415p......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2014-10-19
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -504,17 +505,15 @@ try - finally
                             
                         
                             
+                        
+                            
                             <a href="/tags/#CSS" title="CSS" rel="3">CSS</a>
                             
                         
                             
                         
                             
-                        
-                            
                             <a href="/tags/#Java" title="Java" rel="5">Java</a>
-                            
-                        
                             
                         
                             
@@ -530,15 +529,17 @@ try - finally
                             
                         
                             
+                        
+                            
                             <a href="/tags/#Mockito" title="Mockito" rel="5">Mockito</a>
                             
                         
                             
-                        
-                            
-                        
-                            
                             <a href="/tags/#Web" title="Web" rel="2">Web</a>
+                            
+                        
+                            
+                        
                             
                         
                             
@@ -551,6 +552,8 @@ try - finally
                         
                             
                             <a href="/tags/#Management" title="Management" rel="2">Management</a>
+                            
+                        
                             
                         
                             

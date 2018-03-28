@@ -191,6 +191,30 @@
 
 <div class="post-preview">
 
+    <a href="/2016/05/24/android-error-caused-by-a-third-party-package/">
+        <h2 class="post-title">
+            引入三方包导致 Theme 失效
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            引入一个三方包之后导致 App 主题失效，定位了一个下午，做个记录。
+
+AndroidManifest.xml 文件中 application 节点配置如下：
+123456&lt;application    android:allowBackup="false"    android:icon="@mipmap/app_icon"    android:label="@string/app......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2016-05-24
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/05/19/android-why-not-using-soft-reference/">
         <h2 class="post-title">
             SoftReference 为什么被 Android “放弃”
@@ -449,32 +473,6 @@ OkHttp源码撸了80%，也弄清楚了HTTPS的原......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/01/25/meeting-hexo/">
-        <h2 class="post-title">
-            Hexo 踩坑记
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            分支
-Github的个人帐户默认渲染master分支，只有org帐户才会渲染gh-pages分支。
-个人帐户的master分支是hexo generate之后的文件。
-
-hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
-123456# Deployment## Docs: https://hexo.io/docs/deployment.htmldeploy:  ......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2016-01-25
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -538,17 +536,15 @@ hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
                             
                         
                             
+                        
+                            
                             <a href="/tags/#CSS" title="CSS" rel="3">CSS</a>
                             
                         
                             
                         
                             
-                        
-                            
                             <a href="/tags/#Java" title="Java" rel="5">Java</a>
-                            
-                        
                             
                         
                             
@@ -564,15 +560,17 @@ hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
                             
                         
                             
+                        
+                            
                             <a href="/tags/#Mockito" title="Mockito" rel="5">Mockito</a>
                             
                         
                             
-                        
-                            
-                        
-                            
                             <a href="/tags/#Web" title="Web" rel="2">Web</a>
+                            
+                        
+                            
+                        
                             
                         
                             
@@ -585,6 +583,8 @@ hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
                         
                             
                             <a href="/tags/#Management" title="Management" rel="2">Management</a>
+                            
+                        
                             
                         
                             
