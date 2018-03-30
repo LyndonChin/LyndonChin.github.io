@@ -17,4 +17,5 @@ comments: true
 其他链接
 ---
 * [微博](http://weibo.com/liangfeizc)
-* [CSDN](http://blog.csdn.net/feelang)
+* [知乎](https://www.zhihu.com/people/liangfei.me)
+* [Github](https://github.com/LyndonChin)
