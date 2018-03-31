@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          「译」精通Kotlin标准函数：run、with、let、also和apply - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2018/03/31/kotlin-mastering-standard-functions/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/todos/">TODOS</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                    </div>
+                    <h1>「译」精通Kotlin标准函数：run、with、let、also和apply</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2018-03-31
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>原文地址：<a href="https://medium.com/@elye.project/mastering-kotlin-standard-functions-run-with-let-also-and-apply-9cd334b0ef84" target="_blank" rel="noopener">https://medium.com/@elye.project/mastering-kotlin-standard-functions-run-with-let-also-and-apply-9cd334b0ef84</a></p>
+</blockquote>
+<p>一些 Kotlin 的<a href="https://github.com/JetBrains/kotlin/blob/master/libraries/stdlib/src/kotlin/util/Standard.kt" target="_blank" rel="noopener">标准函数</a>非常相似，以至于我们都无法确定要使用哪一个。这里我会介绍一种简单的方式来区分他们的不同点以及如何选择使用。</p>
+<h2 id="作用域函数"><a href="#作用域函数" class="headerlink" title="作用域函数"></a>作用域函数</h2><p>接下来聚焦的函数有：<code>run</code>、<code>with</code>、<code>T.run</code>、<code>T.let</code>、<code>T.also</code> 以及 <code>T.apply</code>。我称他们为<strong>作用域函数</strong>（scoping functions），因为它们为调用方函数提供了一个内部作用域。</p>
+<p>最能够体现作用域的是 <code>run</code> 函数：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">test</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> mode = <span class="string">"I am sad"</span></span><br><span class="line"></span><br><span class="line">    run &#123;</span><br><span class="line">        <span class="keyword">val</span> mood = <span class="string">"I am happy"</span></span><br><span class="line">        println(mood) <span class="comment">// I am happy</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    println(mood) <span class="comment">// I am sad</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基于此，在 <code>test</code> 函数内部，你可以拥有一个单独的区域，在这个作用域内，<code>mood</code> 在打印之前被重新定义成了 <code>I am happy</code>，并且它完全被包裹（enclosed）在 <code>run</code> 的区域内。</p>
+<p>这个作用域函数本身看起来并不会非常有用。但是除了拥有单独的区域之外，它还有另一个优势：它有返回值，即区域内的最后一个对象。</p>
+<p>因此，下面的代码会变得整洁，我们把 <code>show()</code> 函数应用到两个 view 之上，但是并不需要调用两次。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run &#123;</span><br><span class="line">    <span class="keyword">if</span> (firstTimeView) introView <span class="keyword">else</span> normalView</span><br><span class="line">&#125;.show()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里演示所用，其实还可以简化为 <code>(if (firstTimeView) introView else normalView).show()</code>。</p>
+</blockquote>
+<h2 id="作用域函数三大特性"><a href="#作用域函数三大特性" class="headerlink" title="作用域函数三大特性"></a>作用域函数三大特性</h2><p>为了让作用域函数更有意思，可将其行为分类为三大特性。我会使用这些特性来区分彼此。</p>
+<h3 id="一、正常-vs-扩展函数"><a href="#一、正常-vs-扩展函数" class="headerlink" title="一、正常 vs. 扩展函数"></a>一、正常 vs. 扩展函数</h3><p>如果我们看一下 <code>with</code> 和 <code>T.run</code>，会发现它们的确非常相似。下面的代码做了同样的事情。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">with(webview.settings) &#123;</span><br><span class="line">    javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">    databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// similarly</span></span><br><span class="line"></span><br><span class="line">webview.settings.run &#123;</span><br><span class="line">    javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">    databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是，它们的不同点在于，一个是正常函数（即 <code>with</code>），另一个是扩展函数（即 <code>T.run</code>）。</p>
+<p>假设 <code>webview.settings</code> 可能为空，那么代码就会变成下面的样子：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Yack!</span></span><br><span class="line">with(webview.settings) &#123;</span><br><span class="line">    <span class="keyword">this</span>?.javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">    <span class="keyword">this</span>?.databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Nice</span></span><br><span class="line">webview.settings?.run &#123;</span><br><span class="line">    javaScriptEnabled = <span class="literal">true</span></span><br><span class="line">    databaseEnabled = <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在这个案例中，<code>T.run</code> 的扩展函数明显要好一些，因为我们可以在使用前就做好了空检查。</p>
+<h3 id="二、this-vs-it-参数"><a href="#二、this-vs-it-参数" class="headerlink" title="二、this vs. it 参数"></a>二、this vs. it 参数</h3><p>如果我们看一下 <code>T.run</code> 和 <code>T.let</code>，会发现两个函数是相似的，只有一点不同：它们接收参数的方式。下面代码展示了用两个函数实现同样的逻辑：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.run &#123;</span><br><span class="line">    println(<span class="string">"The length of this String is <span class="variable">$length</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Similarly</span></span><br><span class="line"></span><br><span class="line">stringVariable?.let &#123;</span><br><span class="line">    println(<span class="string">"The length of this String is <span class="subst">$&#123;it.length&#125;</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果检查一下 <code>T.run</code> 的函数签名就会发现 <code>T.run</code> 只是一个调用 <code>block: T.()</code> 的扩展函数。因此在它的作用域内，<code>T</code> 可以被引用为 <code>this</code>。实际编程中，<code>this</code> 大部分情况下都可以被省略。因此，在上面的例子中，我们可以在 <code>println</code> 的声明语句中使用 <code>$length</code> 而不是 <code>${this.length}</code>。我把它称之为：<strong>this 作为参数</strong>进行传递。</p>
+<p>但是，对于 <code>T.let</code> 函数，你会发现 <code>T.let</code> 把它自己传入了函数 <code>block: (T)</code>。因此它被当做一个 lambda 参数来传递。在作用域函数内它可以被引用为 <code>it</code>。所以我称之为：<strong>it 作为参数</strong>进行传递。</p>
+<p>从上面可以看出，<code>T.run</code> 好像比 <code>T.let</code> 高级，因为它更隐式一些，但是 <code>T.let</code> 函数会有些一些微妙的优势：</p>
+<ul>
+<li><code>T.let</code> 可以更清楚地区分所得变量和外部类的函数/成员。</li>
+<li><code>this</code> 不能被省略的情况下，例如用作一个函数参数，<code>it</code> 比 <code>this</code> 更短更清晰。</li>
+<li><p><code>T.let</code> 允许用更好的命名来表示转换过的所用变量（the converted used variable），也就是说，你可以把 <code>it</code> 转换为其他名字：</p>
+  <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.let &#123;</span><br><span class="line">    nonNullString -&gt;</span><br><span class="line">    println(<span class="string">"The non null string is <span class="variable">$nonNullString</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="三、返回-this-vs-其他类型"><a href="#三、返回-this-vs-其他类型" class="headerlink" title="三、返回 this vs. 其他类型"></a>三、返回 this vs. 其他类型</h3><p>现在，我们看一下 <code>T.let</code> 和 <code>T.also</code>，如果我们看一下函数作用域内部的话，会发现两者是一样的：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">stringVariable?.let &#123;</span><br><span class="line">    println(<span class="string">"The length of this String is <span class="subst">$&#123;it.length&#125;</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Exactly the same as below</span></span><br><span class="line"></span><br><span class="line">stringVariable?.also &#123;</span><br><span class="line">    println(<span class="string">"The length of this String is <span class="subst">$&#123;it.length&#125;</span>"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是，它们微妙的区别之处在于返回了什么。<code>T.let</code> 返回了一个不同类型的值，但是 <code>T.also</code> 返回了 <code>T</code> 自身，也就是 <code>this</code>。</p>
+<p>简单的示例如下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> original = <span class="string">"abc"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Evolve the value and send to the next chain</span></span><br><span class="line">original.let &#123;</span><br><span class="line">    println(<span class="string">"The original String is <span class="variable">$it</span>"</span>) <span class="comment">// "abc"</span></span><br><span class="line">    it.reversed() <span class="comment">// evolve it as parameter to send to next let</span></span><br><span class="line">&#125;.let &#123;</span><br><span class="line">    println(<span class="string">"The reverse String is <span class="variable">$it</span>"</span>) <span class="comment">// "cba"</span></span><br><span class="line">    it.length <span class="comment">// can be evolve to other type</span></span><br><span class="line">&#125;.let &#123;</span><br><span class="line">    println(<span class="string">"The length of the String is <span class="variable">$it</span>"</span>) <span class="comment">// 3</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Wrong</span></span><br><span class="line"><span class="comment">// Same value is sent in the chain (printed answer is wrong)</span></span><br><span class="line">original.also &#123;</span><br><span class="line">    println(<span class="string">"The original String is <span class="variable">$it</span>"</span>) <span class="comment">// "abc"</span></span><br><span class="line">    it.reversed() <span class="comment">// even if we evolve it, it is useless</span></span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(<span class="string">"The reverse String is <span class="subst">$&#123;it&#125;</span>"</span>) <span class="comment">// "abc"</span></span><br><span class="line">    it.length <span class="comment">// even if we evolve it, it is useless</span></span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(<span class="string">"The length of the String is <span class="subst">$&#123;it&#125;</span>"</span>) <span class="comment">// "abc"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Corrected for also (i.e. manipulate as original string</span></span><br><span class="line"><span class="comment">// Same value is sent in the chain</span></span><br><span class="line">original.also &#123;</span><br><span class="line">    println(<span class="string">"The original String is <span class="variable">$it</span>"</span>) <span class="comment">// "abc"</span></span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(<span class="string">"The reverse String is <span class="subst">$&#123;it.reversed()&#125;</span>"</span>) <span class="comment">// "cba"</span></span><br><span class="line">&#125;.also &#123;</span><br><span class="line">    println(<span class="string">"The length of the String is <span class="subst">$&#123;it.length&#125;</span>"</span>) <span class="comment">// 3</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的 <code>T.also</code> 貌似没什么意义，因为我们可以轻松把它们组合进一个单一的函数块内。仔细想一下，它们会有如下优势：</p>
+<ul>
+<li>它可以为相同的对象提供清晰的处理流程，可以使用粒度更小的函数式部分。</li>
+<li>它可以在被使用之前做灵活的自处理（self manipulation），可以创建一个链式构造器操作。</li>
+</ul>
+<p>如果两者结合链式来使用，一个进化自己，一个持有自己，就会变得非常强大，例如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Normal approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">makeDir</span><span class="params">(path: <span class="type">String</span>)</span></span>: File &#123;</span><br><span class="line">    <span class="keyword">val</span> result = File(path)</span><br><span class="line">    result.mkdirs()</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Improved approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">makeDir</span><span class="params">(path: <span class="type">String</span>)</span></span> = path.let&#123; File(it) &#125;.also&#123; it.mkdirs() &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="回顾一下所有的特性"><a href="#回顾一下所有的特性" class="headerlink" title="回顾一下所有的特性"></a>回顾一下所有的特性</h2><p>通过这三个特性，我们可以清楚地知道每个函数的行为。让我们举例说明一下上面没有提到的 <code>T.apply</code> 函数，它的 3 个特性如下所述：</p>
+<ul>
+<li>它是一个扩展函数</li>
+<li>它把 <code>this</code> 作为参数</li>
+<li>它返回了 <code>this</code>（它自己）</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Normal approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createIntent</span><span class="params">(intentData: <span class="type">String</span>, intentAction: <span class="type">String</span>)</span></span>: Intent &#123;</span><br><span class="line">    <span class="keyword">val</span> intent = Intent()</span><br><span class="line">    intent.action = intentAction</span><br><span class="line">    intent.<span class="keyword">data</span> = Uri.parse(intentData)</span><br><span class="line">    <span class="keyword">return</span> intent</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Improved approach, chaining</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createIntent</span><span class="params">(intentData: <span class="type">String</span>, intentAction: <span class="type">String</span>)</span></span> = </span><br><span class="line">    Intent().apply &#123; action = intentAction &#125;</span><br><span class="line">            .apply &#123; <span class="keyword">data</span> = Uri.parse(intentData) &#125;</span><br></pre></td></tr></table></figure>
+<p>或者我们也可以把一个非链式的对象创建过程变得可链式（chain-able）：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Normal approach</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createIntent</span><span class="params">(intentData: <span class="type">String</span>, intentAction: <span class="type">String</span>)</span></span>: Intent &#123;</span><br><span class="line">    <span class="keyword">val</span> intent = Intent()</span><br><span class="line">    intent.action = intentAction</span><br><span class="line">    intent.<span class="keyword">data</span> = Uri.parse(intentData)</span><br><span class="line">    <span class="keyword">return</span> intent</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Improved approach, chaining</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">createIntent</span><span class="params">(intentData: <span class="type">String</span>, intentAction: <span class="type">String</span>)</span></span> = </span><br><span class="line">    Intent().apply &#123; action = intentAction &#125;</span><br><span class="line">            .apply &#123; <span class="keyword">data</span> = Uri.parse(intentData) &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="函数选择"><a href="#函数选择" class="headerlink" title="函数选择"></a>函数选择</h2><p>现在思路变清晰了，根据这三大特性，我们可以对函数进行分类。基于此可以构建一个决策树来帮助我们根据需要来选择使用哪一个函数。</p>
+<img src="/2018/03/31/kotlin-mastering-standard-functions/function-selection.png" title="function selections decision tree">
+<p>希望上面的决策树能够更清晰地阐述这些函数，同时也能简化你的决策，使你能够得当地使用这些函数。</p>
+
+
+                <hr>
+
+                <div style="text-align: center;">
+                    <p>欢迎扫码关注 <b>老梁写代码</b> 微信公众号</p>
+                    <img src="https://wx2.sinaimg.cn/mw690/63934de3gy1fpdr77kb6kj209k09kjrc.jpg"/>
+                </div>
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/03/28/kotlin-var-val-const/" data-toggle="tooltip" data-placement="top" title="Kotlin 中 var、val、const 关键字解析">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://yifeiyuan.me/" target="_blank">程序亦非猿</a></li>
+                    
+                        <li><a href="https://www.liaohuqiu.net/" target="_blank">秋百万</a></li>
+                    
+                        <li><a href="http://blog.zhaiyifan.cn/" target="_blank">大帅</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2018/03/31/kotlin-mastering-standard-functions/";
+var disqus_url = "http://liangfei.me/2018/03/31/kotlin-mastering-standard-functions/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>
