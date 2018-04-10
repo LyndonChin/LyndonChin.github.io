@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Kotlin实战之Fuel的高阶函数 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2018/04/10/kotlin-fuel-interceptor/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                          <a class="tag" href="/tags/#Fuel" title="Fuel">Fuel</a>
+                        
+                    </div>
+                    <h1>Kotlin实战之Fuel的高阶函数</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2018-04-10
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><a href="https://github.com/kittinunf/Fuel" target="_blank" rel="noopener">Fuel</a> 是一个用 Kotlin 写的网络库，与 OkHttp 相比较，它的代码结构比较简单，但是它的巧妙之处在于充分利用了 <a href="https://github.com/LyndonChin/kotlin-docs-zh" target="_blank" rel="noopener">Kotlin 的语言特性</a>，所以代码看上去干净利落。</p>
+<p>OkHttp 使用了一个 <em>interceptor chain</em> 来实现拦截器的串联调用，由于 Java 语言（ JDK ≤ 7）本身的局限性，所以实现代码比较臃肿，可读性也不友好。当然，RxJava 再加上 retrolambda 这种 backport 的出现，一定程度上了缓解了这种尴尬，但是 Kotlin 天生具备的声明式写法又使得 Java 逊色了很多。</p>
+<p>我们知道，拦截器本质上是一个责任链模式（chain of responsibility）的实现，我们通过具体代码来学习一下 Kotlin 究竟是如何利用高阶函数实现了拦截器功能。</p>
+<p>首先定义一个 <code>MutableList</code> 用于存储拦截器实例：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">val</span> requestInterceptors: </span><br><span class="line">  MutableList&lt;((Request) -&gt; Request) -&gt; ((Request) -&gt; Request)&gt; </span><br><span class="line">   = mutableListOf()</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意，Kotlin 的类型系统明确区分了 mutable 和 immutable，默认的 List 类型是 immutable。</p>
+</blockquote>
+<p><code>requestInterceptors</code> 的元素类型是一个<a href="https://github.com/LyndonChin/kotlin-docs-zh/blob/master/functions-and-lambdas/02_lambdas.md" target="_blank" rel="noopener">高阶函数</a>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">((Request) -&gt; Request) -&gt; ((Request) -&gt; Request)</span><br></pre></td></tr></table></figure>
+<p>作为元素类型的高阶函数，其参数也是一个高阶函数 <code>(Request) -&gt; Request</code>， 同时，返回值也是高阶函数 <code>(Request) -&gt; Request</code>。</p>
+<p>然后，我们给 <code>requestInterceptors</code> 定义一个增加元素的方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">addRequestInterceptor</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  interceptor: ((<span class="type">Request</span>)</span></span> -&gt; Request) -&gt; ((Request) -&gt; Request)) &#123;</span><br><span class="line">    requestInterceptors += interceptor</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>addRequestInterceptor</code> 的参数类型</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">(Request) -&gt; Request) -&gt; ((Request) -&gt; Request)</span><br></pre></td></tr></table></figure>
+<p>与 <code>requestInterceptors</code> 的元素类型一致。</p>
+<blockquote>
+<p>注意，这里又出现了一个 Kotlin 有而 Java 没有的语言特性：操作符重载。</p>
+</blockquote>
+<p>我们没有调用 <code>requestInterceptors.add(interceptor)</code>，而是用了一个 <code>plusAssign</code> 的操作符 <code>+=</code>（MutableCollections.kt 中定义的操作符重载）：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Adds the specified [element] to this mutable collection.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@kotlin</span>.<span class="keyword">internal</span>.InlineOnly</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">inline</span> <span class="keyword">operator</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> MutableCollection<span class="type">&lt;in T&gt;</span>.<span class="title">plusAssign</span><span class="params">(element: <span class="type">T</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">this</span>.add(element)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么，此时应该定义一个拦截器的函数实例了：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">loggingRequestInterceptor</span><span class="params">()</span></span> =</span><br><span class="line">        &#123; next: (T) -&gt; T -&gt;</span><br><span class="line">            &#123; t: T -&gt;</span><br><span class="line">                println(t.toString())</span><br><span class="line">                next(t)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p><code>loggingRequestInterceptor</code> 是一个函数，它的返回值是一个 lambda 表达式（即高阶函数）：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">&#123; next: (T) -&gt; T -&gt;</span><br><span class="line">    &#123; t: T -&gt;</span><br><span class="line">        println(t.toString())</span><br><span class="line">        next(t)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1) 这个 lambda 的<strong>参数</strong>是 <code>next: (T) -&gt; T</code>（参数名是 <code>next</code>，参数类型是 <code>(T) -&gt; T</code>），<strong>返回值</strong>是另一个 lambda 表达式：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">&#123; t: T -&gt;</span><br><span class="line">    println(t.toString())</span><br><span class="line">    next(t)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2) 因为 lambda 本身是一个函数字面量（function literal），它的类型通过函数本身可以推到得出，如果我们用一个变量来引用这个 lambda 的话，变量的类型是 <code>(T) -&gt; T</code>。</p>
+<p>由1、2两点可知，<code>loggingRequestInterceptor()</code> 的返回值是一个 lambda 表达式，它的参数是 <code>(T) -&gt; T</code>，返回值也是 <code>(T) -&gt; T</code>。</p>
+<p>这里的泛型函数略抽象，我们来看一个具体化的函数：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">cUrlLoggingRequestInterceptor</span><span class="params">()</span></span> =</span><br><span class="line">        &#123; next: (Request) -&gt; Request -&gt;</span><br><span class="line">            &#123; r: Request -&gt;</span><br><span class="line">                println(r.cUrlString())</span><br><span class="line">                next(r)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>同理，<code>cUrlLoggingRequestInterceptor()</code> 函数的参数为 <code>(Request) -&gt; Request</code>、返回值为 <code>(Request) -&gt; Request</code>。</p>
+<p>拦截器都定义好了，那么应该如何调用呢？Kotlin 一行代码搞定🤟：：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">requestInterceptors.foldRight(&#123; r: Request -&gt; r &#125;) &#123; f, acc -&gt; f(acc) &#125;</span><br></pre></td></tr></table></figure>
+<p><code>foldRight</code> 是 <code>List</code> 的一个扩展函数，先来看声明：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T, R&gt;</span> List<span class="type">&lt;T&gt;</span>.<span class="title">foldRight</span><span class="params">(initial: <span class="type">R</span>, operation: (<span class="type">T</span>, acc: <span class="type">R</span>)</span></span> -&gt; R): R &#123;</span><br><span class="line">    <span class="keyword">var</span> accumulator = initial</span><br><span class="line">    <span class="keyword">if</span> (!isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">val</span> iterator = listIterator(size) <span class="comment">// 让迭代器指向最后一个元素的末尾</span></span><br><span class="line">        <span class="keyword">while</span> (iterator.hasPrevious()) &#123;</span><br><span class="line">            accumulator = operation(iterator.previous(), accumulator)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> accumulator</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数功能总结为一句话：从右往左，对列表中的每一个元素执行 <code>operation</code> 操作，每个操作的结果是下一次操作的入参，第一次 <code>operation</code> 的初始值是 <code>initial</code>。</p>
+<p>回头来看拦截器列表 <code>requestInterceptors</code> 如何执行了 <code>foldRight</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">requestInterceptors.foldRight(&#123; r: Request -&gt; r &#125;) &#123; f, acc -&gt; f(acc) &#125;</span><br></pre></td></tr></table></figure>
+<p>参数 <code>inital: R</code> 的实参是 <code>{ r: Request -&gt; r }</code>，一个函数字面量，没有执行任何操作，接收 <code>r</code> 返回 <code>r</code>。</p>
+<p>参数 <code>operation: (T, acc: R) -&gt; R</code> 可接收一个 lambda，所以它的实参 <code>{f, acc -&gt; f(acc)}</code> 可以位于圆括号之外。<code>f</code> 的泛型是 <code>T</code>，具体类型是 </p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">((Request) -&gt; Request) -&gt; ((Request) -&gt; Request)</span><br></pre></td></tr></table></figure>
+<p><code>acc</code> 的类型通过 <code>initial: R</code> 的实参 <code>{ r: Request -&gt; r }</code> 可以推到得出——<code>(Request) -&gt; Request</code>。</p>
+<p>OK，语法完全没毛病，再来看语义。</p>
+<pre><code>+---------------------+
+| { r: Request -&gt; r } | ---&gt; 初始值，命名为 *fun0*
++---------------------+
+           |
+           |
+          \|/    fun0 作为参数传递给 requestInterceptors 最右的 f（最后一个元素）
++----------------------------------|------------------------f---------------------|-+
+| cUrlLoggingRequestInterceptor(): ((Request) -&gt; Request) -&gt; ((Request) -&gt; Request) |
++----------------------------------|----------------------------------------------|-+
+           |
+           |                  f 返回结果：
+           |                  +-----------------------------+
+           |                  | { r: Request -&gt;             |
+           |                  |     println(r.cUrlString()) |
+           |                  |     fun0(r)                 |
+           |                  | }                           |
+           |                  +-----------------------------+
+           |                                    命名为 *fun1*
+           |  
+          \|/   fun1 作为参数，传递给倒数第二个 f
++----------------------------------|-----------------------f--------------------|-+
+| loggingRequestInterceptor(): ((Request) -&gt; Request) -&gt; ((Request) -&gt; Request)   |
++----------------------------------|--------------------------------------------|-+
+           |
+           |                  f 返回结果：
+           |                  +-----------------------------+
+           |                  | { r: Request -&gt;             |
+           |                  |     println(1.toString())   |
+           |                  |     fun1(r)                 |
+           |                  | }                           |
+           |                  +-----------------------------+
+           |                                    命名为 *fun2*
+          \|/   将 fun2 解体：
++------------------------------+
+| { r: Request -&gt;              |
+|     println(r.toString())    |
+|     println(r.cUrlString())  | 类型为：(Request) -&gt; request
+|     r                        |
+| }                            |
++------------------------------+
+</code></pre><p>至此，一个简单的拦截器功能就实现了，代码竟然如此简洁，感动！</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://blog.piasy.com/2016/07/11/Understand-OkHttp/" target="_blank" rel="noopener">拆轮子系列：拆 OkHttp by Piasy</a></li>
+<li><a href="https://github.com/LyndonChin/kotlin-docs-zh" target="_blank" rel="noopener">Kotlin中文文档</a></li>
+</ul>
+
+
+                <hr>
+
+                <div style="text-align: center;">
+                    <p>欢迎扫码关注 <b>老梁写代码</b> 微信公众号</p>
+                    <img src="https://wx2.sinaimg.cn/mw690/63934de3gy1fpdr77kb6kj209k09kjrc.jpg"/>
+                </div>
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/03/31/kotlin-mastering-standard-functions/" data-toggle="tooltip" data-placement="top" title="「译」精通Kotlin标准函数：run、with、let、also和apply">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Kotlin" title="Kotlin">Kotlin</a>
+                        
+                          <a class="tag" href="/tags/#Fuel" title="Fuel">Fuel</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://yifeiyuan.me/" target="_blank">程序亦非猿</a></li>
+                    
+                        <li><a href="https://www.liaohuqiu.net/" target="_blank">秋百万</a></li>
+                    
+                        <li><a href="http://blog.zhaiyifan.cn/" target="_blank">大帅</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2018/04/10/kotlin-fuel-interceptor/";
+var disqus_url = "http://liangfei.me/2018/04/10/kotlin-fuel-interceptor/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>

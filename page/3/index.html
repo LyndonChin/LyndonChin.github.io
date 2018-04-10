@@ -108,13 +108,6 @@
                         </li>
                         
                     
-
-                        
-                        <li>
-                            <a href="/todos/">TODOS</a>
-                        </li>
-                        
-                    
                     
                 </ul>
             </div>
@@ -188,6 +181,30 @@
             
                 <!-- Main Content -->
 
+
+<div class="post-preview">
+
+    <a href="/2017/07/03/http-status-code/">
+        <h2 class="post-title">
+            精通 HTTP 之 STATUS CODE
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            HTTP 的 status code 分为 5 个类别（1XX、2XX、3XX、4XX、5XX），每个 code 都有对应的 reason phrase，这些 reason phrases 并没有规范，都是约定俗成的。
+
+statuses@npm 是一个 HTTP 状态码的工具类：1var status = require('statuses')
+101-199: Informational......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2017-07-03
+    </p>
+
+</div>
+<hr>
 
 <div class="post-preview">
 
@@ -427,31 +444,6 @@ ServiceMethod 使用了 Builder 模式，先来看 Servic......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/07/06/android-retrofit-and-rxjava/">
-        <h2 class="post-title">
-            Retrofit + RxAndroid 实践总结
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            在接入 Retrofit + RxAndroid 之前，项目代码中主要存在如下问题：
-
-服务器 API 的定义方式不一致，有的集中定义，有的定义在业务代码中，没有分类不便于维护。
-Request / Response / API 三者没有对应关系（Request 参数使用 Map 传递，Response 返回 JSON 数据）。
-每次都需要传递 access_token 给需要验证登录的 A......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2016-07-06
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -527,7 +519,9 @@ Request / Response / API 三者没有对应关系（Request 参数使用 Map 传
                             
                         
                             
-                            <a href="/tags/#Kotlin" title="Kotlin" rel="2">Kotlin</a>
+                            <a href="/tags/#Kotlin" title="Kotlin" rel="3">Kotlin</a>
+                            
+                        
                             
                         
                             
@@ -553,13 +547,13 @@ Request / Response / API 三者没有对应关系（Request 参数使用 Map 传
                             
                         
                             
+                        
+                            
+                        
+                            
+                        
+                            
                             <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
-                            
-                        
-                            
-                        
-                            
-                        
                             
                         
                             

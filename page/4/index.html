@@ -108,13 +108,6 @@
                         </li>
                         
                     
-
-                        
-                        <li>
-                            <a href="/todos/">TODOS</a>
-                        </li>
-                        
-                    
                     
                 </ul>
             </div>
@@ -188,6 +181,31 @@
             
                 <!-- Main Content -->
 
+
+<div class="post-preview">
+
+    <a href="/2016/07/06/android-retrofit-and-rxjava/">
+        <h2 class="post-title">
+            Retrofit + RxAndroid 实践总结
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            在接入 Retrofit + RxAndroid 之前，项目代码中主要存在如下问题：
+
+服务器 API 的定义方式不一致，有的集中定义，有的定义在业务代码中，没有分类不便于维护。
+Request / Response / API 三者没有对应关系（Request 参数使用 Map 传递，Response 返回 JSON 数据）。
+每次都需要传递 access_token 给需要验证登录的 A......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2016-07-06
+    </p>
+
+</div>
+<hr>
 
 <div class="post-preview">
 
@@ -418,38 +436,6 @@ Gradle 插件会编译 src/test/java 的代码，运行时会用到一个修改�
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/01/26/backup-git-config/">
-        <h2 class="post-title">
-            我的 git 配置
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            记录我的 git 配置文件。
-
-alias
-[alias]
-    co = checkout
-    br = branch
-    ci = commit
-    st = status
-    last = log -1 HEAD
-    unstage = reset HEAD --
-    visual = !"gitk"
-    lg1 = log --graph --abbre......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2016-01-26
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -525,7 +511,9 @@ alias
                             
                         
                             
-                            <a href="/tags/#Kotlin" title="Kotlin" rel="2">Kotlin</a>
+                            <a href="/tags/#Kotlin" title="Kotlin" rel="3">Kotlin</a>
+                            
+                        
                             
                         
                             
@@ -551,13 +539,13 @@ alias
                             
                         
                             
+                        
+                            
+                        
+                            
+                        
+                            
                             <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
-                            
-                        
-                            
-                        
-                            
-                        
                             
                         
                             
