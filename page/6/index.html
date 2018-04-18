@@ -184,6 +184,34 @@
 
 <div class="post-preview">
 
+    <a href="/2015/06/20/android-get-hardware-data/">
+        <h2 class="post-title">
+            如何获取 Android 设备的CPU核数、时钟频率以及内存大小
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            因项目需要，分析了一下 Facebook 的开源项目 - Device Year Class。
+Device Year Class 的主要功能是根据 CPU核数、时钟频率 以及 内存大小 对设备进行分级。代码很简单，只包含两个类:
+
+DeviceInfo -&gt; 获取设备参数，
+YearClass -&gt; 根据参数进行分级。
+
+
+下表是 Facebook 公司提供的分级标准，其中 Y......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2015-06-20
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2015/05/05/meeting-android-sky/">
         <h2 class="post-title">
             Dart更近一步，Sky会一统江湖吗？
@@ -244,7 +272,7 @@ ES6 好像从2009年就开始制定了，现在终于支持 forEach、fo......
 
 先看一个只有 try-finally，没有 catch 的例子。
 try - finally
-123456789101112131415p......
+public class Exception......
         </div>
     </a>
     <p class="post-meta">
@@ -271,7 +299,7 @@ try - finally
 
 
 例如以下代码中变量 x 为什么必须声明为 final。
-12345678910public class Closure &#123;  public static void main(String... args) throws InterruptedException &#123;    f......
+public class Closure &#123;  public static void main(String... args) throws InterruptedException &#123;    final int x ......
         </div>
     </a>
     <p class="post-meta">
@@ -316,10 +344,10 @@ try - finally
         </h3>
         <div class="post-content-preview">
             定义一个内部类时，这个内部类会有一个隐式引用 (implicit reference) 指向外部类的实例。例如下面的代码：
-123class WithInner &#123;    class Inner &#123;&#125;&#125;
+class WithInner &#123;    class Inner &#123;&#125;&#125;
 
 其实，内部类Inner默认会有一个带参数的构造函数，我们通过反射来看一下。
-123456789101112131415161718192021222......
+import java.lang.reflect.Constructor;im......
         </div>
     </a>
     <p class="post-meta">
@@ -402,13 +430,11 @@ An inner class provides a kind of window into the outer cl......
                             
                         
                             
-                            <a href="/tags/#UnitTest" title="UnitTest" rel="6">UnitTest</a>
-                            
-                        
-                            
                             <a href="/tags/#Git" title="Git" rel="2">Git</a>
                             
                         
+                            
+                            <a href="/tags/#UnitTest" title="UnitTest" rel="6">UnitTest</a>
                             
                         
                             
@@ -420,13 +446,17 @@ An inner class provides a kind of window into the outer cl......
                             
                         
                             
+                        
+                            
                             <a href="/tags/#Java" title="Java" rel="5">Java</a>
                             
                         
                             
-                            <a href="/tags/#Kotlin" title="Kotlin" rel="3">Kotlin</a>
+                            <a href="/tags/#Kotlin" title="Kotlin" rel="4">Kotlin</a>
                             
                         
+                            
+                            <a href="/tags/#Fuel" title="Fuel" rel="2">Fuel</a>
                             
                         
                             
@@ -442,9 +472,9 @@ An inner class provides a kind of window into the outer cl......
                             
                         
                             
-                        
-                            
                             <a href="/tags/#Mockito" title="Mockito" rel="5">Mockito</a>
+                            
+                        
                             
                         
                             
@@ -452,13 +482,13 @@ An inner class provides a kind of window into the outer cl......
                             
                         
                             
-                        
-                            
-                        
-                            
-                        
-                            
                             <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
+                            
+                        
+                            
+                        
+                            
+                        
                             
                         
                             

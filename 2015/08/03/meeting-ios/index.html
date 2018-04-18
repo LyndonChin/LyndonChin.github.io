@@ -249,7 +249,7 @@ M     |     |
 E     |     |
 N     |     |
 U------------
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];</span><br><span class="line">layout.minimumInteritemSpacing = 4.0f;</span><br><span class="line">layout.minimumLineSpacing = 2.0f;</span><br><span class="line">[layout setSectionInset:UIEdgeInsetsMake(0, 4, 0, 4)];</span><br></pre></td></tr></table></figure>
+</code></pre><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];</span><br><span class="line">layout.minimumInteritemSpacing = 4.0f;</span><br><span class="line">layout.minimumLineSpacing = 2.0f;</span><br><span class="line">[layout setSectionInset:UIEdgeInsetsMake(0, 4, 0, 4)];</span><br></pre></td></tr></table></figure>
 <p>结果当 Menu 不显示的时候，第二行只能显示5个 Cell，剩下的一个被挤到了第三行。</p>
 <blockquote>
 <p>这是因为虽然 Menu 的宽度为0，但 flow layout 设置的 Margin 对它依然有效，从而导致第二行放不下6个 Cell。</p>

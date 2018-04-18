@@ -184,6 +184,31 @@
 
 <div class="post-preview">
 
+    <a href="/2016/01/27/android-source-reading-of-rich-editor/">
+        <h2 class="post-title">
+            RichEditor 源码解析
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            RichEditor 是一个继承自 WebView 的自定义 view。
+
+基本功能枚举类型 Type 定了它所支持的排版格式：
+public enum Type &#123;  BOLD,  ITALIC,  SUBSCRIPT,  SUPERSCRIPT,  STRIKETHROUGH,  UNDERLINE,  H1,  H2,  H3,  H4,  H5,  H6&#125;
+首先在......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2016-01-27
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/01/26/backup-git-config/">
         <h2 class="post-title">
             我的 git 配置
@@ -274,7 +299,7 @@ Github的个人帐户默认渲染master分支，只有org帐户才会渲染gh-pa
 个人帐户的master分支是hexo generate之后的文件。
 
 hexo deploy 相关的配置（分支和仓库）位于 _config.yml：
-123456# Deployment## Docs: https://hexo.io/docs/deployment.htmldeploy:  ......
+# Deployment## Docs: https://hexo.io/docs/deployment.htmldeploy:  type: ......
         </div>
     </a>
     <p class="post-meta">
@@ -436,34 +461,6 @@ git merge –no-ff 可以保证即使是 fast-forward 也会产生一个......
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2015/06/20/android-get-hardware-data/">
-        <h2 class="post-title">
-            如何获取 Android 设备的CPU核数、时钟频率以及内存大小
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            因项目需要，分析了一下 Facebook 的开源项目 - Device Year Class。
-Device Year Class 的主要功能是根据 CPU核数、时钟频率 以及 内存大小 对设备进行分级。代码很简单，只包含两个类:
-
-DeviceInfo -&gt; 获取设备参数，
-YearClass -&gt; 根据参数进行分级。
-
-
-下表是 Facebook 公司提供的分级标准，其中 Y......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2015-06-20
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -517,13 +514,11 @@ YearClass -&gt; 根据参数进行分级。
                             
                         
                             
-                            <a href="/tags/#UnitTest" title="UnitTest" rel="6">UnitTest</a>
-                            
-                        
-                            
                             <a href="/tags/#Git" title="Git" rel="2">Git</a>
                             
                         
+                            
+                            <a href="/tags/#UnitTest" title="UnitTest" rel="6">UnitTest</a>
                             
                         
                             
@@ -535,13 +530,17 @@ YearClass -&gt; 根据参数进行分级。
                             
                         
                             
+                        
+                            
                             <a href="/tags/#Java" title="Java" rel="5">Java</a>
                             
                         
                             
-                            <a href="/tags/#Kotlin" title="Kotlin" rel="3">Kotlin</a>
+                            <a href="/tags/#Kotlin" title="Kotlin" rel="4">Kotlin</a>
                             
                         
+                            
+                            <a href="/tags/#Fuel" title="Fuel" rel="2">Fuel</a>
                             
                         
                             
@@ -557,9 +556,9 @@ YearClass -&gt; 根据参数进行分级。
                             
                         
                             
-                        
-                            
                             <a href="/tags/#Mockito" title="Mockito" rel="5">Mockito</a>
+                            
+                        
                             
                         
                             
@@ -567,13 +566,13 @@ YearClass -&gt; 根据参数进行分级。
                             
                         
                             
-                        
-                            
-                        
-                            
-                        
-                            
                             <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
+                            
+                        
+                            
+                        
+                            
+                        
                             
                         
                             

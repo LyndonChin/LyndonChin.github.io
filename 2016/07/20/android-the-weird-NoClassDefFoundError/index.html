@@ -192,15 +192,15 @@
 <a id="more"></a>
 <h2 id="try-1-multiDexKeepProguard"><a href="#try-1-multiDexKeepProguard" class="headerlink" title="try #1 - multiDexKeepProguard"></a>try #1 - multiDexKeepProguard</h2><p>首先确认是不是由于类没有被放到 main dex 中导致了这个问题。打开文件 <code>build/intermediates/multi-dex/debug/maindexlist.txt</code>，查找类名，发现文件中包含了我们要找的类。</p>
 <p>不放心，说不定是 Multidex 的bug，手动把这个“丢失”的类放进 main dex。</p>
-<p><em>build.gralde</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  defaultConfig &#123;</span><br><span class="line">    multiDexEnabled = <span class="literal">true</span></span><br><span class="line">    multiDexKeepProguard file(<span class="string">'multidex.pro'</span>)</span><br><span class="line">  &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><em>multidex.pro</em><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-keep public the-full-name-of-the-missing-class &#123; *; &#125;</span><br></pre></td></tr></table></figure></p>
+<p><em>build.gralde</em><br><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  defaultConfig &#123;</span><br><span class="line">    multiDexEnabled = <span class="literal">true</span></span><br><span class="line">    multiDexKeepProguard file(<span class="string">'multidex.pro'</span>)</span><br><span class="line">  &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><em>multidex.pro</em><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-keep public the-full-name-of-the-missing-class &#123; *; &#125;</span><br></pre></td></tr></table></figure></p>
 <p>编译运行，问题依然，并没有什么卵用。</p>
 <p>既然不是 main dex 问题，那我们先来确认一下问题是否由 MultiDex 引起。</p>
 <h2 id="try-2-关掉-Multidex"><a href="#try-2-关掉-Multidex" class="headerlink" title="try #2 - 关掉 Multidex"></a>try #2 - 关掉 Multidex</h2><p>关掉 multidex 然后打一个 release 包。</p>
 <blockquote>
 <p>由于方法数受限，关掉 Multidex 之后打不出 Debug 包，但是混淆过后方法数减少很多，可以顺利打出 Release 包。</p>
 </blockquote>
-<p><em>build.gradle</em><br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">  multiDexEnabled <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><em>build.gradle</em><br><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">defaultConfig &#123;</span><br><span class="line">  multiDexEnabled <span class="literal">true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>编译运行，依然出错，可以确定不是 Multidex 的锅。</p>
 <h2 id="try-3-传递依赖"><a href="#try-3-传递依赖" class="headerlink" title="try #3 - 传递依赖"></a>try #3 - 传递依赖</h2><p>把依赖由只依赖 aar 改为传递依赖。</p>
 <p><del><code>compile &#39;me.liangfei.android:weird-1.0.0@aar&#39;</code></del><br><code>compile &#39;me.liangfei.android:weird-1.0.0&#39;</code></p>

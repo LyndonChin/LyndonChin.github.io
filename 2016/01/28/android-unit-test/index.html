@@ -195,10 +195,10 @@
 </blockquote>
 <a id="more"></a>
 <p>Gradle 插件会编译 <code>src/test/java</code> 的代码，运行时会用到一个修改过的 <code>android.jar</code>（去掉了所有的 <code>final</code> 修饰符），这样就可以利用多态引入 <strong>mocking libraries</strong>。</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  testCompile <span class="string">'junit:junit:4.12'</span></span><br><span class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew test --<span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">  testCompile <span class="string">'junit:junit:4.12'</span></span><br><span class="line">  testCompile <span class="string">"org.mockito:mockito-core:1.9.5"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">./gradlew test --<span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
 <p>等价于</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">./gradlew testDebug testRelease --<span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
 <p>其中 <code>--continue</code> 表示即使某个 case 失败了，也会继续执行剩下的 case。</p>
 <h2 id="Flavors-amp-Build-type"><a href="#Flavors-amp-Build-type" class="headerlink" title="Flavors &amp; Build type"></a>Flavors &amp; Build type</h2><p>遵守规范</p>
 <ul>
@@ -212,9 +212,9 @@ java.lang.RuntimeException: Method isEmpty in android.text.TextUtils not mocked.
 </pre>
 
 <p>加了 mock 依赖后还是搞不定：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">testCompile <span class="string">"org.mockito:mockito-core:1.9.5</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">testCompile <span class="string">"org.mockito:mockito-core:1.9.5</span></span><br></pre></td></tr></table></figure>
 <p>修改配置，让 mock 方法返回默认值还是不行：</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  testOptions &#123; </span><br><span class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="code"><pre><span class="line">android &#123;</span><br><span class="line">  testOptions &#123; </span><br><span class="line">    unitTests.returnDefaultValues = <span class="literal">true</span></span><br><span class="line">  &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>结果却是：</p>
 <blockquote>
 <p>We are aware that the default behavior is problematic when using classes like Log or TextUtils and will evaluate possible solutions in future releases.</p>
