@@ -368,7 +368,9 @@ var failureCallback: ((FuelError, Response) -> Unit)? = null
 
 ## 参考资料
 
+* [原文链接](http://liangfei.me/2018/04/18/kotlin-fuel-details/)
 * [一些「流与管道」的小事](https://zhuanlan.zhihu.com/p/35518932)
 * [OK，IO](https://zhuanlan.zhihu.com/p/35807478)
 * [HTTPS 精读之 TLS 证书校验](https://zhuanlan.zhihu.com/p/30655259)
 * [Kotlin 官方中文教程](https://github.com/LyndonChin/kotlin-docs-zh)
+* [Kotlin实战之Fuel的高阶函数](http://liangfei.me/2018/04/10/kotlin-fuel-interceptor/)
