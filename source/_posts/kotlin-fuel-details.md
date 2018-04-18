@@ -6,15 +6,15 @@ tags:
   - Fuel
 ---
 
-场景
+使用场景
 ---
-一个“朴素”的 url 完全可以用一个字符串来表示（例如 `"http://httpbin.org/get"`），我们利用 Kotlin 语言本身的特性为 `String` 类型添加一个扩展函数 `httpGet()`，然后借此发起 http 请求：
+一个“朴素”的 url 完全可以用一个字符串来表示（例如 `"https://www.youzan.com"`），我们可以利用 Kotlin 语言本身的特性为 `String` 类型添加一个扩展函数 `httpGet()`，然后借此发起 http 请求：
 
 ```kotlin
-"http://httpbin.org/get".httpGet()
+"https://www.youzan.com".httpGet()
 ```
 
-但是，对于“不朴素”的字符串来说，我们可以让其实现一个接口：
+但是，对于不是朴素字符串的对象来说，我们可以让其实现一个接口：
 
 ```kotlin
 interface PathStringConvertible {
@@ -22,7 +22,7 @@ interface PathStringConvertible {
 }
 ```
 
-然后将“计算”过后的 path 通过一个 `String` 类型提供出来，用法如下：
+然后，将“计算”过后的 path 通过一个 `String` 类型提供出来，例如：
 
 ```kotlin
 enum class HttpsBin(relativePath: String) : Fuel.PathStringConvertible {
@@ -36,7 +36,9 @@ enum class HttpsBin(relativePath: String) : Fuel.PathStringConvertible {
 }
 ```
 
-如果我们所有的 url 都有一个 base url，或者是其他公用参数，那么还需有一个地方来存储这些通用配置，而这个地方的幕后老大就叫 `FuelManager`。`String` 和 `PathStringConvertible` 最终也会调用到 `FuelManager`。
+但是，也会存在一种情况，所有的 url 可能会共享一个 base url，或者是其他公用参数，那么还需有一个地方来存储这些通用配置，这个地方的幕后老大就叫 `FuelManager`。
+
+`String` 和 `PathStringConvertible` 最终也会调用到 `FuelManager`。
 
     +----------+
     |  String  |------------->----+
@@ -47,7 +49,7 @@ enum class HttpsBin(relativePath: String) : Fuel.PathStringConvertible {
     +-------------------------+
 
 
-除了通过 `String` 或者 `PathStringConvertiable` 来发起请求，我们还可以直接用一个 `Request` 变量，因此 `Fuel` 还提供了转换 `Request` 的接口：
+除了通过 `String` 或者 `PathStringConvertiable` 来发起请求，我们还可以直接用一个 `Request`，因此 `Fuel` 还提供了转换 `Request` 的接口：
 
 ```kotlin
 interface RequestConvertible {
@@ -59,11 +61,10 @@ interface RequestConvertible {
 0. 一个字符串
 0. `PathStringConvertible` 变量
 0. `RequestConvertible` 变量
-0. 直接使用 `Fuel` 伴生对象的方法
+0. 直接使用 `Fuel` 伴生对象提供的方法
 
-实现
+代码实现
 ---
-
 ### 对外提供服务的 Fuel
 首先 `Fuel` 作为对外的接口提供方（类似 Facade 模式），通过一个伴生对象（companion object）提供服务（以 get 方法为例）：
 
@@ -98,7 +99,6 @@ fun Fuel.PathStringConvertible.httpGet(parameter: List<Pair<String, Any?>>? = nu
 ```
 
 ### 幕后老大 FuleManager
-
 FuleManager 利用[伴生对象](https://github.com/LyndonChin/kotlin-docs-zh/blob/master/classes-and-objects/10_objects.md#伴生对象)实现了单例模式：
 
 ```kotlin
@@ -147,7 +147,7 @@ interface Client {
                                               +--------------------+
 
 
-Fuel 默认提供的 Http 引擎是 `HttpClient`，它是基于 HttpURLConnection 实现。
+Fuel 默认提供的 Http 引擎是 `HttpClient`，它是基于 HttpURLConnection 的实现。
 
 `basePath`、`baseHeaders` 和 `baseParams` 存储了请求的公用配置，我们可以通过 `FuleManager.instance` 为其赋值：
 
@@ -206,7 +206,6 @@ fun request(method: Method, path: String, param: List<Pair<String, Any?>>? = nul
 跟其他网络库一样，一次完整的请求，必然包含两个实体—— `Request` & `Response`，先来看 `Request`。
 
 ### 请求实体 Request
-
 ```kotlin
 class Request(
   val method: Method,
@@ -247,7 +246,7 @@ internal val taskRequest: TaskRequest by lazy {
 
 涉及到上传下载的 `DownloadTaskRequest` 和 `UploadTaskRequest` 都继承自 `TaskRequest`，它们会处理文件和流相关的东西，关于此可参考 IO 哥写的 [一些「流与管道」的小事](https://zhuanlan.zhihu.com/p/35518932) 以及 [OK, IO](https://zhuanlan.zhihu.com/p/35807478)。
 
-`FuelManager` 在构造 `Request` 时用到了一个类 `Encoding`：
+`FuelManager` 在构造 `Request` 时用到了一个类——`Encoding`：
 
 ```kotlin
 class Encoding(
@@ -258,7 +257,9 @@ class Encoding(
   val parameters: List<Pair<String, Any?>>? = null) : Fuel.RequestConvertible
 ```
 
-`Encoding` 也是继承自 `Fuel.RequestConvertible`，它完成了对 `Request` 参数的组装编码，并产生了一个 `Request`。`Encoding` 组装 query parameter 的方式可以说赏心悦目，贴出来欣赏一下：
+`Encoding` 也是继承自 `Fuel.RequestConvertible`，它完成了对 `Request` 参数的组装编码，并产生了一个 `Request`。
+
+`Encoding` 组装 query parameter 的方式可以说赏心悦目，贴出来欣赏一下：
 
 ```kotlin
 private fun queryFromParameters(params: List<Pair<String, Any?>>?): String = params.orEmpty()
@@ -268,7 +269,6 @@ private fun queryFromParameters(params: List<Pair<String, Any?>>?): String = par
 ```
 
 ### 请求返回结果 Response
-
 ```kotlin
 class Response(
   val url: URL,
@@ -279,7 +279,7 @@ class Response(
   val dataStream: InputStream = ByteArrayInputStream(ByteArray(0))
 ```
 
-由 `Response` 的属性可以看出，它所携带的仍然是一个流（Stream），在分析反序列化之前，我们先看 `Response` 是如何与 `Request` 串联起来的。
+由 `Response` 的属性可以看出，它所携带的仍然是一个流（Stream），我们先看 `Response` 是如何与 `Request` 串联起来的。
 
 `Deserializable.kt` 文件为 `Request` 定了名称为 `response` 的扩展函数：
 
@@ -313,12 +313,11 @@ private fun <T : Any, U : Deserializable<T>> Request.response(
 }
 ```
 
-扩展函数 `response` 的参数中，`deserializable` 反序列化操作，`success` 和 `failure` 用于处理请求结果。
+扩展函数 `response` 的参数中，`deserializable` 负责反序列化操作，`success` 和 `failure` 用于处理请求结果。
 
-Fuel 提供了两个 `Deserializable` 的实现：`StringDeserializer` 以及 `ByteArrayDeserializer`，它们用于反序列化一个 response stream。
+Fuel 提供了两个 `Deserializable` 的实现：`StringDeserializer` 以及 `ByteArrayDeserializer`，它们用于反序列化 response 的 stream。
 
 ### 异步请求
-
 `Deserializable.kt` 为 `Request` 定义的扩展函数 `response` 在执行异步操作时用到了一个 `AsnycTaskRequest`，其实它本身并不提供异步实现，而是交由一个 `ExecutorService` 去执行，而这个 `ExecutorService` 恰由 `FuelManager` 定义，并在构造 `Request` 时传入给它。
 
 FuleManager.kt
@@ -365,6 +364,8 @@ var failureCallback: ((FuelError, Response) -> Unit)? = null
     +---------+      +--------+      +----------+
     | Request | ===> | Client | ===> | Response |
     +---------+      +--------+      +----------+
+
+虽然Fuel 的复杂度不可与 OkHttp 相提并论，但是依赖 Kotlin 语言本身的灵活性，它的代码却比 OkHttp 要简洁的多，特别是关于高阶函数和扩展函数的运用，极大地提升了代码的可读性。
 
 ## 参考资料
 
