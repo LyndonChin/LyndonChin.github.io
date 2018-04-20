@@ -184,6 +184,30 @@
 
 <div class="post-preview">
 
+    <a href="/2016/07/20/android-the-weird-NoClassDefFoundError/">
+        <h2 class="post-title">
+            诡异的问题 NoClassDefFoundError
+        </h2>
+        <h3 class="post-subtitle">
+            
+        </h3>
+        <div class="post-content-preview">
+            今天又遇到一个比较难搞的问题，记一下流水账。
+APP 中引用了一个二方包，编译成功，结果运行时报错 - NoClassDefFoundError。
+
+try #1 - multiDexKeepProguard首先确认是不是由于类没有被放到 main dex 中导致了这个问题。打开文件 build/intermediates/multi-dex/debug/maindexlist.txt，查找......
+        </div>
+    </a>
+    <p class="post-meta">
+        Posted by liangfei on
+        2016-07-20
+    </p>
+
+</div>
+<hr>
+
+<div class="post-preview">
+
     <a href="/2016/07/10/android-diagram-retrofit-service-method/">
         <h2 class="post-title">
             图解 Retrofit 之 ServiceMethod
@@ -411,32 +435,6 @@ In order to use the new Java 8 language features, you need to also use the new J
 </div>
 <hr>
 
-<div class="post-preview">
-
-    <a href="/2016/01/28/android-unit-test/">
-        <h2 class="post-title">
-            Android 单元测试
-        </h2>
-        <h3 class="post-subtitle">
-            
-        </h3>
-        <div class="post-content-preview">
-            Android Studio 和 Android Gradle Plugin 可以让我们脱离 android.jar 直接在 development machine 上执行单元测试。
-
-Unit tests run on a local JVM on your development machine
-
-
-Gradle 插件会编译 src/test/java 的代码，运行时会用到一个修改过的 ......
-        </div>
-    </a>
-    <p class="post-meta">
-        Posted by liangfei on
-        2016-01-28
-    </p>
-
-</div>
-<hr>
-
 
 
 <!-- Pager -->
@@ -490,17 +488,17 @@ Gradle 插件会编译 src/test/java 的代码，运行时会用到一个修改�
                             
                         
                             
-                            <a href="/tags/#UnitTest" title="UnitTest" rel="6">UnitTest</a>
-                            
-                        
-                            
                             <a href="/tags/#Git" title="Git" rel="2">Git</a>
                             
                         
                             
+                            <a href="/tags/#UnitTest" title="UnitTest" rel="6">UnitTest</a>
+                            
                         
                             
                             <a href="/tags/#CSS" title="CSS" rel="3">CSS</a>
+                            
+                        
                             
                         
                             
@@ -532,11 +530,7 @@ Gradle 插件会编译 src/test/java 的代码，运行时会用到一个修改�
                             
                         
                             
-                        
-                            
                             <a href="/tags/#Mockito" title="Mockito" rel="5">Mockito</a>
-                            
-                        
                             
                         
                             
@@ -546,15 +540,23 @@ Gradle 插件会编译 src/test/java 的代码，运行时会用到一个修改�
                             
                         
                             
-                        
-                            
                             <a href="/tags/#Summary" title="Summary" rel="8">Summary</a>
                             
                         
                             
                         
                             
+                        
+                            
+                        
+                            
+                        
+                            
                             <a href="/tags/#Management" title="Management" rel="2">Management</a>
+                            
+                        
+                            
+                        
                             
                         
                             
