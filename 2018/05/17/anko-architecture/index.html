@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Anko的设计之道 - 梁飞的博客 | liangfei&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="http://liangfei.me/2018/05/17/anko-architecture/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/hux-blog.min.css">
+
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">LIANG.FEI</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#kotlin" title="kotlin">kotlin</a>
+                        
+                          <a class="tag" href="/tags/#anko" title="anko">anko</a>
+                        
+                    </div>
+                    <h1>Anko的设计之道</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by liangfei on
+                        2018-05-17
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><a href="https://github.com/kotlin/anko" target="_blank" rel="noopener">Anko</a> 是一个完全基于 Kotlin 设计的 Android 三方库，名字来自于 Android Kotlin 这两个单词的前两个字母。Anko 试图建立一套新的 Android 开发范式， 虽然不会成为主流，但是它的设计思想值得我们借鉴。</p>
+<h2 id="新的-UI-体系"><a href="#新的-UI-体系" class="headerlink" title="新的 UI 体系"></a>新的 UI 体系</h2><p>先看一下 Anko 用于构建 UI 的几个关键类：</p>
+<pre><code>+--------------+
+| ViewManaager |
++-------.------+
+       /|\
+        |
++---------------+
+|  AnkoContext  |&lt;--------------+
++-------.-------+               |
+       /|\                      |
+        |                       |
++-----------------+   +-----------------------+
+| AnkoContextImpl |   | DelegatingAnkoContext |
++-------.---------+   +-----------------------+
+       /|\
+        |
++---------------------+
+| ReusableContextImpl |
++---------------------+
+</code></pre><p>这里需要强调的是，<code>AnkoContext</code> 继承自 <code>ViewManager</code>，而不是 <code>android.content.Context</code>。刚开始读源码时，总会觉得 <code>AnkoContext</code> 的命名有点反直觉，但是，就像文章一开始所说的——“Anko 试图建立一套新的 Android 开发范式” ——其实 <code>AnkoContext</code> 和 <code>android.content.Context</code> 之间是并列关系。</p>
+<p>就像 Android 需要基于 <code>Context</code> 来创建一个 <code>View</code> 一样，Anko 创建 UI 组件也需要基于 <code>AnkoContext</code>。</p>
+<p>既然 <code>AnkoContext</code> 与 <code>android.content.Context</code> 是并列关系，那么大部分为 <code>android.content.Context</code> 定义扩展的地方也定义了 <code>AnkoContext</code> 的扩展。例如 <code>Dimensions.kt</code> 文件：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> Context.<span class="title">dip</span><span class="params">(value: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> = (value * resources.displayMetrics.density).toInt()</span><br><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> AnkoContext<span class="type">&lt;*&gt;</span>.<span class="title">dip</span><span class="params">(value: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> = ctx.dip(value)</span><br><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> View.<span class="title">dip</span><span class="params">(value: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> = context.dip(value)</span><br><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> Fragment.<span class="title">dip</span><span class="params">(value: <span class="type">Int</span>)</span></span>: <span class="built_in">Int</span> = activity.dip(value)</span><br></pre></td></tr></table></figure>
+<p>Anko 的 UI 组件用一个接口 <code>AnkoComponent</code> 来表示，接口内提供了一个模板方法 <code>createView</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">AnkoComponent</span>&lt;<span class="type">in T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">createView</span><span class="params">(ui: <span class="type">AnkoContext</span>&lt;<span class="type">T</span>&gt;)</span></span>: View</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，<code>AnkoComponent</code> 的类型参数（type parameter）是一个逆变的声明处变型（declaration-site variance），模板方法 <code>createView</code> 的作用是基于 <code>AnkoContext&lt;T&gt;</code> 实例创建一个 <code>View</code>。</p>
+<p><code>AnkoContext</code> 继承自 <code>ViewManager</code>，也是一个接口，它“内藏”了 Android 的 <code>android.content.Context</code> 实例，同时还定义了一个类型为 <code>T</code> 的属性 <code>owner</code> 用于表示 <code>AnkoContext</code> 的拥有者。<code>AnkoContext</code> 没有对类型参数 <code>T</code> 加以限定，任何类型都可以。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">AnkoContext</span>&lt;<span class="type">out T</span>&gt; : <span class="type">ViewManager &#123;</span></span></span><br><span class="line">  <span class="keyword">val</span> ctx: Context</span><br><span class="line">  <span class="keyword">val</span> owner: T</span><br><span class="line">  <span class="keyword">val</span> view: View</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">updateViewLayout</span><span class="params">(view: <span class="type">View</span>, params: <span class="type">ViewGroup</span>.<span class="type">LayoutParams</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">throw</span> UnsupportedOperationException()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">removeView</span><span class="params">(view: <span class="type">View</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">throw</span> UnsupportedOperationException()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">create</span><span class="params">(ctx: <span class="type">Context</span>, setContentView: <span class="type">Boolean</span> = <span class="literal">false</span>)</span></span>: AnkoContext&lt;Context&gt;</span><br><span class="line">          = AnkoContextImpl(ctx, ctx, setContentView)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">createReusable</span><span class="params">(ctx: <span class="type">Context</span>, setContentView: <span class="type">Boolean</span> = <span class="literal">false</span>)</span></span>: AnkoContext&lt;Context&gt;</span><br><span class="line">          = ReusableAnkoContext(ctx, ctx, setContentView)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">create</span><span class="params">(ctx: <span class="type">Context</span>, owner: <span class="type">T</span>, setContentView: <span class="type">Boolean</span> = <span class="literal">false</span>)</span></span>: AnkoContext&lt;T&gt;</span><br><span class="line">          = AnkoContextImpl(ctx, owner, setContentView)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">createReusable</span><span class="params">(ctx: <span class="type">Context</span>, owner: <span class="type">T</span>, setContentView: <span class="type">Boolean</span> = <span class="literal">false</span>)</span></span>: AnkoContext&lt;T&gt;</span><br><span class="line">          = ReusableAnkoContext(ctx, owner, setContentView)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T: ViewGroup&gt;</span> <span class="title">createDelegate</span><span class="params">(owner: <span class="type">T</span>)</span></span>: AnkoContext&lt;T&gt; = DelegatingAnkoContext(owner)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>AnkoContext</code> 还通过伴生对象（companion object）提供了五个工厂方法，它们生产出来的对象都是 <code>AnkoContext</code> 的子类，上面的类关系图已经展示出了它们之间的关系。</p>
+<p><code>AnkoContextImpl</code> 是 <code>AnkoContext</code> 接口的具体实现，覆写了 <code>ViewManager#addView</code> 方法：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">addView</span><span class="params">(view: <span class="type">View</span>?, params: <span class="type">ViewGroup</span>.<span class="type">LayoutParams</span>?)</span></span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (view == <span class="literal">null</span>) <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (myView != <span class="literal">null</span>) &#123;</span><br><span class="line">    alreadyHasView()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">this</span>.myView = view</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (setContentView) &#123;</span><br><span class="line">    doAddView(ctx, view)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们来分析一下 <code>addView</code> 的具体实现：</p>
+<p>参数 <code>view: View?</code> 是一个可空类型，但是 <code>AnkoContext</code> 的属性 <code>view: View</code> 是一个非可空类型，所以 <code>AnkoContextImpl</code> 重新定义了一个属性 <code>var myView: View?</code> 用于存储参数 <code>view: View?</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">var</span> myView: View? = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">override</span> <span class="keyword">val</span> view: View</span><br><span class="line">  <span class="keyword">get</span>() = myView ?: <span class="keyword">throw</span> IllegalStateException(<span class="string">"View was not set previously"</span>)</span><br></pre></td></tr></table></figure>
+<p><code>AnkoContextImpl</code> 的构造方法多了一个属性参数 <code>setContentView: Boolean</code>，它表示是否要把 <code>addView</code> 的参数 <code>view</code> 设置为属性 <code>ctx: Context</code> 的 content view：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">doAddView</span><span class="params">(context: <span class="type">Context</span>, view: <span class="type">View</span>)</span></span> &#123;</span><br><span class="line">  <span class="keyword">when</span> (context) &#123;</span><br><span class="line">    <span class="keyword">is</span> Activity -&gt; context.setContentView(view)</span><br><span class="line">    <span class="keyword">is</span> ContextWrapper -&gt; doAddView(context.baseContext, view)</span><br><span class="line">    <span class="keyword">else</span> -&gt; <span class="keyword">throw</span> IllegalStateException(<span class="string">"Context is not an Activity, can't set content view"</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ReusableAnkoContext</code> 继承自 <code>AnkoContextImpl</code>，两者唯一的不同点在于 <code>ReusableAnkoContext</code> 的 <code>alreadHasView</code> 是一个空实现，而 <code>AnkoContextImpl</code> 会抛出一个异常，它不支持 view 复用。</p>
+<p><code>DelegatingAnkoContext</code> 是 <code>AnkoContext</code> 的另一个实现：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">class</span> <span class="title">DelegatingAnkoContext</span>&lt;<span class="type">T: ViewGroup</span>&gt;</span>(<span class="keyword">override</span> <span class="keyword">val</span> owner: T): AnkoContext&lt;T&gt; &#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">val</span> ctx: Context = owner.context</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">val</span> view: View = owner</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">addView</span><span class="params">(view: <span class="type">View</span>?, params: <span class="type">ViewGroup</span>.<span class="type">LayoutParams</span>?)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (view == <span class="literal">null</span>) <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (params == <span class="literal">null</span>) &#123;</span><br><span class="line">      owner.addView(view)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      owner.addView(view, params)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>DelegatingAnkoContext</code> 的类型参数指定了 upper bound —— <code>&lt;T: ViewGroup&gt;</code>，也就是说 <code>DelegatingAnkoContext</code> 的 <code>owner</code> 必须是 <code>ViewGroup</code> 或者它的子类。</p>
+<p>关于 <code>DelegatingAnkoContext</code> 名字中的 <code>Delegating</code> 应该是为了表达属性 <code>view: View</code> 代理了（delegating）<code>owner: T</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="keyword">val</span> view: View = owner</span><br></pre></td></tr></table></figure>
+<p>再来回看一下这几个类的继承关系：</p>
+<ul>
+<li><code>AnkoContext</code> 继承自 <code>ViewManager</code></li>
+<li><code>AnkoContextImpl</code> 和 <code>DelegatingAnkoContext</code> 实现了 <code>AnkoContext</code></li>
+<li><code>ReusableContextImpl</code> 继承自 <code>AnkoContextImpl</code>。</li>
+</ul>
+<pre><code>+--------------+
+| ViewManaager |
++-------.------+
+       /|\
+        |
++---------------+
+|  AnkoContext  |&lt;--------------+
++-------.-------+               |
+       /|\                      |
+        |                       |
++-----------------+   +-----------------------+
+| AnkoContextImpl |   | DelegatingAnkoContext |
++-------.---------+   +-----------------------+
+       /|\
+        |
++---------------------+
+| ReusableContextImpl |
++---------------------+
+</code></pre><h2 id="基于-DSL-实现-UI-布局"><a href="#基于-DSL-实现-UI-布局" class="headerlink" title="基于 DSL 实现 UI 布局"></a>基于 DSL 实现 UI 布局</h2><p>DSL 可以用于取代手写 XML 布局，其优势如下：</p>
+<ul>
+<li>类型安全：编译阶段就能够发现类型错误，而且不会出现 NPE</li>
+<li>代码复用：可封装 View 的创建逻辑</li>
+<li>性能提升：节省了 inflate 的运行开销</li>
+</ul>
+<p>先来看一段代码：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">verticalLayout &#123;</span><br><span class="line">    padding = dip(<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line">    imageView(android.R.drawable.ic_menu_manage).lparams &#123;</span><br><span class="line">        margin = dip(<span class="number">16</span>)</span><br><span class="line">        gravity = Gravity.CENTER</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">val</span> name = editText &#123;</span><br><span class="line">        hintResource = R.string.name</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> password = editText &#123;</span><br><span class="line">        hintResource = R.string.password</span><br><span class="line">        inputType = TYPE_CLASS_TEXT or TYPE_TEXT_VARIATION_PASSWORD</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    button(<span class="string">"Log in"</span>) &#123;</span><br><span class="line">        onClick &#123;</span><br><span class="line">            ui.owner.tryLogin(ui, name.text, password.text)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    myRichView()</span><br><span class="line">&#125;.applyRecursively(customStyle)</span><br></pre></td></tr></table></figure>
+<p>在 Anko 新的 UI 体系中，<code>AnkoComponent</code> 表示一个 UI 组件，模板方法 <code>createView</code> 返回 <code>View</code> 实例，上面的代码即可作为 <code>createView</code> 的函数内容，返回值是一个 vertical 的 <code>LinearLayout</code>。</p>
+<p>加上 <code>AnkoComponent</code> 把上面的代码补全：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivityUi</span> : <span class="type">AnkoComponent</span>&lt;<span class="type">MainActivity</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> customStyle = &#123; v: Any -&gt;</span><br><span class="line">    <span class="keyword">when</span> (v) &#123;</span><br><span class="line">      <span class="keyword">is</span> Button -&gt; v.textSize = <span class="number">26</span>f</span><br><span class="line">      <span class="keyword">is</span> EditText -&gt; v.textSize = <span class="number">24</span>f</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">createView</span><span class="params">(ui: <span class="type">AnkoContext</span>&lt;<span class="type">MainActivity</span>&gt;)</span></span> = with(ui) &#123;</span><br><span class="line">    relativeLayout &#123;</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">    &#125;.applyRecursively(customStyle)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们来分析一下 <code>relativeLayout</code> 如何成为 <code>ui: AnkoContext&lt;MainActivity&gt;</code> 的 content view。</p>
+<p>首先，<code>relativeLayout</code> 是 <code>ViewManager</code> 的扩展函数，返回值是一个 <code>LinearLayout</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> ViewManager.<span class="title">verticalLayout</span><span class="params">(theme: <span class="type">Int</span> = <span class="number">0</span>, init: (@<span class="type">AnkoViewDslMarker</span> <span class="type">_LinearLayout</span>)</span></span>.() -&gt; <span class="built_in">Unit</span>): LinearLayout &#123;</span><br><span class="line">  <span class="keyword">return</span> ankoView(`$$Anko$Factories$CustomViews`.VERTICAL_LAYOUT_FACTORY, theme, init)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后，它会调用 <code>ViewManager</code> 的另一个扩展函数——<code>ankoView</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : View&gt;</span> ViewManager.<span class="title">ankoView</span><span class="params">(factory: (<span class="type">ctx</span>: <span class="type">Context</span>)</span></span> -&gt; T, theme: <span class="built_in">Int</span>, init: T.() -&gt; <span class="built_in">Unit</span>): T &#123;</span><br><span class="line">  <span class="keyword">val</span> ctx = AnkoInternals.wrapContextIfNeeded(AnkoInternals.getContext(<span class="keyword">this</span>), theme)</span><br><span class="line">  <span class="keyword">val</span> view = factory(ctx)</span><br><span class="line">  view.init()</span><br><span class="line">  AnkoInternals.addView(<span class="keyword">this</span>, view)</span><br><span class="line">  <span class="keyword">return</span> view</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>ankoView</code> 会调用 <code>AnkoInternals#addView</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T : View&gt;</span> <span class="title">addView</span><span class="params">(manager: <span class="type">ViewManager</span>, view: <span class="type">T</span>)</span></span> = <span class="keyword">when</span> (manager) &#123;</span><br><span class="line">  <span class="keyword">is</span> ViewGroup -&gt; manager.addView(view)</span><br><span class="line">  <span class="keyword">is</span> AnkoContext&lt;*&gt; -&gt; manager.addView(view, <span class="literal">null</span>)</span><br><span class="line">  <span class="keyword">else</span> -&gt; <span class="keyword">throw</span> AnkoException(<span class="string">"<span class="variable">$manager</span> is the wrong parent"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说，<code>verticalLayout</code> 函数会把它所创建的 <code>LinearLayout</code> 作为 child view 添加到接收者（receiver）中，这里是 <code>ViewManager</code>。</p>
+<p>再回到 <code>AnkoComponent</code> 的 <code>createView</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">createView</span><span class="params">(ui: <span class="type">AnkoContext</span>&lt;<span class="type">MainActivity</span>&gt;)</span></span> = with(ui) &#123;</span><br><span class="line">  verticalLayout &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>with(ui)</code> 会把 <code>ui: AnkoContext&lt;MainActivity&gt;</code> 作为第二个参数（用大括号表示的高阶函数）的 receiver，也就是说 高阶函数内的 <code>this</code> 会指向变量 <code>ui</code>。这样的话，<code>AnkoInternals.addView(this, view)</code> 会调用到 <code>AnkoContext</code> 的 <code>addView</code> 方法，具体如何处理取决于接口 <code>AnkoContext</code> 的具体实现。</p>
+<p>下面举例来展示它们的用法。</p>
+<h3 id="自定义-View"><a href="#自定义-View" class="headerlink" title="自定义 View"></a>自定义 View</h3><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RichView</span> : <span class="type">LinearLayout &#123;</span></span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> image: ImageView</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">lateinit</span> <span class="keyword">var</span> text: TextView</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">init</span><span class="params">()</span></span> = AnkoContext.createDelegate(<span class="keyword">this</span>).apply &#123;</span><br><span class="line">    gravity = CENTER</span><br><span class="line">    padding = dip(<span class="number">24</span>)</span><br><span class="line"></span><br><span class="line">    image = imageView(imageResource = R.drawable.kotlin) &#123;</span><br><span class="line">      onClick &#123; startAnimation() &#125;</span><br><span class="line"></span><br><span class="line">      padding = dip(<span class="number">8</span>)</span><br><span class="line">      layoutParams = LinearLayout.LayoutParams(dip(<span class="number">48</span>), dip(<span class="number">48</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    text = textView(<span class="string">"Anko Rich view"</span>) &#123;</span><br><span class="line">      textSize = <span class="number">19</span>f</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    startAnimation()</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>AnkoContext.createDelegate</code> 创建了一个 <code>DelegatingAnkoContext</code>，它的 owner 和 view 都是 <code>this</code>，也就说扩展函数 <code>image</code>、<code>text</code> 所创建的 view 都会作为 child view 添加给 <code>this</code>。</p>
+<h3 id="Activity-的-content-view"><a href="#Activity-的-content-view" class="headerlink" title="Activity 的 content view"></a>Activity 的 content view</h3><figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> : <span class="type">AppCompatActivity</span></span>() &#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreate</span><span class="params">(savedInstanceState: <span class="type">Bundle</span>?)</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.onCreate(savedInstanceState)</span><br><span class="line">    <span class="keyword">val</span> adapter = ProverbAdapter(<span class="keyword">this</span>, proverbs)</span><br><span class="line">    MainActivityUI(adapter).setContentView(<span class="keyword">this</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainActivityUI</span></span>(<span class="keyword">private</span> <span class="keyword">val</span> adapter: ProverbAdapter) : AnkoComponent&lt;MainActivity&gt; &#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">createView</span><span class="params">(ui: <span class="type">AnkoContext</span>&lt;<span class="type">MainActivity</span>&gt;)</span></span> = with(ui) &#123;</span><br><span class="line">    relativeLayout &#123;</span><br><span class="line">      recyclerView &#123;</span><br><span class="line">        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, <span class="literal">false</span>).apply &#123;</span><br><span class="line">          adapter = <span class="keyword">this</span><span class="symbol">@MainActivityUI</span>.adapter</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;.lparams(width = matchParent, height = matchParent)</span><br><span class="line">    &#125;.apply &#123;</span><br><span class="line">      layoutParams = FrameLayout.LayoutParams(matchParent, matchParent).apply &#123;</span><br><span class="line">        padding = dip(<span class="number">16</span>)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>MainActivityUI</code> 是 <code>AnkoComponent&lt;MainActivity&gt;</code> 的子类，类型实参 <code>&lt;MainActivity&gt;</code> 表示 <code>AnkoContext</code> 的 <code>owner</code> 的类型。</p>
+<p>创建完 <code>MainActivityUI</code> 的实例之后，用法就变得非常简单，直接调用它的扩展函数 <code>setContentView</code>：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line">MainActivityUI(adapter).setContentView(<span class="keyword">this</span>)</span><br></pre></td></tr></table></figure>
+<p><code>setContentView</code> 会创建一个 <code>AnkoContextImpl</code> 类型的实例，然后把这个实例作为参数调用 <code>createView</code>。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">fun &lt;T : Activity&gt; AnkoComponent&lt;T&gt;.setContentView(activity: T): View =</span><br><span class="line">    createView(AnkoContextImpl(activity, activity, true))</span><br></pre></td></tr></table></figure>
+<h3 id="RecyclerView-ViewHolder"><a href="#RecyclerView-ViewHolder" class="headerlink" title="RecyclerView.ViewHolder"></a>RecyclerView.ViewHolder</h3><p>首先用 <code>AnkoComponent</code> 定义 item 的 UI 组件。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProverbComponent</span></span>(<span class="keyword">val</span> ui: AnkoContext&lt;ProverbAdapter&gt;) : AnkoComponent&lt;ProverbAdapter&gt; &#123;</span><br><span class="line">  <span class="keyword">lateinit</span> <span class="keyword">var</span> category: TextView</span><br><span class="line">  <span class="keyword">lateinit</span> <span class="keyword">var</span> title: TextView</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">fun</span> <span class="title">createView</span><span class="params">()</span></span> = createView(ui)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">createView</span><span class="params">(ui: <span class="type">AnkoContext</span>&lt;<span class="type">ProverbAdapter</span>&gt;)</span></span> = with (ui) &#123;</span><br><span class="line">    linearLayout &#123;</span><br><span class="line">      category = textView &#123;</span><br><span class="line">        textColor = Color.RED</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      textView &#123;</span><br><span class="line">        text = <span class="string">": "</span></span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      title = textView &#123;</span><br><span class="line">        textColor = Color.BLUE</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后用 <code>ViewHolder</code> 来 hold 这个组件。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ViewHolder</span></span>(<span class="keyword">val</span> ankoComponent: ProverbComponent) : RecyclerView.ViewHolder(ankoComponent.createView())</span><br></pre></td></tr></table></figure>
+<p>创建组件所使用的 <code>AnkoContext</code> 是 <code>ReusableAnkoContext</code>。</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ProverbAdapter</span></span>(context: Context, <span class="keyword">private</span> <span class="keyword">val</span> items: List&lt;Proverb&gt;) : RecyclerView.Adapter&lt;ViewHolder&gt;() &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> ankoContext: AnkoContext&lt;ProverbAdapter&gt; = AnkoContext.createReusable(context, <span class="keyword">this</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onBindViewHolder</span><span class="params">(holder: <span class="type">ViewHolder</span>, position: <span class="type">Int</span>)</span></span> &#123;</span><br><span class="line">    holder.ankoComponent.category.text = items[position].category</span><br><span class="line">    holder.ankoComponent.title.text = items[position].phrase</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">getItemCount</span><span class="params">()</span></span>: <span class="built_in">Int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> items.size</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">onCreateViewHolder</span><span class="params">(parent: <span class="type">ViewGroup</span>, viewType: <span class="type">Int</span>)</span></span>: ViewHolder &#123;</span><br><span class="line">    <span class="keyword">return</span> ViewHolder(ProverbComponent(ankoContext))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Anko 这种基于 DSL 的布局方式可以算得上是一股清流，虽然在执行效率上面有所提升，但是从开发效率和分工协作的角度来看，DSL 算不上是一种高效的方式。</p>
+<p>我们都知道，用 Sketch 画 UI 肯定比手写代码的方式效率高，无论是 Android 还是 iOS，UI 的布局方式都在朝着“拖拽”的方向演进，比如 <code>ConstraintLayout</code>、<code>AutoLayout</code>，设计稿直接转换为 XML 布局文件也已经指日可待。除此之外，逻辑代码和布局代码混在一起的方式也不便于代码维护。</p>
+<p>UI 布局只是 Anko 的功能之一，有时间了再分析一下 Anko Coroutines 的实现。</p>
+
+
+                <hr>
+
+                <div style="text-align: center;">
+                    <p>欢迎扫码关注 <b>老梁写代码</b> 微信公众号</p>
+                    <img src="https://wx2.sinaimg.cn/mw690/63934de3gy1fpdr77kb6kj209k09kjrc.jpg"/>
+                </div>
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2018/04/23/google-io-2018-attraction/" data-toggle="tooltip" data-placement="top" title="Google I/O 2018 看点">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+                <!-- disqus 评论框 start -->
+                <div class="comment">
+                    <div id="disqus_thread" class="disqus-thread"></div>
+                </div>
+                <!-- disqus 评论框 end -->
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#kotlin" title="kotlin">kotlin</a>
+                        
+                          <a class="tag" href="/tags/#anko" title="anko">anko</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://yifeiyuan.me/" target="_blank">程序亦非猿</a></li>
+                    
+                        <li><a href="https://www.liaohuqiu.net/" target="_blank">秋百万</a></li>
+                    
+                        <li><a href="http://blog.zhaiyifan.cn/" target="_blank">大帅</a></li>
+                    
+                </ul>
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = "http-www-liangfei-me";
+var disqus_identifier = "http://liangfei.me/2018/05/17/anko-architecture/";
+var disqus_url = "http://liangfei.me/2018/05/17/anko-architecture/";
+
+var disqus_config = function () {
+this.page.url = disqus_url;
+this.page.identifier = disqus_identifier;
+};
+
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://' + disqus_shortname +'.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/liangfei.me">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank" href="http://weibo.com/liangfeizc">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/LyndonChin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; LIANG.FEI 2018 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("http://liangfei.me/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111924601-1"></script>
+    <script>
+        var _gaId = 'UA-111924601-1';
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', _gaId);
+    </script>
+
+
+<!-- Baidu Tongji -->
+
+<script>
+    var _baId = '03812d0423cc43c7d86d65fd5bd22176';
+
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?" + _baId;
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+
+<!-- Side Catalog -->
+
+
+
+
+</body>
+
+</html>
